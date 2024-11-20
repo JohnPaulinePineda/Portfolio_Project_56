@@ -940,6 +940,7 @@ train_gen = train_datagen.flow_from_directory(directory=path,
                                               classes=classes,
                                               batch_size=batch_size, 
                                               color_mode="grayscale")
+
 ```
 
     Found 4571 images belonging to 4 classes.
@@ -964,6 +965,7 @@ for i in range(5):
     axes[i].set_title(f"Label: {labels[0]}")
     axes[i].axis('off')
 plt.show()
+
 ```
 
 
@@ -996,6 +998,7 @@ test_gen = test_datagen.flow_from_directory(directory=path,
                                             classes=classes,
                                             batch_size=batch_size, 
                                             color_mode="grayscale")
+
 ```
 
     Found 1141 images belonging to 4 classes.
@@ -1014,6 +1017,7 @@ for i, idx in enumerate(range(0, 5)):
     axes[i].set_title(f"Label: {labels[0]}")
     axes[i].axis('off')
 plt.show()
+
 ```
 
 
@@ -1048,6 +1052,7 @@ imageEDA['Mean'] = mean_val
 imageEDA['StDev'] = std_dev_val
 imageEDA['Max'] = max_val
 imageEDA['Min'] = min_val
+
 ```
 
 
@@ -1058,6 +1063,7 @@ imageEDA['Min'] = min_val
 # grouped by categories
 ##################################
 imageEDA.groupby(['Class'])['Mean'].mean()
+
 ```
 
 
@@ -1080,6 +1086,7 @@ imageEDA.groupby(['Class'])['Mean'].mean()
 # grouped by categories
 ##################################
 imageEDA.groupby(['Class'])['Mean'].min()
+
 ```
 
 
@@ -1102,6 +1109,7 @@ imageEDA.groupby(['Class'])['Mean'].min()
 # grouped by categories
 ##################################
 imageEDA.groupby(['Class'])['Mean'].max()
+
 ```
 
 
@@ -1124,6 +1132,7 @@ imageEDA.groupby(['Class'])['Mean'].max()
 # grouped by categories
 ##################################
 imageEDA.groupby(['Class'])['Mean'].std()
+
 ```
 
 
@@ -1146,6 +1155,7 @@ imageEDA.groupby(['Class'])['Mean'].std()
 ##################################
 sns.displot(data = imageEDA, x = 'Mean', kind="kde", hue = 'Class', height=6, aspect=1.40)
 plt.title('Image Pixel Intensity Mean Distribution by Category', fontsize=14, weight='bold');
+
 ```
 
 
@@ -1162,6 +1172,7 @@ plt.title('Image Pixel Intensity Mean Distribution by Category', fontsize=14, we
 ##################################
 sns.displot(data = imageEDA, x = 'Max', kind="kde", hue = 'Class', height=6, aspect=1.40)
 plt.title('Image Pixel Intensity Maximum Distribution by Category', fontsize=14, weight='bold');
+
 ```
 
 
@@ -1178,6 +1189,7 @@ plt.title('Image Pixel Intensity Maximum Distribution by Category', fontsize=14,
 ##################################
 sns.displot(data = imageEDA, x = 'Min', kind="kde", hue = 'Class', height=6, aspect=1.40)
 plt.title('Image Pixel Intensity Minimum Distribution by Category', fontsize=14, weight='bold');
+
 ```
 
 
@@ -1194,6 +1206,7 @@ plt.title('Image Pixel Intensity Minimum Distribution by Category', fontsize=14,
 ##################################
 sns.displot(data = imageEDA, x = 'StDev', kind="kde", hue = 'Class', height=6, aspect=1.40)
 plt.title('Image Pixel Intensity Standard Deviation Distribution by Category', fontsize=14, weight='bold');
+
 ```
 
 
@@ -1217,6 +1230,7 @@ plt.xticks(rotation=0, fontsize = 12)
 ax.set_xlabel('Image Pixel Intensity Mean',fontsize=14, weight='bold')
 ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
 plt.title('Image Pixel Intensity Mean and Standard Deviation Distribution', fontsize = 14, weight='bold');
+
 ```
 
 
@@ -1242,6 +1256,7 @@ axes[0].set_ylabel('Image Pixel Intensity Standard Deviation')
 for ax in axes:
     ax.set_xlabel('Image Pixel Intensity Mean')
 scatterplot.fig.tight_layout()
+
 ```
 
 
@@ -1260,7 +1275,7 @@ scatterplot.fig.tight_layout()
 ##################################
 def getImage(path):
     image = cv2.imread(path)
-    resized_image = cv2.resize(image, (500,500))
+    resized_image = cv2.resize(image, (300,300))
     return OffsetImage(resized_image, zoom = 0.1)
 
 DF_sample = imageEDA.sample(frac=1.0, replace=False, random_state=123)
@@ -1271,13 +1286,14 @@ ab = sns.scatterplot(data=DF_sample, x="Mean", y='StDev')
 sns.despine(top=True, right=True, left=False, bottom=False)
 ax.set_xlabel('Image Pixel Intensity Mean', fontsize=14, weight='bold')
 ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
-ax.set_xlim(0,140)
+ax.set_xlim(-5,145)
 ax.set_ylim(0,120)
 plt.title('Overall: Image Pixel Intensity Mean and Standard Deviation Distribution', fontsize=14, weight='bold');
 
 for x0, y0, path in zip(DF_sample['Mean'], DF_sample['StDev'], paths):
     ab = AnnotationBbox(getImage(path), (x0, y0), frameon=False)
     ax.add_artist(ab)
+    
 ```
 
 
@@ -1306,13 +1322,14 @@ ab = sns.scatterplot(data=DF_sample, x="Mean", y='StDev')
 sns.despine(top=True, right=True, left=False, bottom=False)
 ax.set_xlabel('Image Pixel Intensity Mean', fontsize=14, weight='bold')
 ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
-ax.set_xlim(0,140)
+ax.set_xlim(-5,145)
 ax.set_ylim(10,110)
 plt.title('Glioma: Image Pixel Intensity Mean and Standard Deviation Distribution', fontsize=14, weight='bold');
 
-for x0, y0, path_glioma in zip(DF_sample['Mean'], DF_sample['StDev'],paths):
+for x0, y0, path_glioma in zip(DF_sample['Mean'], DF_sample['StDev'], paths):
     ab = AnnotationBbox(getImage(path_glioma), (x0, y0), frameon=False)
     ax.add_artist(ab)
+    
 ```
 
 
@@ -1341,13 +1358,14 @@ ab = sns.scatterplot(data=DF_sample, x="Mean", y='StDev')
 sns.despine(top=True, right=True, left=False, bottom=False)
 ax.set_xlabel('Image Pixel Intensity Mean', fontsize=14, weight='bold')
 ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
-ax.set_xlim(0,140)
+ax.set_xlim(-5,145)
 ax.set_ylim(10,110)
 plt.title('Meningioma: Image Pixel Intensity Mean and Standard Deviation Distribution', fontsize=14, weight='bold');
 
-for x0, y0, path_meningioma in zip(DF_sample['Mean'], DF_sample['StDev'],paths):
+for x0, y0, path_meningioma in zip(DF_sample['Mean'], DF_sample['StDev'], paths):
     ab = AnnotationBbox(getImage(path_meningioma), (x0, y0), frameon=False)
     ax.add_artist(ab)
+    
 ```
 
 
@@ -1380,9 +1398,10 @@ ax.set_xlim(0, 140)
 ax.set_ylim(10,110)
 plt.title('Pituitary: Image Pixel Intensity Mean and Standard Deviation Distribution', fontsize=14, weight='bold');
 
-for x0, y0, path_pituitary in zip(DF_sample['Mean'], DF_sample['StDev'],paths):
+for x0, y0, path_pituitary in zip(DF_sample['Mean'], DF_sample['StDev'], paths):
     ab = AnnotationBbox(getImage(path_pituitary), (x0, y0), frameon=False)
     ax.add_artist(ab)
+    
 ```
 
 
@@ -1411,18 +1430,345 @@ ab = sns.scatterplot(data=DF_sample, x="Mean", y='StDev')
 sns.despine(top=True, right=True, left=False, bottom=False)
 ax.set_xlabel('Image Pixel Intensity Mean', fontsize=14, weight='bold')
 ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
-ax.set_xlim(0,140)
+ax.set_xlim(-5,145)
 ax.set_ylim(10,110)
 plt.title('No Tumor: Image Pixel Intensity Mean and Standard Deviation Distribution', fontsize=14, weight='bold');
 
-for x0, y0, path_no_tumor in zip(DF_sample['Mean'], DF_sample['StDev'],paths):
+for x0, y0, path_no_tumor in zip(DF_sample['Mean'], DF_sample['StDev'], paths):
     ab = AnnotationBbox(getImage(path_no_tumor), (x0, y0), frameon=False)
     ax.add_artist(ab)
+    
 ```
 
 
     
 ![png](output_60_0.png)
+    
+
+
+
+```python
+#################################
+# Formulating the minimum and standard deviation 
+# scatterplot distribution
+# of the image pixel values
+# represented as actual images
+##################################
+DF_sample = imageEDA.sample(frac=1.0, replace=False, random_state=123)
+paths = DF_sample['Path']
+
+fig, ax = plt.subplots(figsize=(15,9))
+ab = sns.scatterplot(data=DF_sample, x="Min", y='StDev')
+sns.despine(top=True, right=True, left=False, bottom=False)
+ax.set_xlabel('Image Pixel Intensity Minimum', fontsize=14, weight='bold')
+ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
+ax.set_xlim(-5,145)
+ax.set_ylim(0,120)
+plt.title('Overall: Image Pixel Intensity Minimum and Standard Deviation Distribution', fontsize=14, weight='bold');
+
+for x0, y0, path in zip(DF_sample['Min'], DF_sample['StDev'], paths):
+    ab = AnnotationBbox(getImage(path), (x0, y0), frameon=False)
+    ax.add_artist(ab)
+    
+```
+
+
+    
+![png](output_61_0.png)
+    
+
+
+
+```python
+##################################
+# Formulating the minimum and standard deviation 
+# scatterplot distribution
+# of the image pixel values
+# represented as actual images
+# for the Glioma class
+##################################
+DF_sample = imageEDA_glioma.sample(frac=1.0, replace=False, random_state=123)
+paths = DF_sample['Path']
+
+fig, ax = plt.subplots(figsize=(15,9))
+ab = sns.scatterplot(data=DF_sample, x="Min", y='StDev')
+sns.despine(top=True, right=True, left=False, bottom=False)
+ax.set_xlabel('Image Pixel Intensity Minimum', fontsize=14, weight='bold')
+ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
+ax.set_xlim(-5,145)
+ax.set_ylim(10,110)
+plt.title('Glioma: Image Pixel Intensity Minimum and Standard Deviation Distribution', fontsize=14, weight='bold');
+
+for x0, y0, path_glioma in zip(DF_sample['Min'], DF_sample['StDev'], paths):
+    ab = AnnotationBbox(getImage(path_glioma), (x0, y0), frameon=False)
+    ax.add_artist(ab)
+    
+```
+
+
+    
+![png](output_62_0.png)
+    
+
+
+
+```python
+##################################
+# Formulating the minimum and standard deviation 
+# scatterplot distribution
+# of the image pixel values
+# represented as actual images
+# for the Meningioma class
+##################################
+DF_sample = imageEDA_meningioma.sample(frac=1.0, replace=False, random_state=123)
+paths = DF_sample['Path']
+
+fig, ax = plt.subplots(figsize=(15,9))
+ab = sns.scatterplot(data=DF_sample, x="Min", y='StDev')
+sns.despine(top=True, right=True, left=False, bottom=False)
+ax.set_xlabel('Image Pixel Intensity Minimum', fontsize=14, weight='bold')
+ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
+ax.set_xlim(-5,145)
+ax.set_ylim(10,110)
+plt.title('Meningioma: Image Pixel Intensity Minimum and Standard Deviation Distribution', fontsize=14, weight='bold');
+
+for x0, y0, path_meningioma in zip(DF_sample['Min'], DF_sample['StDev'], paths):
+    ab = AnnotationBbox(getImage(path_meningioma), (x0, y0), frameon=False)
+    ax.add_artist(ab)
+
+```
+
+
+    
+![png](output_63_0.png)
+    
+
+
+
+```python
+##################################
+# Formulating the minimum and standard deviation 
+# scatterplot distribution
+# of the image pixel values
+# represented as actual images
+# for the Pituitary class
+##################################
+DF_sample = imageEDA_pituitary.sample(frac=1.0, replace=False, random_state=123)
+paths = DF_sample['Path']
+
+fig, ax = plt.subplots(figsize=(15,9))
+ab = sns.scatterplot(data=DF_sample, x="Min", y='StDev')
+sns.despine(top=True, right=True, left=False, bottom=False)
+ax.set_xlabel('Image Pixel Intensity Minimum', fontsize=14, weight='bold')
+ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
+ax.set_xlim(-5,145)
+ax.set_ylim(10,110)
+plt.title('Pituitary: Image Pixel Intensity Minimum and Standard Deviation Distribution', fontsize=14, weight='bold');
+
+for x0, y0, path_pituitary in zip(DF_sample['Min'], DF_sample['StDev'], paths):
+    ab = AnnotationBbox(getImage(path_pituitary), (x0, y0), frameon=False)
+    ax.add_artist(ab)
+
+```
+
+
+    
+![png](output_64_0.png)
+    
+
+
+
+```python
+##################################
+# Formulating the minimum and standard deviation 
+# scatterplot distribution
+# of the image pixel values
+# represented as actual images
+# for the No Tumor class
+##################################
+DF_sample = imageEDA_no_tumor.sample(frac=1.0, replace=False, random_state=123)
+paths = DF_sample['Path']
+
+fig, ax = plt.subplots(figsize=(15,9))
+ab = sns.scatterplot(data=DF_sample, x="Min", y='StDev')
+sns.despine(top=True, right=True, left=False, bottom=False)
+ax.set_xlabel('Image Pixel Intensity Minimum', fontsize=14, weight='bold')
+ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
+ax.set_xlim(-5,145)
+ax.set_ylim(10,110)
+plt.title('No Tumor: Image Pixel Intensity Minimum and Standard Deviation Distribution', fontsize=14, weight='bold');
+
+for x0, y0, path_no_tumor in zip(DF_sample['Min'], DF_sample['StDev'], paths):
+    ab = AnnotationBbox(getImage(path_no_tumor), (x0, y0), frameon=False)
+    ax.add_artist(ab)
+
+```
+
+
+    
+![png](output_65_0.png)
+    
+
+
+
+```python
+#################################
+# Formulating the maximum and standard deviation 
+# scatterplot distribution
+# of the image pixel values
+# represented as actual images
+##################################
+DF_sample = imageEDA.sample(frac=1.0, replace=False, random_state=123)
+paths = DF_sample['Path']
+
+fig, ax = plt.subplots(figsize=(15,9))
+ab = sns.scatterplot(data=DF_sample, x="Max", y='StDev')
+sns.despine(top=True, right=True, left=False, bottom=False)
+ax.set_xlabel('Image Pixel Intensity Maximum', fontsize=14, weight='bold')
+ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
+ax.set_xlim(115,265)
+ax.set_ylim(0,120)
+plt.title('Overall: Image Pixel Intensity Maximum and Standard Deviation Distribution', fontsize=14, weight='bold');
+
+for x0, y0, path in zip(DF_sample['Max'], DF_sample['StDev'], paths):
+    ab = AnnotationBbox(getImage(path), (x0, y0), frameon=False)
+    ax.add_artist(ab)
+```
+
+
+    
+![png](output_66_0.png)
+    
+
+
+
+```python
+##################################
+# Formulating the maximum and standard deviation 
+# scatterplot distribution
+# of the image pixel values
+# represented as actual images
+# for the Glioma class
+##################################
+DF_sample = imageEDA_glioma.sample(frac=1.0, replace=False, random_state=123)
+paths = DF_sample['Path']
+
+fig, ax = plt.subplots(figsize=(15,9))
+ab = sns.scatterplot(data=DF_sample, x="Max", y='StDev')
+sns.despine(top=True, right=True, left=False, bottom=False)
+ax.set_xlabel('Image Pixel Intensity Maximum', fontsize=14, weight='bold')
+ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
+ax.set_xlim(115,265)
+ax.set_ylim(10,110)
+plt.title('Glioma: Image Pixel Intensity Maximum and Standard Deviation Distribution', fontsize=14, weight='bold');
+
+for x0, y0, path_glioma in zip(DF_sample['Max'], DF_sample['StDev'], paths):
+    ab = AnnotationBbox(getImage(path_glioma), (x0, y0), frameon=False)
+    ax.add_artist(ab)
+```
+
+
+    
+![png](output_67_0.png)
+    
+
+
+
+```python
+##################################
+# Formulating the maximum and standard deviation 
+# scatterplot distribution
+# of the image pixel values
+# represented as actual images
+# for the Meningioma class
+##################################
+DF_sample = imageEDA_meningioma.sample(frac=1.0, replace=False, random_state=123)
+paths = DF_sample['Path']
+
+fig, ax = plt.subplots(figsize=(15,9))
+ab = sns.scatterplot(data=DF_sample, x="Max", y='StDev')
+sns.despine(top=True, right=True, left=False, bottom=False)
+ax.set_xlabel('Image Pixel Intensity Maximum', fontsize=14, weight='bold')
+ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
+ax.set_xlim(115,265)
+ax.set_ylim(10,110)
+plt.title('Meningioma: Image Pixel Intensity Maximum and Standard Deviation Distribution', fontsize=14, weight='bold');
+
+for x0, y0, path_meningioma in zip(DF_sample['Max'], DF_sample['StDev'], paths):
+    ab = AnnotationBbox(getImage(path_meningioma), (x0, y0), frameon=False)
+    ax.add_artist(ab)
+
+```
+
+
+    
+![png](output_68_0.png)
+    
+
+
+
+```python
+##################################
+# Formulating the maximum and standard deviation 
+# scatterplot distribution
+# of the image pixel values
+# represented as actual images
+# for the Pituitary class
+##################################
+DF_sample = imageEDA_pituitary.sample(frac=1.0, replace=False, random_state=123)
+paths = DF_sample['Path']
+
+fig, ax = plt.subplots(figsize=(15,9))
+ab = sns.scatterplot(data=DF_sample, x="Max", y='StDev')
+sns.despine(top=True, right=True, left=False, bottom=False)
+ax.set_xlabel('Image Pixel Intensity Maximum', fontsize=14, weight='bold')
+ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
+ax.set_xlim(115,265)
+ax.set_ylim(10,110)
+plt.title('Pituitary: Image Pixel Intensity Maximum and Standard Deviation Distribution', fontsize=14, weight='bold');
+
+for x0, y0, path_pituitary in zip(DF_sample['Max'], DF_sample['StDev'], paths):
+    ab = AnnotationBbox(getImage(path_pituitary), (x0, y0), frameon=False)
+    ax.add_artist(ab)
+
+```
+
+
+    
+![png](output_69_0.png)
+    
+
+
+
+```python
+##################################
+# Formulating the maximum and standard deviation 
+# scatterplot distribution
+# of the image pixel values
+# represented as actual images
+# for the No Tumor class
+##################################
+DF_sample = imageEDA_no_tumor.sample(frac=1.0, replace=False, random_state=123)
+paths = DF_sample['Path']
+
+fig, ax = plt.subplots(figsize=(15,9))
+ab = sns.scatterplot(data=DF_sample, x="Max", y='StDev')
+sns.despine(top=True, right=True, left=False, bottom=False)
+ax.set_xlabel('Image Pixel Intensity Maximum', fontsize=14, weight='bold')
+ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
+ax.set_xlim(115,265)
+ax.set_ylim(10,110)
+plt.title('No Tumor: Image Pixel Intensity Maximum and Standard Deviation Distribution', fontsize=14, weight='bold');
+
+for x0, y0, path_no_tumor in zip(DF_sample['Max'], DF_sample['StDev'], paths):
+    ab = AnnotationBbox(getImage(path_no_tumor), (x0, y0), frameon=False)
+    ax.add_artist(ab)
+
+```
+
+
+    
+![png](output_70_0.png)
     
 
 
