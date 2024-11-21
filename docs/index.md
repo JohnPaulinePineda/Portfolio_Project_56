@@ -905,7 +905,7 @@ display(image.min())
 path = (os.path.join("..", DATASETS_FINAL_TRAIN_PATH))
 classes=["notumor", "glioma", "meningioma", "pituitary"]
 num_classes = len(classes)
-batch_size = 16
+batch_size = 8
 ```
 
 
@@ -919,15 +919,14 @@ batch_size = 16
 ##################################
 set_seed()
 train_datagen = ImageDataGenerator(rescale=1./255,
-                                   rotation_range=5,
+                                   rotation_range=3,
                                    width_shift_range=0.05,
                                    height_shift_range=0.05,
-                                   horizontal_flip=True,
-                                   vertical_flip=True,
+                                   horizontal_flip=False,
+                                   vertical_flip=False,
                                    shear_range=0.05,
                                    zoom_range=0.05,
                                    validation_split=0.2)
-
 
 ##################################
 # Loading the model training images
@@ -1783,6 +1782,363 @@ for x0, y0, path_no_tumor in zip(DF_sample['Max'], DF_sample['StDev'], paths):
 ### 1.6.3 Convolutional Neural Network Sequential Layer Development <a class="anchor" id="1.6.3"></a>
 
 #### 1.6.3.1 CNN With No Regularization <a class="anchor" id="1.6.3.1"></a>
+
+
+```python
+##################################
+# Defining a function for
+# plotting the loss profile
+# of the training and validation sets
+#################################
+def plot_training_history(history, model_name):
+    plt.figure(figsize=(10,6))
+    plt.plot(history.history['loss'], label='Train')
+    plt.plot(history.history['val_loss'], label='Validation')
+    plt.title(f'{model_name} Training Loss', fontsize = 16, weight = 'bold', pad=20)
+    plt.ylim(0, 5)
+    plt.xlabel('Epoch', fontsize = 14, weight = 'bold',)
+    plt.ylabel('Loss', fontsize = 14, weight = 'bold',)
+    plt.legend(loc='upper right')
+    plt.show()
+```
+
+
+```python
+##################################
+# Formulating the network architecture
+# for CNN with no regularization
+##################################
+set_seed()
+batch_size = 8
+model_nr = Sequential()
+model_nr.add(Conv2D(filters=32, kernel_size=(3, 3), activation='relu', padding='Same', input_shape=(299, 299, 1)))
+model_nr.add(MaxPooling2D(pool_size=(2, 2)))
+model_nr.add(Conv2D(filters=64, kernel_size=(3, 3), padding='Same', activation='relu'))
+model_nr.add(MaxPooling2D(pool_size=(2, 2)))
+model_nr.add(Flatten())
+model_nr.add(Dense(units=128, activation='relu'))
+model_nr.add(Dense(units=num_classes, activation='softmax'))
+
+##################################
+# Compiling the network layers
+##################################
+optimizer = Adam(learning_rate=0.001)
+model_nr.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=[Recall()])
+```
+
+
+```python
+##################################
+# Displaying the model summary
+# for CNN with no regularization
+##################################
+print(model_nr.summary())
+```
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">Model: "sequential"</span>
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃<span style="font-weight: bold"> Layer (type)                         </span>┃<span style="font-weight: bold"> Output Shape                </span>┃<span style="font-weight: bold">         Param # </span>┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ conv2d (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                      │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">299</span>, <span style="color: #00af00; text-decoration-color: #00af00">299</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)        │             <span style="color: #00af00; text-decoration-color: #00af00">320</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ max_pooling2d (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)         │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)        │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ conv2d_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)        │          <span style="color: #00af00; text-decoration-color: #00af00">18,496</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ max_pooling2d_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)       │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">74</span>, <span style="color: #00af00; text-decoration-color: #00af00">74</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ flatten (<span style="color: #0087ff; text-decoration-color: #0087ff">Flatten</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">350464</span>)              │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                        │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">128</span>)                 │      <span style="color: #00af00; text-decoration-color: #00af00">44,859,520</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                      │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">4</span>)                   │             <span style="color: #00af00; text-decoration-color: #00af00">516</span> │
+└──────────────────────────────────────┴─────────────────────────────┴─────────────────┘
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Total params: </span><span style="color: #00af00; text-decoration-color: #00af00">44,878,852</span> (171.20 MB)
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">44,878,852</span> (171.20 MB)
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Non-trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">0</span> (0.00 B)
+</pre>
+
+
+
+    None
+    
+
+
+```python
+##################################
+# Displaying the model layers
+# for CNN with no regularization
+##################################
+model_nr_layer_names = [layer.name for layer in model_nr.layers]
+print("Layer Names:", model_nr_layer_names)
+```
+
+    Layer Names: ['conv2d', 'max_pooling2d', 'conv2d_1', 'max_pooling2d_1', 'flatten', 'dense', 'dense_1']
+    
+
+
+```python
+##################################
+# Displaying the number of weights
+# for each model layer
+# for CNN with no regularization
+##################################
+for layer in model_nr.layers:
+    if hasattr(layer, 'weights'):
+        print(f"Layer: {layer.name}, Number of Weights: {len(layer.get_weights())}")
+```
+
+    Layer: conv2d, Number of Weights: 2
+    Layer: max_pooling2d, Number of Weights: 0
+    Layer: conv2d_1, Number of Weights: 2
+    Layer: max_pooling2d_1, Number of Weights: 0
+    Layer: flatten, Number of Weights: 0
+    Layer: dense, Number of Weights: 2
+    Layer: dense_1, Number of Weights: 2
+    
+
+
+```python
+##################################
+# Displaying the number of weights
+# for each model layer
+# for CNN with no regularization
+##################################
+total_parameters = 0
+for layer in model_nr.layers:
+    layer_parameters = layer.count_params()
+    total_parameters += layer_parameters
+    print(f"Layer: {layer.name}, Parameters: {layer_parameters}")
+print("\nTotal Parameters in the Model:", total_parameters)
+```
+
+    Layer: conv2d, Parameters: 320
+    Layer: max_pooling2d, Parameters: 0
+    Layer: conv2d_1, Parameters: 18496
+    Layer: max_pooling2d_1, Parameters: 0
+    Layer: flatten, Parameters: 0
+    Layer: dense, Parameters: 44859520
+    Layer: dense_1, Parameters: 516
+    
+    Total Parameters in the Model: 44878852
+    
+
+
+```python
+##################################
+# Fitting the model
+# for CNN with no regularization
+##################################
+epochs = 100
+set_seed()
+model_nr_history = model_nr.fit(train_gen, 
+                                steps_per_epoch=len(train_gen) // batch_size,   
+                                validation_steps=len(test_gen) // batch_size, 
+                                validation_data=test_gen, 
+                                epochs=epochs,
+                                verbose=0)
+```
+
+
+```python
+##################################
+# Evaluating the model
+# for CNN with no regularization
+# on the independent validation set
+##################################
+model_nr_y_pred = model_nr.predict(test_gen)
+```
+
+    [1m143/143[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m11s[0m 77ms/step
+    
+
+
+```python
+##################################
+# Plotting the loss profile
+# for CNN with no regularization
+# on the training and validation sets
+##################################
+plot_training_history(model_nr_history, 'CNN With No Regularization : ')
+```
+
+
+    
+![png](output_85_0.png)
+    
+
+
+
+```python
+##################################
+# Consolidating the predictions
+# for CNN with no regularization
+# on the validation set
+##################################
+model_nr_predictions = np.array(list(map(lambda x: np.argmax(x), model_nr_y_pred)))
+model_nr_y_true = test_gen.classes
+
+##################################
+# Formulating the confusion matrix
+# for CNN with no regularization
+# on the validation set
+##################################
+CMatrix = pd.DataFrame(confusion_matrix(model_nr_y_true, model_nr_predictions), columns=classes, index =classes)
+
+##################################
+# Plotting the confusion matrix
+# for CNN with no regularization
+# on the validation set
+##################################
+plt.figure(figsize=(10, 6))
+ax = sns.heatmap(CMatrix, annot = True, fmt = 'g' ,vmin = 0, vmax = 250,cmap = 'icefire')
+ax.set_xlabel('Predicted',fontsize = 14,weight = 'bold')
+ax.set_xticklabels(ax.get_xticklabels(),rotation =0)
+ax.set_ylabel('Actual',fontsize = 14,weight = 'bold') 
+ax.set_yticklabels(ax.get_yticklabels(),rotation =0)
+ax.set_title('CNN With No Regularization : Validation Set Confusion Matrix',fontsize = 14, weight = 'bold',pad=20);
+
+##################################
+# Resetting all states generated by Keras
+##################################
+keras.backend.clear_session()
+```
+
+    WARNING:tensorflow:From D:\Github_Codes\ProjectPortfolio\Portfolio_Project_56\mdeploy_venv\Lib\site-packages\keras\src\backend\common\global_state.py:82: The name tf.reset_default_graph is deprecated. Please use tf.compat.v1.reset_default_graph instead.
+    
+    
+
+
+    
+![png](output_86_1.png)
+    
+
+
+
+```python
+##################################
+# Calculating the model accuracy
+# for CNN with no regularization
+# for the entire validation set
+##################################
+model_nr_acc = accuracy_score(model_nr_y_true, model_nr_predictions)
+
+##################################
+# Calculating the model 
+# Precision, Recall, F-score and Support
+# for CNN with no regularization
+# for the entire validation set
+##################################
+model_nr_results_all = precision_recall_fscore_support(model_nr_y_true, model_nr_predictions, average='macro',zero_division = 1)
+
+##################################
+# Calculating the model 
+# Precision, Recall, F-score and Support
+# for CNN with no regularization
+# for each category of the validation set
+##################################
+model_nr_results_class = precision_recall_fscore_support(model_nr_y_true, model_nr_predictions, average=None, zero_division = 1)
+
+##################################
+# Consolidating all model evaluation metrics 
+# for CNN with no regularization
+##################################
+metric_columns = ['Precision','Recall','F-Score','Support']
+model_nr_all_df = pd.concat([pd.DataFrame(list(model_nr_results_class)).T,pd.DataFrame(list(model_nr_results_all)).T])
+model_nr_all_df.columns = metric_columns
+model_nr_all_df.index = ['No Tumor', 'Glioma', 'Meningioma', 'Pituitary', 'Total']
+model_nr_all_df
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Precision</th>
+      <th>Recall</th>
+      <th>F-Score</th>
+      <th>Support</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>No Tumor</th>
+      <td>0.828080</td>
+      <td>0.905956</td>
+      <td>0.865269</td>
+      <td>319.0</td>
+    </tr>
+    <tr>
+      <th>Glioma</th>
+      <td>0.937778</td>
+      <td>0.799242</td>
+      <td>0.862986</td>
+      <td>264.0</td>
+    </tr>
+    <tr>
+      <th>Meningioma</th>
+      <td>0.729839</td>
+      <td>0.677903</td>
+      <td>0.702913</td>
+      <td>267.0</td>
+    </tr>
+    <tr>
+      <th>Pituitary</th>
+      <td>0.865204</td>
+      <td>0.948454</td>
+      <td>0.904918</td>
+      <td>291.0</td>
+    </tr>
+    <tr>
+      <th>Total</th>
+      <td>0.840225</td>
+      <td>0.832889</td>
+      <td>0.834021</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
 
 #### 1.6.3.2 CNN With Dropout Regularization <a class="anchor" id="1.6.3.2"></a>
 
