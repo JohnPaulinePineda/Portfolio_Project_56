@@ -1831,21 +1831,60 @@ def plot_training_history(history, model_name):
 
 ```python
 ##################################
+# Defining the model file paths
+#################################
+NR_BEST_MODEL_PATH = os.path.join("..", MODELS_PATH, "nr_best_model.keras")
+DR_BEST_MODEL_PATH = os.path.join("..", MODELS_PATH, "dr_best_model.keras")
+BNR_BEST_MODEL_PATH = os.path.join("..", MODELS_PATH, "bnr_best_model.keras")
+DR_BNR_BEST_MODEL_PATH = os.path.join("..", MODELS_PATH, "dr_bnr_best_model.keras")
+```
+
+
+```python
+##################################
 # Defining the model callback configuration
-# for slow model training
+# for model training
 #################################
 early_stopping = EarlyStopping(
-    monitor='val_loss',           # Defining the metric to monitor
-    patience=10,                  # Defining the number of epochs to wait before stopping if no improvement
-    min_delta=1e-4 ,              # Defining the minimum change in the monitored quantity to qualify as an improvement
-    restore_best_weights=True     # Restoring the weights from the best epoch
+    monitor='val_loss',               # Defining the metric to monitor
+    patience=10,                      # Defining the number of epochs to wait before stopping if no improvement
+    min_delta=1e-4 ,                  # Defining the minimum change in the monitored quantity to qualify as an improvement
+    restore_best_weights=True         # Restoring the weights from the best epoch
 )
 
 reduce_lr = ReduceLROnPlateau(
-    monitor='val_loss',           # Defining the metric to monitor
-    factor=0.1,                   # Reducing the learning rate by a factor of 10%
-    patience=3,                   # Defining the number of epochs to wait before reducing learning rate
-    min_lr=1e-6                   # Defining the lower bound on the learning rate
+    monitor='val_loss',               # Defining the metric to monitor
+    factor=0.1,                       # Reducing the learning rate by a factor of 10%
+    patience=3,                       # Defining the number of epochs to wait before reducing learning rate
+    min_lr=1e-6                       # Defining the lower bound on the learning rate
+)
+
+nr_model_checkpoint = ModelCheckpoint(
+    filepath=NR_BEST_MODEL_PATH,      # Defining the file path for saving
+    monitor='val_loss',               # Defining the metric to monitor
+    save_best_only=True,              # Saving only the best model
+    save_weights_only=False,          # Saving the entire model, not just weights
+)
+
+dr_model_checkpoint = ModelCheckpoint(
+    filepath=DR_BEST_MODEL_PATH,      # Defining the file path for saving
+    monitor='val_loss',               # Defining the metric to monitor
+    save_best_only=True,              # Saving only the best model
+    save_weights_only=False,          # Saving the entire model, not just weights
+)
+
+bnr_model_checkpoint = ModelCheckpoint(
+    filepath=BNR_BEST_MODEL_PATH,     # Defining the file path for saving
+    monitor='val_loss',               # Defining the metric to monitor
+    save_best_only=True,              # Saving only the best model
+    save_weights_only=False,          # Saving the entire model, not just weights
+)
+
+dr_bnr_model_checkpoint = ModelCheckpoint(
+    filepath=DR_BNR_BEST_MODEL_PATH,  # Defining the file path for saving
+    monitor='val_loss',               # Defining the metric to monitor
+    save_best_only=True,              # Saving only the best model
+    save_weights_only=False,          # Saving the entire model, not just weights
 )
 ```
 
@@ -1860,15 +1899,15 @@ reduce_lr = ReduceLROnPlateau(
 set_seed()
 batch_size = 32
 model_nr = Sequential()
-model_nr.add(Conv2D(filters=16, kernel_size=(3, 3), padding = 'Same', activation='relu', input_shape=(227, 227, 1)))
-model_nr.add(MaxPooling2D(pool_size=(2, 2)))
-model_nr.add(Conv2D(filters=32, kernel_size=(3, 3), padding = 'Same', activation='relu'))
-model_nr.add(MaxPooling2D(pool_size=(2, 2)))
-model_nr.add(Conv2D(filters=64, kernel_size=(3, 3), padding = 'Same', activation='relu'))
-model_nr.add(MaxPooling2D(pool_size=(2, 2)))
-model_nr.add(Flatten())
-model_nr.add(Dense(units=128, activation='relu'))
-model_nr.add(Dense(units=num_classes, activation='softmax'))
+model_nr.add(Conv2D(filters=16, kernel_size=(3, 3), padding = 'Same', activation='relu', input_shape=(227, 227, 1), name="nr_conv2d_0"))
+model_nr.add(MaxPooling2D(pool_size=(2, 2), name="nr_max_pooling2d_0"))
+model_nr.add(Conv2D(filters=32, kernel_size=(3, 3), padding = 'Same', activation='relu', name="nr_conv2d_1"))
+model_nr.add(MaxPooling2D(pool_size=(2, 2), name="nr_max_pooling2d_1"))
+model_nr.add(Conv2D(filters=64, kernel_size=(3, 3), padding = 'Same', activation='relu', name="nr_conv2d_2"))
+model_nr.add(MaxPooling2D(pool_size=(2, 2), name="nr_max_pooling2d_2"))
+model_nr.add(Flatten(name="nr_flatten"))
+model_nr.add(Dense(units=128, activation='relu', name="nr_dense_0"))
+model_nr.add(Dense(units=num_classes, activation='softmax', name="nr_dense_1"))
 
 ```
 
@@ -1892,23 +1931,23 @@ print(model_nr.summary())
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
 ┃<span style="font-weight: bold"> Layer (type)                         </span>┃<span style="font-weight: bold"> Output Shape                </span>┃<span style="font-weight: bold">         Param # </span>┃
 ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
-│ conv2d (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                      │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">227</span>, <span style="color: #00af00; text-decoration-color: #00af00">227</span>, <span style="color: #00af00; text-decoration-color: #00af00">16</span>)        │             <span style="color: #00af00; text-decoration-color: #00af00">160</span> │
+│ nr_conv2d_0 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                 │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">227</span>, <span style="color: #00af00; text-decoration-color: #00af00">227</span>, <span style="color: #00af00; text-decoration-color: #00af00">16</span>)        │             <span style="color: #00af00; text-decoration-color: #00af00">160</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ max_pooling2d (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)         │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">16</span>)        │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+│ nr_max_pooling2d_0 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">16</span>)        │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ conv2d_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)        │           <span style="color: #00af00; text-decoration-color: #00af00">4,640</span> │
+│ nr_conv2d_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                 │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)        │           <span style="color: #00af00; text-decoration-color: #00af00">4,640</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ max_pooling2d_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)       │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+│ nr_max_pooling2d_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ conv2d_2 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │          <span style="color: #00af00; text-decoration-color: #00af00">18,496</span> │
+│ nr_conv2d_2 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                 │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │          <span style="color: #00af00; text-decoration-color: #00af00">18,496</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ max_pooling2d_2 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)       │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">28</span>, <span style="color: #00af00; text-decoration-color: #00af00">28</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+│ nr_max_pooling2d_2 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">28</span>, <span style="color: #00af00; text-decoration-color: #00af00">28</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ flatten (<span style="color: #0087ff; text-decoration-color: #0087ff">Flatten</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">50176</span>)               │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+│ nr_flatten (<span style="color: #0087ff; text-decoration-color: #0087ff">Flatten</span>)                 │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">50176</span>)               │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ dense (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                        │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">128</span>)                 │       <span style="color: #00af00; text-decoration-color: #00af00">6,422,656</span> │
+│ nr_dense_0 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                   │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">128</span>)                 │       <span style="color: #00af00; text-decoration-color: #00af00">6,422,656</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ dense_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                      │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">4</span>)                   │             <span style="color: #00af00; text-decoration-color: #00af00">516</span> │
+│ nr_dense_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                   │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">4</span>)                   │             <span style="color: #00af00; text-decoration-color: #00af00">516</span> │
 └──────────────────────────────────────┴─────────────────────────────┴─────────────────┘
 </pre>
 
@@ -1946,7 +1985,7 @@ print("Layer Names:", model_nr_layer_names)
 
 ```
 
-    Layer Names: ['conv2d', 'max_pooling2d', 'conv2d_1', 'max_pooling2d_1', 'conv2d_2', 'max_pooling2d_2', 'flatten', 'dense', 'dense_1']
+    Layer Names: ['nr_conv2d_0', 'nr_max_pooling2d_0', 'nr_conv2d_1', 'nr_max_pooling2d_1', 'nr_conv2d_2', 'nr_max_pooling2d_2', 'nr_flatten', 'nr_dense_0', 'nr_dense_1']
     
 
 
@@ -1962,15 +2001,15 @@ for layer in model_nr.layers:
         
 ```
 
-    Layer: conv2d, Number of Weights: 2
-    Layer: max_pooling2d, Number of Weights: 0
-    Layer: conv2d_1, Number of Weights: 2
-    Layer: max_pooling2d_1, Number of Weights: 0
-    Layer: conv2d_2, Number of Weights: 2
-    Layer: max_pooling2d_2, Number of Weights: 0
-    Layer: flatten, Number of Weights: 0
-    Layer: dense, Number of Weights: 2
-    Layer: dense_1, Number of Weights: 2
+    Layer: nr_conv2d_0, Number of Weights: 2
+    Layer: nr_max_pooling2d_0, Number of Weights: 0
+    Layer: nr_conv2d_1, Number of Weights: 2
+    Layer: nr_max_pooling2d_1, Number of Weights: 0
+    Layer: nr_conv2d_2, Number of Weights: 2
+    Layer: nr_max_pooling2d_2, Number of Weights: 0
+    Layer: nr_flatten, Number of Weights: 0
+    Layer: nr_dense_0, Number of Weights: 2
+    Layer: nr_dense_1, Number of Weights: 2
     
 
 
@@ -1989,15 +2028,15 @@ print("\nTotal Parameters in the Model:", total_parameters)
 
 ```
 
-    Layer: conv2d, Parameters: 160
-    Layer: max_pooling2d, Parameters: 0
-    Layer: conv2d_1, Parameters: 4640
-    Layer: max_pooling2d_1, Parameters: 0
-    Layer: conv2d_2, Parameters: 18496
-    Layer: max_pooling2d_2, Parameters: 0
-    Layer: flatten, Parameters: 0
-    Layer: dense, Parameters: 6422656
-    Layer: dense_1, Parameters: 516
+    Layer: nr_conv2d_0, Parameters: 160
+    Layer: nr_max_pooling2d_0, Parameters: 0
+    Layer: nr_conv2d_1, Parameters: 4640
+    Layer: nr_max_pooling2d_1, Parameters: 0
+    Layer: nr_conv2d_2, Parameters: 18496
+    Layer: nr_max_pooling2d_2, Parameters: 0
+    Layer: nr_flatten, Parameters: 0
+    Layer: nr_dense_0, Parameters: 6422656
+    Layer: nr_dense_1, Parameters: 516
     
     Total Parameters in the Model: 6446468
     
@@ -2014,16 +2053,16 @@ set_seed()
 batch_size = 32
 input_shape = (227, 227, 1)
 model_dr = Sequential()
-model_dr.add(Conv2D(filters=16, kernel_size=(3, 3), padding = 'Same', activation='relu', input_shape=(227, 227, 1)))
-model_dr.add(MaxPooling2D(pool_size=(2, 2)))
-model_dr.add(Conv2D(filters=32, kernel_size=(3, 3), padding = 'Same', activation='relu'))
-model_dr.add(MaxPooling2D(pool_size=(2, 2)))
-model_dr.add(Conv2D(filters=64, kernel_size=(3, 3), padding = 'Same', activation='relu'))
-model_dr.add(MaxPooling2D(pool_size=(2, 2)))
-model_dr.add(Flatten())
-model_dr.add(Dense(units=128, activation='relu'))
-model_dr.add(Dropout(rate=0.30))
-model_dr.add(Dense(units=num_classes, activation='softmax'))
+model_dr.add(Conv2D(filters=16, kernel_size=(3, 3), padding = 'Same', activation='relu', input_shape=(227, 227, 1), name="dr_conv2d_0"))
+model_dr.add(MaxPooling2D(pool_size=(2, 2), name="dr_max_pooling2d_0"))
+model_dr.add(Conv2D(filters=32, kernel_size=(3, 3), padding = 'Same', activation='relu', name="dr_conv2d_1"))
+model_dr.add(MaxPooling2D(pool_size=(2, 2), name="dr_max_pooling2d_1"))
+model_dr.add(Conv2D(filters=64, kernel_size=(3, 3), padding = 'Same', activation='relu', name="dr_conv2d_2"))
+model_dr.add(MaxPooling2D(pool_size=(2, 2), name="dr_max_pooling2d_2"))
+model_dr.add(Flatten(name="dr_flatten"))
+model_dr.add(Dense(units=128, activation='relu', name="dr_dense_0"))
+model_dr.add(Dropout(rate=0.30, name="dr_dropout"))
+model_dr.add(Dense(units=num_classes, activation='softmax', name="dr_dense_1"))
 
 ```
 
@@ -2047,25 +2086,25 @@ print(model_dr.summary())
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
 ┃<span style="font-weight: bold"> Layer (type)                         </span>┃<span style="font-weight: bold"> Output Shape                </span>┃<span style="font-weight: bold">         Param # </span>┃
 ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
-│ conv2d_3 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">227</span>, <span style="color: #00af00; text-decoration-color: #00af00">227</span>, <span style="color: #00af00; text-decoration-color: #00af00">16</span>)        │             <span style="color: #00af00; text-decoration-color: #00af00">160</span> │
+│ dr_conv2d_0 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                 │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">227</span>, <span style="color: #00af00; text-decoration-color: #00af00">227</span>, <span style="color: #00af00; text-decoration-color: #00af00">16</span>)        │             <span style="color: #00af00; text-decoration-color: #00af00">160</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ max_pooling2d_3 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)       │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">16</span>)        │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+│ dr_max_pooling2d_0 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">16</span>)        │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ conv2d_4 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)        │           <span style="color: #00af00; text-decoration-color: #00af00">4,640</span> │
+│ dr_conv2d_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                 │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)        │           <span style="color: #00af00; text-decoration-color: #00af00">4,640</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ max_pooling2d_4 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)       │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+│ dr_max_pooling2d_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ conv2d_5 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │          <span style="color: #00af00; text-decoration-color: #00af00">18,496</span> │
+│ dr_conv2d_2 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                 │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │          <span style="color: #00af00; text-decoration-color: #00af00">18,496</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ max_pooling2d_5 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)       │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">28</span>, <span style="color: #00af00; text-decoration-color: #00af00">28</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+│ dr_max_pooling2d_2 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">28</span>, <span style="color: #00af00; text-decoration-color: #00af00">28</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ flatten_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Flatten</span>)                  │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">50176</span>)               │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+│ dr_flatten (<span style="color: #0087ff; text-decoration-color: #0087ff">Flatten</span>)                 │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">50176</span>)               │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ dense_2 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                      │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">128</span>)                 │       <span style="color: #00af00; text-decoration-color: #00af00">6,422,656</span> │
+│ dr_dense_0 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                   │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">128</span>)                 │       <span style="color: #00af00; text-decoration-color: #00af00">6,422,656</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ dropout (<span style="color: #0087ff; text-decoration-color: #0087ff">Dropout</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">128</span>)                 │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+│ dr_dropout (<span style="color: #0087ff; text-decoration-color: #0087ff">Dropout</span>)                 │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">128</span>)                 │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ dense_3 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                      │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">4</span>)                   │             <span style="color: #00af00; text-decoration-color: #00af00">516</span> │
+│ dr_dense_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                   │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">4</span>)                   │             <span style="color: #00af00; text-decoration-color: #00af00">516</span> │
 └──────────────────────────────────────┴─────────────────────────────┴─────────────────┘
 </pre>
 
@@ -2103,7 +2142,7 @@ print("Layer Names:", model_dr_layer_names)
 
 ```
 
-    Layer Names: ['conv2d_3', 'max_pooling2d_3', 'conv2d_4', 'max_pooling2d_4', 'conv2d_5', 'max_pooling2d_5', 'flatten_1', 'dense_2', 'dropout', 'dense_3']
+    Layer Names: ['dr_conv2d_0', 'dr_max_pooling2d_0', 'dr_conv2d_1', 'dr_max_pooling2d_1', 'dr_conv2d_2', 'dr_max_pooling2d_2', 'dr_flatten', 'dr_dense_0', 'dr_dropout', 'dr_dense_1']
     
 
 
@@ -2119,16 +2158,16 @@ for layer in model_dr.layers:
         
 ```
 
-    Layer: conv2d_3, Number of Weights: 2
-    Layer: max_pooling2d_3, Number of Weights: 0
-    Layer: conv2d_4, Number of Weights: 2
-    Layer: max_pooling2d_4, Number of Weights: 0
-    Layer: conv2d_5, Number of Weights: 2
-    Layer: max_pooling2d_5, Number of Weights: 0
-    Layer: flatten_1, Number of Weights: 0
-    Layer: dense_2, Number of Weights: 2
-    Layer: dropout, Number of Weights: 0
-    Layer: dense_3, Number of Weights: 2
+    Layer: dr_conv2d_0, Number of Weights: 2
+    Layer: dr_max_pooling2d_0, Number of Weights: 0
+    Layer: dr_conv2d_1, Number of Weights: 2
+    Layer: dr_max_pooling2d_1, Number of Weights: 0
+    Layer: dr_conv2d_2, Number of Weights: 2
+    Layer: dr_max_pooling2d_2, Number of Weights: 0
+    Layer: dr_flatten, Number of Weights: 0
+    Layer: dr_dense_0, Number of Weights: 2
+    Layer: dr_dropout, Number of Weights: 0
+    Layer: dr_dense_1, Number of Weights: 2
     
 
 
@@ -2147,16 +2186,16 @@ print("\nTotal Parameters in the Model:", total_parameters)
 
 ```
 
-    Layer: conv2d_3, Parameters: 160
-    Layer: max_pooling2d_3, Parameters: 0
-    Layer: conv2d_4, Parameters: 4640
-    Layer: max_pooling2d_4, Parameters: 0
-    Layer: conv2d_5, Parameters: 18496
-    Layer: max_pooling2d_5, Parameters: 0
-    Layer: flatten_1, Parameters: 0
-    Layer: dense_2, Parameters: 6422656
-    Layer: dropout, Parameters: 0
-    Layer: dense_3, Parameters: 516
+    Layer: dr_conv2d_0, Parameters: 160
+    Layer: dr_max_pooling2d_0, Parameters: 0
+    Layer: dr_conv2d_1, Parameters: 4640
+    Layer: dr_max_pooling2d_1, Parameters: 0
+    Layer: dr_conv2d_2, Parameters: 18496
+    Layer: dr_max_pooling2d_2, Parameters: 0
+    Layer: dr_flatten, Parameters: 0
+    Layer: dr_dense_0, Parameters: 6422656
+    Layer: dr_dropout, Parameters: 0
+    Layer: dr_dense_1, Parameters: 516
     
     Total Parameters in the Model: 6446468
     
@@ -2173,17 +2212,17 @@ set_seed()
 batch_size = 32
 input_shape = (227, 227, 1)
 model_bnr = Sequential()
-model_bnr.add(Conv2D(filters=16, kernel_size=(3, 3), padding = 'Same', activation='relu', input_shape=(227, 227, 1)))
-model_bnr.add(MaxPooling2D(pool_size=(2, 2)))
-model_bnr.add(Conv2D(filters=32, kernel_size=(3, 3), padding = 'Same', activation='relu'))
-model_bnr.add(MaxPooling2D(pool_size=(2, 2)))
-model_bnr.add(Conv2D(filters=64, kernel_size=(3, 3), padding = 'Same', activation='relu'))
-model_bnr.add(BatchNormalization())
-model_bnr.add(Activation('relu'))
-model_bnr.add(MaxPooling2D(pool_size=(2, 2)))
-model_bnr.add(Flatten())
-model_bnr.add(Dense(units=128, activation='relu'))
-model_bnr.add(Dense(units=num_classes, activation='softmax'))
+model_bnr.add(Conv2D(filters=16, kernel_size=(3, 3), padding = 'Same', activation='relu', input_shape=(227, 227, 1), name="bnr_conv2d_0"))
+model_bnr.add(MaxPooling2D(pool_size=(2, 2), name="bnr_max_pooling2d_0"))
+model_bnr.add(Conv2D(filters=32, kernel_size=(3, 3), padding = 'Same', activation='relu', name="bnr_conv2d_1"))
+model_bnr.add(MaxPooling2D(pool_size=(2, 2), name="bnr_max_pooling2d_1"))
+model_bnr.add(Conv2D(filters=64, kernel_size=(3, 3), padding = 'Same', activation='relu', name="bnr_conv2d_2"))
+model_bnr.add(BatchNormalization(name="bnr_batch_normalization"))
+model_bnr.add(Activation('relu', name="bnr_activation"))
+model_bnr.add(MaxPooling2D(pool_size=(2, 2), name="bnr_max_pooling2d_2"))
+model_bnr.add(Flatten(name="bnr_flatten"))
+model_bnr.add(Dense(units=128, activation='relu', name="bnr_dense_0"))
+model_bnr.add(Dense(units=num_classes, activation='softmax', name="bnr_dense_1"))
 
 ```
 
@@ -2206,28 +2245,28 @@ print(model_bnr.summary())
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
 ┃<span style="font-weight: bold"> Layer (type)                         </span>┃<span style="font-weight: bold"> Output Shape                </span>┃<span style="font-weight: bold">         Param # </span>┃
 ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
-│ conv2d_6 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">227</span>, <span style="color: #00af00; text-decoration-color: #00af00">227</span>, <span style="color: #00af00; text-decoration-color: #00af00">16</span>)        │             <span style="color: #00af00; text-decoration-color: #00af00">160</span> │
+│ bnr_conv2d_0 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">227</span>, <span style="color: #00af00; text-decoration-color: #00af00">227</span>, <span style="color: #00af00; text-decoration-color: #00af00">16</span>)        │             <span style="color: #00af00; text-decoration-color: #00af00">160</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ max_pooling2d_6 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)       │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">16</span>)        │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+│ bnr_max_pooling2d_0 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)   │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">16</span>)        │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ conv2d_7 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)        │           <span style="color: #00af00; text-decoration-color: #00af00">4,640</span> │
+│ bnr_conv2d_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)        │           <span style="color: #00af00; text-decoration-color: #00af00">4,640</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ max_pooling2d_7 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)       │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+│ bnr_max_pooling2d_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)   │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ conv2d_8 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │          <span style="color: #00af00; text-decoration-color: #00af00">18,496</span> │
+│ bnr_conv2d_2 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │          <span style="color: #00af00; text-decoration-color: #00af00">18,496</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ batch_normalization                  │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │             <span style="color: #00af00; text-decoration-color: #00af00">256</span> │
+│ bnr_batch_normalization              │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │             <span style="color: #00af00; text-decoration-color: #00af00">256</span> │
 │ (<span style="color: #0087ff; text-decoration-color: #0087ff">BatchNormalization</span>)                 │                             │                 │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ activation (<span style="color: #0087ff; text-decoration-color: #0087ff">Activation</span>)              │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+│ bnr_activation (<span style="color: #0087ff; text-decoration-color: #0087ff">Activation</span>)          │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ max_pooling2d_8 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)       │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">28</span>, <span style="color: #00af00; text-decoration-color: #00af00">28</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+│ bnr_max_pooling2d_2 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)   │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">28</span>, <span style="color: #00af00; text-decoration-color: #00af00">28</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ flatten_2 (<span style="color: #0087ff; text-decoration-color: #0087ff">Flatten</span>)                  │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">50176</span>)               │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+│ bnr_flatten (<span style="color: #0087ff; text-decoration-color: #0087ff">Flatten</span>)                │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">50176</span>)               │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ dense_4 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                      │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">128</span>)                 │       <span style="color: #00af00; text-decoration-color: #00af00">6,422,656</span> │
+│ bnr_dense_0 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                  │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">128</span>)                 │       <span style="color: #00af00; text-decoration-color: #00af00">6,422,656</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ dense_5 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                      │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">4</span>)                   │             <span style="color: #00af00; text-decoration-color: #00af00">516</span> │
+│ bnr_dense_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                  │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">4</span>)                   │             <span style="color: #00af00; text-decoration-color: #00af00">516</span> │
 └──────────────────────────────────────┴─────────────────────────────┴─────────────────┘
 </pre>
 
@@ -2264,7 +2303,7 @@ model_bnr_layer_names = [layer.name for layer in model_bnr.layers]
 print("Layer Names:", model_bnr_layer_names)
 ```
 
-    Layer Names: ['conv2d_6', 'max_pooling2d_6', 'conv2d_7', 'max_pooling2d_7', 'conv2d_8', 'batch_normalization', 'activation', 'max_pooling2d_8', 'flatten_2', 'dense_4', 'dense_5']
+    Layer Names: ['bnr_conv2d_0', 'bnr_max_pooling2d_0', 'bnr_conv2d_1', 'bnr_max_pooling2d_1', 'bnr_conv2d_2', 'bnr_batch_normalization', 'bnr_activation', 'bnr_max_pooling2d_2', 'bnr_flatten', 'bnr_dense_0', 'bnr_dense_1']
     
 
 
@@ -2279,17 +2318,17 @@ for layer in model_bnr.layers:
         print(f"Layer: {layer.name}, Number of Weights: {len(layer.get_weights())}")
 ```
 
-    Layer: conv2d_6, Number of Weights: 2
-    Layer: max_pooling2d_6, Number of Weights: 0
-    Layer: conv2d_7, Number of Weights: 2
-    Layer: max_pooling2d_7, Number of Weights: 0
-    Layer: conv2d_8, Number of Weights: 2
-    Layer: batch_normalization, Number of Weights: 4
-    Layer: activation, Number of Weights: 0
-    Layer: max_pooling2d_8, Number of Weights: 0
-    Layer: flatten_2, Number of Weights: 0
-    Layer: dense_4, Number of Weights: 2
-    Layer: dense_5, Number of Weights: 2
+    Layer: bnr_conv2d_0, Number of Weights: 2
+    Layer: bnr_max_pooling2d_0, Number of Weights: 0
+    Layer: bnr_conv2d_1, Number of Weights: 2
+    Layer: bnr_max_pooling2d_1, Number of Weights: 0
+    Layer: bnr_conv2d_2, Number of Weights: 2
+    Layer: bnr_batch_normalization, Number of Weights: 4
+    Layer: bnr_activation, Number of Weights: 0
+    Layer: bnr_max_pooling2d_2, Number of Weights: 0
+    Layer: bnr_flatten, Number of Weights: 0
+    Layer: bnr_dense_0, Number of Weights: 2
+    Layer: bnr_dense_1, Number of Weights: 2
     
 
 
@@ -2307,17 +2346,17 @@ for layer in model_bnr.layers:
 print("\nTotal Parameters in the Model:", total_parameters)
 ```
 
-    Layer: conv2d_6, Parameters: 160
-    Layer: max_pooling2d_6, Parameters: 0
-    Layer: conv2d_7, Parameters: 4640
-    Layer: max_pooling2d_7, Parameters: 0
-    Layer: conv2d_8, Parameters: 18496
-    Layer: batch_normalization, Parameters: 256
-    Layer: activation, Parameters: 0
-    Layer: max_pooling2d_8, Parameters: 0
-    Layer: flatten_2, Parameters: 0
-    Layer: dense_4, Parameters: 6422656
-    Layer: dense_5, Parameters: 516
+    Layer: bnr_conv2d_0, Parameters: 160
+    Layer: bnr_max_pooling2d_0, Parameters: 0
+    Layer: bnr_conv2d_1, Parameters: 4640
+    Layer: bnr_max_pooling2d_1, Parameters: 0
+    Layer: bnr_conv2d_2, Parameters: 18496
+    Layer: bnr_batch_normalization, Parameters: 256
+    Layer: bnr_activation, Parameters: 0
+    Layer: bnr_max_pooling2d_2, Parameters: 0
+    Layer: bnr_flatten, Parameters: 0
+    Layer: bnr_dense_0, Parameters: 6422656
+    Layer: bnr_dense_1, Parameters: 516
     
     Total Parameters in the Model: 6446724
     
@@ -2334,18 +2373,18 @@ set_seed()
 batch_size = 32
 input_shape = (227, 227, 1)
 model_dr_bnr = Sequential()
-model_dr_bnr.add(Conv2D(filters=16, kernel_size=(3, 3), padding = 'Same', activation='relu', input_shape=(227, 227, 1)))
-model_dr_bnr.add(MaxPooling2D(pool_size=(2, 2)))
-model_dr_bnr.add(Conv2D(filters=32, kernel_size=(3, 3), padding = 'Same', activation='relu'))
-model_dr_bnr.add(MaxPooling2D(pool_size=(2, 2)))
-model_dr_bnr.add(Conv2D(filters=64, kernel_size=(3, 3), padding = 'Same', activation='relu'))
-model_dr_bnr.add(BatchNormalization())
-model_dr_bnr.add(Activation('relu'))
-model_dr_bnr.add(MaxPooling2D(pool_size=(2, 2)))
-model_dr_bnr.add(Flatten())
-model_dr_bnr.add(Dense(units=128, activation='relu'))
-model_dr_bnr.add(Dropout(rate=0.30))
-model_dr_bnr.add(Dense(units=num_classes, activation='softmax'))
+model_dr_bnr.add(Conv2D(filters=16, kernel_size=(3, 3), padding = 'Same', activation='relu', input_shape=(227, 227, 1), name="dr_bnr_conv2d_0"))
+model_dr_bnr.add(MaxPooling2D(pool_size=(2, 2), name="dr_bnr_max_pooling2d_0"))
+model_dr_bnr.add(Conv2D(filters=32, kernel_size=(3, 3), padding = 'Same', activation='relu', name="dr_bnr_conv2d_1"))
+model_dr_bnr.add(MaxPooling2D(pool_size=(2, 2), name="dr_bnr_max_pooling2d_1"))
+model_dr_bnr.add(Conv2D(filters=64, kernel_size=(3, 3), padding = 'Same', activation='relu', name="dr_bnr_conv2d_2"))
+model_dr_bnr.add(BatchNormalization(name="dr_bnr_batch_normalization"))
+model_dr_bnr.add(Activation('relu', name="dr_bnr_activation"))
+model_dr_bnr.add(MaxPooling2D(pool_size=(2, 2), name="dr_bnr_max_pooling2d_2"))
+model_dr_bnr.add(Flatten(name="dr_bnr_flatten"))
+model_dr_bnr.add(Dense(units=128, activation='relu', name="dr_bnr_dense_0"))
+model_dr_bnr.add(Dropout(rate=0.30, name="dr_bnr_dropout"))
+model_dr_bnr.add(Dense(units=num_classes, activation='softmax', name="dr_bnr_dense_1"))
 
 ```
 
@@ -2369,30 +2408,33 @@ print(model_dr_bnr.summary())
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
 ┃<span style="font-weight: bold"> Layer (type)                         </span>┃<span style="font-weight: bold"> Output Shape                </span>┃<span style="font-weight: bold">         Param # </span>┃
 ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
-│ conv2d_9 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">227</span>, <span style="color: #00af00; text-decoration-color: #00af00">227</span>, <span style="color: #00af00; text-decoration-color: #00af00">16</span>)        │             <span style="color: #00af00; text-decoration-color: #00af00">160</span> │
+│ dr_bnr_conv2d_0 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)             │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">227</span>, <span style="color: #00af00; text-decoration-color: #00af00">227</span>, <span style="color: #00af00; text-decoration-color: #00af00">16</span>)        │             <span style="color: #00af00; text-decoration-color: #00af00">160</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ max_pooling2d_9 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)       │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">16</span>)        │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+│ dr_bnr_max_pooling2d_0               │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">16</span>)        │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+│ (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)                       │                             │                 │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ conv2d_10 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                   │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)        │           <span style="color: #00af00; text-decoration-color: #00af00">4,640</span> │
+│ dr_bnr_conv2d_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)             │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">113</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)        │           <span style="color: #00af00; text-decoration-color: #00af00">4,640</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ max_pooling2d_10 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)      │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+│ dr_bnr_max_pooling2d_1               │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+│ (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)                       │                             │                 │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ conv2d_11 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                   │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │          <span style="color: #00af00; text-decoration-color: #00af00">18,496</span> │
+│ dr_bnr_conv2d_2 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)             │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │          <span style="color: #00af00; text-decoration-color: #00af00">18,496</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ batch_normalization_1                │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │             <span style="color: #00af00; text-decoration-color: #00af00">256</span> │
+│ dr_bnr_batch_normalization           │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │             <span style="color: #00af00; text-decoration-color: #00af00">256</span> │
 │ (<span style="color: #0087ff; text-decoration-color: #0087ff">BatchNormalization</span>)                 │                             │                 │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ activation_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Activation</span>)            │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+│ dr_bnr_activation (<span style="color: #0087ff; text-decoration-color: #0087ff">Activation</span>)       │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">56</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ max_pooling2d_11 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)      │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">28</span>, <span style="color: #00af00; text-decoration-color: #00af00">28</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+│ dr_bnr_max_pooling2d_2               │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">28</span>, <span style="color: #00af00; text-decoration-color: #00af00">28</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+│ (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)                       │                             │                 │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ flatten_3 (<span style="color: #0087ff; text-decoration-color: #0087ff">Flatten</span>)                  │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">50176</span>)               │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+│ dr_bnr_flatten (<span style="color: #0087ff; text-decoration-color: #0087ff">Flatten</span>)             │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">50176</span>)               │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ dense_6 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                      │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">128</span>)                 │       <span style="color: #00af00; text-decoration-color: #00af00">6,422,656</span> │
+│ dr_bnr_dense_0 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)               │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">128</span>)                 │       <span style="color: #00af00; text-decoration-color: #00af00">6,422,656</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ dropout_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dropout</span>)                  │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">128</span>)                 │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+│ dr_bnr_dropout (<span style="color: #0087ff; text-decoration-color: #0087ff">Dropout</span>)             │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">128</span>)                 │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
 ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
-│ dense_7 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                      │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">4</span>)                   │             <span style="color: #00af00; text-decoration-color: #00af00">516</span> │
+│ dr_bnr_dense_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)               │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">4</span>)                   │             <span style="color: #00af00; text-decoration-color: #00af00">516</span> │
 └──────────────────────────────────────┴─────────────────────────────┴─────────────────┘
 </pre>
 
@@ -2430,7 +2472,7 @@ print("Layer Names:", model_dr_bnr_layer_names)
 
 ```
 
-    Layer Names: ['conv2d_9', 'max_pooling2d_9', 'conv2d_10', 'max_pooling2d_10', 'conv2d_11', 'batch_normalization_1', 'activation_1', 'max_pooling2d_11', 'flatten_3', 'dense_6', 'dropout_1', 'dense_7']
+    Layer Names: ['dr_bnr_conv2d_0', 'dr_bnr_max_pooling2d_0', 'dr_bnr_conv2d_1', 'dr_bnr_max_pooling2d_1', 'dr_bnr_conv2d_2', 'dr_bnr_batch_normalization', 'dr_bnr_activation', 'dr_bnr_max_pooling2d_2', 'dr_bnr_flatten', 'dr_bnr_dense_0', 'dr_bnr_dropout', 'dr_bnr_dense_1']
     
 
 
@@ -2446,18 +2488,18 @@ for layer in model_dr_bnr.layers:
 
 ```
 
-    Layer: conv2d_9, Number of Weights: 2
-    Layer: max_pooling2d_9, Number of Weights: 0
-    Layer: conv2d_10, Number of Weights: 2
-    Layer: max_pooling2d_10, Number of Weights: 0
-    Layer: conv2d_11, Number of Weights: 2
-    Layer: batch_normalization_1, Number of Weights: 4
-    Layer: activation_1, Number of Weights: 0
-    Layer: max_pooling2d_11, Number of Weights: 0
-    Layer: flatten_3, Number of Weights: 0
-    Layer: dense_6, Number of Weights: 2
-    Layer: dropout_1, Number of Weights: 0
-    Layer: dense_7, Number of Weights: 2
+    Layer: dr_bnr_conv2d_0, Number of Weights: 2
+    Layer: dr_bnr_max_pooling2d_0, Number of Weights: 0
+    Layer: dr_bnr_conv2d_1, Number of Weights: 2
+    Layer: dr_bnr_max_pooling2d_1, Number of Weights: 0
+    Layer: dr_bnr_conv2d_2, Number of Weights: 2
+    Layer: dr_bnr_batch_normalization, Number of Weights: 4
+    Layer: dr_bnr_activation, Number of Weights: 0
+    Layer: dr_bnr_max_pooling2d_2, Number of Weights: 0
+    Layer: dr_bnr_flatten, Number of Weights: 0
+    Layer: dr_bnr_dense_0, Number of Weights: 2
+    Layer: dr_bnr_dropout, Number of Weights: 0
+    Layer: dr_bnr_dense_1, Number of Weights: 2
     
 
 
@@ -2476,18 +2518,18 @@ print("\nTotal Parameters in the Model:", total_parameters)
 
 ```
 
-    Layer: conv2d_9, Parameters: 160
-    Layer: max_pooling2d_9, Parameters: 0
-    Layer: conv2d_10, Parameters: 4640
-    Layer: max_pooling2d_10, Parameters: 0
-    Layer: conv2d_11, Parameters: 18496
-    Layer: batch_normalization_1, Parameters: 256
-    Layer: activation_1, Parameters: 0
-    Layer: max_pooling2d_11, Parameters: 0
-    Layer: flatten_3, Parameters: 0
-    Layer: dense_6, Parameters: 6422656
-    Layer: dropout_1, Parameters: 0
-    Layer: dense_7, Parameters: 516
+    Layer: dr_bnr_conv2d_0, Parameters: 160
+    Layer: dr_bnr_max_pooling2d_0, Parameters: 0
+    Layer: dr_bnr_conv2d_1, Parameters: 4640
+    Layer: dr_bnr_max_pooling2d_1, Parameters: 0
+    Layer: dr_bnr_conv2d_2, Parameters: 18496
+    Layer: dr_bnr_batch_normalization, Parameters: 256
+    Layer: dr_bnr_activation, Parameters: 0
+    Layer: dr_bnr_max_pooling2d_2, Parameters: 0
+    Layer: dr_bnr_flatten, Parameters: 0
+    Layer: dr_bnr_dense_0, Parameters: 6422656
+    Layer: dr_bnr_dropout, Parameters: 0
+    Layer: dr_bnr_dense_1, Parameters: 516
     
     Total Parameters in the Model: 6446724
     
@@ -2503,15 +2545,15 @@ print("\nTotal Parameters in the Model:", total_parameters)
 set_seed()
 batch_size = 32
 model_nr = Sequential()
-model_nr.add(Conv2D(filters=16, kernel_size=(3, 3), padding = 'Same', activation='relu', input_shape=(227, 227, 1)))
-model_nr.add(MaxPooling2D(pool_size=(2, 2)))
-model_nr.add(Conv2D(filters=32, kernel_size=(3, 3), padding = 'Same', activation='relu'))
-model_nr.add(MaxPooling2D(pool_size=(2, 2)))
-model_nr.add(Conv2D(filters=64, kernel_size=(3, 3), padding = 'Same', activation='relu'))
-model_nr.add(MaxPooling2D(pool_size=(2, 2)))
-model_nr.add(Flatten())
-model_nr.add(Dense(units=128, activation='relu'))
-model_nr.add(Dense(units=num_classes, activation='softmax'))
+model_nr.add(Conv2D(filters=16, kernel_size=(3, 3), padding = 'Same', activation='relu', input_shape=(227, 227, 1), name="nr_conv2d_0"))
+model_nr.add(MaxPooling2D(pool_size=(2, 2), name="nr_max_pooling2d_0"))
+model_nr.add(Conv2D(filters=32, kernel_size=(3, 3), padding = 'Same', activation='relu', name="nr_conv2d_1"))
+model_nr.add(MaxPooling2D(pool_size=(2, 2), name="nr_max_pooling2d_1"))
+model_nr.add(Conv2D(filters=64, kernel_size=(3, 3), padding = 'Same', activation='relu', name="nr_conv2d_2"))
+model_nr.add(MaxPooling2D(pool_size=(2, 2), name="nr_max_pooling2d_2"))
+model_nr.add(Flatten(name="nr_flatten"))
+model_nr.add(Dense(units=128, activation='relu', name="nr_dense_0"))
+model_nr.add(Dense(units=num_classes, activation='softmax', name="nr_dense_1"))
 
 ##################################
 # Compiling the network layers
@@ -2535,42 +2577,42 @@ model_nr_history = model_nr.fit(train_gen,
                                 validation_data=val_gen, 
                                 epochs=epochs,
                                 verbose=1,
-                                callbacks=[early_stopping, reduce_lr])
+                                callbacks=[early_stopping, reduce_lr, nr_model_checkpoint])
 
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 350ms/step - loss: 0.9387 - recall: 0.4232 - val_loss: 0.7573 - val_recall: 0.6950 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 368ms/step - loss: 0.9387 - recall: 0.4232 - val_loss: 0.7573 - val_recall: 0.6950 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m50s[0m 350ms/step - loss: 0.3854 - recall: 0.8401 - val_loss: 0.8148 - val_recall: 0.6985 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 352ms/step - loss: 0.3854 - recall: 0.8401 - val_loss: 0.8148 - val_recall: 0.6985 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m50s[0m 346ms/step - loss: 0.2359 - recall: 0.9100 - val_loss: 0.9404 - val_recall: 0.7239 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 359ms/step - loss: 0.2359 - recall: 0.9100 - val_loss: 0.9404 - val_recall: 0.7239 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m50s[0m 348ms/step - loss: 0.1882 - recall: 0.9315 - val_loss: 0.7925 - val_recall: 0.7967 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 364ms/step - loss: 0.1882 - recall: 0.9315 - val_loss: 0.7925 - val_recall: 0.7967 - learning_rate: 0.0010
     Epoch 5/20
     [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 352ms/step - loss: 0.1249 - recall: 0.9541 - val_loss: 0.7649 - val_recall: 0.7932 - learning_rate: 1.0000e-04
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 361ms/step - loss: 0.1104 - recall: 0.9568 - val_loss: 0.7411 - val_recall: 0.7949 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 351ms/step - loss: 0.1104 - recall: 0.9568 - val_loss: 0.7411 - val_recall: 0.7949 - learning_rate: 1.0000e-04
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 357ms/step - loss: 0.0860 - recall: 0.9661 - val_loss: 0.7796 - val_recall: 0.8037 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m84s[0m 367ms/step - loss: 0.0860 - recall: 0.9661 - val_loss: 0.7796 - val_recall: 0.8037 - learning_rate: 1.0000e-04
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 365ms/step - loss: 0.0855 - recall: 0.9640 - val_loss: 0.8181 - val_recall: 0.8072 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 359ms/step - loss: 0.0855 - recall: 0.9640 - val_loss: 0.8181 - val_recall: 0.8072 - learning_rate: 1.0000e-04
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 361ms/step - loss: 0.0695 - recall: 0.9774 - val_loss: 0.8332 - val_recall: 0.7967 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 354ms/step - loss: 0.0695 - recall: 0.9774 - val_loss: 0.8332 - val_recall: 0.7967 - learning_rate: 1.0000e-04
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 358ms/step - loss: 0.0699 - recall: 0.9809 - val_loss: 0.8315 - val_recall: 0.8072 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 355ms/step - loss: 0.0699 - recall: 0.9809 - val_loss: 0.8315 - val_recall: 0.8072 - learning_rate: 1.0000e-05
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 359ms/step - loss: 0.0638 - recall: 0.9795 - val_loss: 0.8407 - val_recall: 0.8107 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 351ms/step - loss: 0.0638 - recall: 0.9795 - val_loss: 0.8407 - val_recall: 0.8107 - learning_rate: 1.0000e-05
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 352ms/step - loss: 0.0727 - recall: 0.9754 - val_loss: 0.8312 - val_recall: 0.8072 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 362ms/step - loss: 0.0727 - recall: 0.9754 - val_loss: 0.8312 - val_recall: 0.8072 - learning_rate: 1.0000e-05
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 365ms/step - loss: 0.0591 - recall: 0.9791 - val_loss: 0.8332 - val_recall: 0.8081 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 357ms/step - loss: 0.0591 - recall: 0.9791 - val_loss: 0.8332 - val_recall: 0.8081 - learning_rate: 1.0000e-06
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 357ms/step - loss: 0.0657 - recall: 0.9785 - val_loss: 0.8350 - val_recall: 0.8072 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 360ms/step - loss: 0.0657 - recall: 0.9785 - val_loss: 0.8350 - val_recall: 0.8072 - learning_rate: 1.0000e-06
     Epoch 15/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m50s[0m 348ms/step - loss: 0.0672 - recall: 0.9770 - val_loss: 0.8377 - val_recall: 0.8089 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 359ms/step - loss: 0.0672 - recall: 0.9770 - val_loss: 0.8377 - val_recall: 0.8089 - learning_rate: 1.0000e-06
     Epoch 16/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 361ms/step - loss: 0.0687 - recall: 0.9767 - val_loss: 0.8386 - val_recall: 0.8089 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 362ms/step - loss: 0.0687 - recall: 0.9767 - val_loss: 0.8386 - val_recall: 0.8089 - learning_rate: 1.0000e-06
     
 
 
@@ -2584,7 +2626,7 @@ model_nr_y_pred = model_nr.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 129ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 139ms/step
     
 
 
@@ -2600,7 +2642,7 @@ plot_training_history(model_nr_history, 'CNN With No Regularization : ')
 
 
     
-![png](output_106_0.png)
+![png](output_107_0.png)
     
 
 
@@ -2647,7 +2689,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_107_1.png)
+![png](output_108_1.png)
     
 
 
@@ -2769,16 +2811,16 @@ set_seed()
 batch_size = 32
 input_shape = (227, 227, 1)
 model_dr = Sequential()
-model_dr.add(Conv2D(filters=16, kernel_size=(3, 3), padding = 'Same', activation='relu', input_shape=(227, 227, 1)))
-model_dr.add(MaxPooling2D(pool_size=(2, 2)))
-model_dr.add(Conv2D(filters=32, kernel_size=(3, 3), padding = 'Same', activation='relu'))
-model_dr.add(MaxPooling2D(pool_size=(2, 2)))
-model_dr.add(Conv2D(filters=64, kernel_size=(3, 3), padding = 'Same', activation='relu'))
-model_dr.add(MaxPooling2D(pool_size=(2, 2)))
-model_dr.add(Flatten())
-model_dr.add(Dense(units=128, activation='relu'))
-model_dr.add(Dropout(rate=0.30))
-model_dr.add(Dense(units=num_classes, activation='softmax'))
+model_dr.add(Conv2D(filters=16, kernel_size=(3, 3), padding = 'Same', activation='relu', input_shape=(227, 227, 1), name="dr_conv2d_0"))
+model_dr.add(MaxPooling2D(pool_size=(2, 2), name="dr_max_pooling2d_0"))
+model_dr.add(Conv2D(filters=32, kernel_size=(3, 3), padding = 'Same', activation='relu', name="dr_conv2d_1"))
+model_dr.add(MaxPooling2D(pool_size=(2, 2), name="dr_max_pooling2d_1"))
+model_dr.add(Conv2D(filters=64, kernel_size=(3, 3), padding = 'Same', activation='relu', name="dr_conv2d_2"))
+model_dr.add(MaxPooling2D(pool_size=(2, 2), name="dr_max_pooling2d_2"))
+model_dr.add(Flatten(name="dr_flatten"))
+model_dr.add(Dense(units=128, activation='relu', name="dr_dense_0"))
+model_dr.add(Dropout(rate=0.30, name="dr_dropout"))
+model_dr.add(Dense(units=num_classes, activation='softmax', name="dr_dense_1"))
 
 ##################################
 # Compiling the network layers
@@ -2801,42 +2843,42 @@ model_dr_history = model_dr.fit(train_gen,
                                 validation_data=val_gen, 
                                 epochs=epochs,
                                 verbose=1,
-                                callbacks=[early_stopping, reduce_lr])
+                                callbacks=[early_stopping, reduce_lr, dr_model_checkpoint])
 
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 368ms/step - loss: 1.0770 - recall: 0.3361 - val_loss: 0.8354 - val_recall: 0.6757 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 377ms/step - loss: 1.0770 - recall: 0.3361 - val_loss: 0.8354 - val_recall: 0.6757 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 358ms/step - loss: 0.4318 - recall: 0.8098 - val_loss: 0.7435 - val_recall: 0.7073 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 363ms/step - loss: 0.4318 - recall: 0.8098 - val_loss: 0.7435 - val_recall: 0.7073 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 352ms/step - loss: 0.3128 - recall: 0.8685 - val_loss: 0.7023 - val_recall: 0.7704 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 362ms/step - loss: 0.3128 - recall: 0.8685 - val_loss: 0.7023 - val_recall: 0.7704 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m50s[0m 347ms/step - loss: 0.2648 - recall: 0.8899 - val_loss: 0.7189 - val_recall: 0.7485 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 363ms/step - loss: 0.2648 - recall: 0.8899 - val_loss: 0.7189 - val_recall: 0.7485 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m50s[0m 346ms/step - loss: 0.2105 - recall: 0.9192 - val_loss: 0.7316 - val_recall: 0.7791 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 359ms/step - loss: 0.2105 - recall: 0.9192 - val_loss: 0.7316 - val_recall: 0.7791 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m50s[0m 350ms/step - loss: 0.1848 - recall: 0.9329 - val_loss: 0.6052 - val_recall: 0.7958 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 359ms/step - loss: 0.1848 - recall: 0.9329 - val_loss: 0.6052 - val_recall: 0.7958 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m50s[0m 348ms/step - loss: 0.1397 - recall: 0.9493 - val_loss: 0.8291 - val_recall: 0.7879 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 359ms/step - loss: 0.1397 - recall: 0.9493 - val_loss: 0.8291 - val_recall: 0.7879 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 352ms/step - loss: 0.1444 - recall: 0.9431 - val_loss: 0.7666 - val_recall: 0.8063 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 364ms/step - loss: 0.1444 - recall: 0.9431 - val_loss: 0.7666 - val_recall: 0.8063 - learning_rate: 0.0010
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 358ms/step - loss: 0.1201 - recall: 0.9517 - val_loss: 0.9356 - val_recall: 0.7415 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 362ms/step - loss: 0.1201 - recall: 0.9517 - val_loss: 0.9356 - val_recall: 0.7415 - learning_rate: 0.0010
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 354ms/step - loss: 0.0917 - recall: 0.9687 - val_loss: 0.7669 - val_recall: 0.8221 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 363ms/step - loss: 0.0917 - recall: 0.9687 - val_loss: 0.7669 - val_recall: 0.8221 - learning_rate: 1.0000e-04
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m50s[0m 350ms/step - loss: 0.0670 - recall: 0.9774 - val_loss: 0.8218 - val_recall: 0.8151 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 377ms/step - loss: 0.0670 - recall: 0.9774 - val_loss: 0.8218 - val_recall: 0.8151 - learning_rate: 1.0000e-04
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m50s[0m 349ms/step - loss: 0.0740 - recall: 0.9748 - val_loss: 0.8106 - val_recall: 0.8195 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 368ms/step - loss: 0.0740 - recall: 0.9748 - val_loss: 0.8106 - val_recall: 0.8195 - learning_rate: 1.0000e-04
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 353ms/step - loss: 0.0559 - recall: 0.9776 - val_loss: 0.8149 - val_recall: 0.8203 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 371ms/step - loss: 0.0559 - recall: 0.9776 - val_loss: 0.8149 - val_recall: 0.8203 - learning_rate: 1.0000e-05
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 352ms/step - loss: 0.0587 - recall: 0.9824 - val_loss: 0.8228 - val_recall: 0.8203 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 382ms/step - loss: 0.0587 - recall: 0.9824 - val_loss: 0.8228 - val_recall: 0.8203 - learning_rate: 1.0000e-05
     Epoch 15/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 356ms/step - loss: 0.0637 - recall: 0.9741 - val_loss: 0.8297 - val_recall: 0.8203 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 357ms/step - loss: 0.0637 - recall: 0.9741 - val_loss: 0.8297 - val_recall: 0.8203 - learning_rate: 1.0000e-05
     Epoch 16/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m50s[0m 346ms/step - loss: 0.0574 - recall: 0.9784 - val_loss: 0.8297 - val_recall: 0.8212 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 362ms/step - loss: 0.0574 - recall: 0.9784 - val_loss: 0.8297 - val_recall: 0.8212 - learning_rate: 1.0000e-06
     
 
 
@@ -2850,7 +2892,7 @@ model_dr_y_pred = model_dr.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 130ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 140ms/step
     
 
 
@@ -2866,7 +2908,7 @@ plot_training_history(model_dr_history, 'CNN With Dropout Regularization : ')
 
 
     
-![png](output_113_0.png)
+![png](output_114_0.png)
     
 
 
@@ -2910,7 +2952,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_114_0.png)
+![png](output_115_0.png)
     
 
 
@@ -3032,17 +3074,17 @@ set_seed()
 batch_size = 32
 input_shape = (227, 227, 1)
 model_bnr = Sequential()
-model_bnr.add(Conv2D(filters=16, kernel_size=(3, 3), padding = 'Same', activation='relu', input_shape=(227, 227, 1)))
-model_bnr.add(MaxPooling2D(pool_size=(2, 2)))
-model_bnr.add(Conv2D(filters=32, kernel_size=(3, 3), padding = 'Same', activation='relu'))
-model_bnr.add(MaxPooling2D(pool_size=(2, 2)))
-model_bnr.add(Conv2D(filters=64, kernel_size=(3, 3), padding = 'Same', activation='relu'))
-model_bnr.add(BatchNormalization())
-model_bnr.add(Activation('relu'))
-model_bnr.add(MaxPooling2D(pool_size=(2, 2)))
-model_bnr.add(Flatten())
-model_bnr.add(Dense(units=128, activation='relu'))
-model_bnr.add(Dense(units=num_classes, activation='softmax'))
+model_bnr.add(Conv2D(filters=16, kernel_size=(3, 3), padding = 'Same', activation='relu', input_shape=(227, 227, 1), name="bnr_conv2d_0"))
+model_bnr.add(MaxPooling2D(pool_size=(2, 2), name="bnr_max_pooling2d_0"))
+model_bnr.add(Conv2D(filters=32, kernel_size=(3, 3), padding = 'Same', activation='relu', name="bnr_conv2d_1"))
+model_bnr.add(MaxPooling2D(pool_size=(2, 2), name="bnr_max_pooling2d_1"))
+model_bnr.add(Conv2D(filters=64, kernel_size=(3, 3), padding = 'Same', activation='relu', name="bnr_conv2d_2"))
+model_bnr.add(BatchNormalization(name="bnr_batch_normalization"))
+model_bnr.add(Activation('relu', name="bnr_activation"))
+model_bnr.add(MaxPooling2D(pool_size=(2, 2), name="bnr_max_pooling2d_2"))
+model_bnr.add(Flatten(name="bnr_flatten"))
+model_bnr.add(Dense(units=128, activation='relu', name="bnr_dense_0"))
+model_bnr.add(Dense(units=num_classes, activation='softmax', name="bnr_dense_1"))
 
 ##################################
 # Compiling the network layers
@@ -3065,29 +3107,29 @@ model_bnr_history = model_bnr.fit(train_gen,
                                   validation_data=val_gen, 
                                   epochs=epochs,
                                   verbose=1,
-                                  callbacks=[early_stopping, reduce_lr])
+                                  callbacks=[early_stopping, reduce_lr, bnr_model_checkpoint])
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 380ms/step - loss: 2.0890 - recall: 0.5036 - val_loss: 1.1336 - val_recall: 0.0167 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m61s[0m 412ms/step - loss: 2.0890 - recall: 0.5036 - val_loss: 1.1336 - val_recall: 0.0167 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 376ms/step - loss: 0.3362 - recall: 0.8611 - val_loss: 0.9812 - val_recall: 0.1087 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m79s[0m 388ms/step - loss: 0.3362 - recall: 0.8611 - val_loss: 0.9812 - val_recall: 0.1087 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 370ms/step - loss: 0.2292 - recall: 0.9119 - val_loss: 0.6711 - val_recall: 0.6740 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m82s[0m 390ms/step - loss: 0.2292 - recall: 0.9119 - val_loss: 0.6711 - val_recall: 0.6740 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 369ms/step - loss: 0.1786 - recall: 0.9340 - val_loss: 1.0136 - val_recall: 0.5285 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.1786 - recall: 0.9340 - val_loss: 1.0136 - val_recall: 0.5285 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 368ms/step - loss: 0.1684 - recall: 0.9306 - val_loss: 1.1061 - val_recall: 0.6854 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 395ms/step - loss: 0.1684 - recall: 0.9306 - val_loss: 1.1061 - val_recall: 0.6854 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 370ms/step - loss: 0.1131 - recall: 0.9553 - val_loss: 0.9477 - val_recall: 0.7625 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.1131 - recall: 0.9553 - val_loss: 0.9477 - val_recall: 0.7625 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 368ms/step - loss: 0.0678 - recall: 0.9768 - val_loss: 0.7528 - val_recall: 0.8273 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.0678 - recall: 0.9768 - val_loss: 0.7528 - val_recall: 0.8273 - learning_rate: 1.0000e-04
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 366ms/step - loss: 0.0606 - recall: 0.9798 - val_loss: 0.7445 - val_recall: 0.8256 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.0606 - recall: 0.9798 - val_loss: 0.7445 - val_recall: 0.8256 - learning_rate: 1.0000e-04
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 364ms/step - loss: 0.0451 - recall: 0.9870 - val_loss: 0.7859 - val_recall: 0.8335 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 385ms/step - loss: 0.0451 - recall: 0.9870 - val_loss: 0.7859 - val_recall: 0.8335 - learning_rate: 1.0000e-04
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 372ms/step - loss: 0.0497 - recall: 0.9858 - val_loss: 0.7841 - val_recall: 0.8352 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 380ms/step - loss: 0.0497 - recall: 0.9858 - val_loss: 0.7841 - val_recall: 0.8352 - learning_rate: 1.0000e-05
     
 
 
@@ -3100,7 +3142,7 @@ model_bnr_history = model_bnr.fit(train_gen,
 model_bnr_y_pred = model_bnr.predict(val_gen)
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 138ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 144ms/step
     
 
 
@@ -3115,7 +3157,7 @@ plot_training_history(model_bnr_history, 'CNN With Batch Normalization Regulariz
 
 
     
-![png](output_120_0.png)
+![png](output_121_0.png)
     
 
 
@@ -3158,7 +3200,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_121_0.png)
+![png](output_122_0.png)
     
 
 
@@ -3279,18 +3321,18 @@ set_seed()
 batch_size = 32
 input_shape = (227, 227, 1)
 model_dr_bnr = Sequential()
-model_dr_bnr.add(Conv2D(filters=16, kernel_size=(3, 3), padding = 'Same', activation='relu', input_shape=(227, 227, 1)))
-model_dr_bnr.add(MaxPooling2D(pool_size=(2, 2)))
-model_dr_bnr.add(Conv2D(filters=32, kernel_size=(3, 3), padding = 'Same', activation='relu'))
-model_dr_bnr.add(MaxPooling2D(pool_size=(2, 2)))
-model_dr_bnr.add(Conv2D(filters=64, kernel_size=(3, 3), padding = 'Same', activation='relu'))
-model_dr_bnr.add(BatchNormalization())
-model_dr_bnr.add(Activation('relu'))
-model_dr_bnr.add(MaxPooling2D(pool_size=(2, 2)))
-model_dr_bnr.add(Flatten())
-model_dr_bnr.add(Dense(units=128, activation='relu'))
-model_dr_bnr.add(Dropout(rate=0.30))
-model_dr_bnr.add(Dense(units=num_classes, activation='softmax'))
+model_dr_bnr.add(Conv2D(filters=16, kernel_size=(3, 3), padding = 'Same', activation='relu', input_shape=(227, 227, 1), name="dr_bnr_conv2d_0"))
+model_dr_bnr.add(MaxPooling2D(pool_size=(2, 2), name="dr_bnr_max_pooling2d_0"))
+model_dr_bnr.add(Conv2D(filters=32, kernel_size=(3, 3), padding = 'Same', activation='relu', name="dr_bnr_conv2d_1"))
+model_dr_bnr.add(MaxPooling2D(pool_size=(2, 2), name="dr_bnr_max_pooling2d_1"))
+model_dr_bnr.add(Conv2D(filters=64, kernel_size=(3, 3), padding = 'Same', activation='relu', name="dr_bnr_conv2d_2"))
+model_dr_bnr.add(BatchNormalization(name="dr_bnr_batch_normalization"))
+model_dr_bnr.add(Activation('relu', name="dr_bnr_activation"))
+model_dr_bnr.add(MaxPooling2D(pool_size=(2, 2), name="dr_bnr_max_pooling2d_2"))
+model_dr_bnr.add(Flatten(name="dr_bnr_flatten"))
+model_dr_bnr.add(Dense(units=128, activation='relu', name="dr_bnr_dense_0"))
+model_dr_bnr.add(Dropout(rate=0.30, name="dr_bnr_dropout"))
+model_dr_bnr.add(Dense(units=num_classes, activation='softmax', name="dr_bnr_dense_1"))
 
 ##################################
 # Compiling the network layers
@@ -3314,42 +3356,42 @@ model_dr_bnr_history = model_dr_bnr.fit(train_gen,
                                   validation_data=val_gen, 
                                   epochs=epochs,
                                   verbose=1,
-                                  callbacks=[early_stopping, reduce_lr])
+                                  callbacks=[early_stopping, reduce_lr, dr_bnr_model_checkpoint])
 
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 378ms/step - loss: 1.7995 - recall: 0.5219 - val_loss: 1.1321 - val_recall: 0.0342 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m58s[0m 388ms/step - loss: 1.7995 - recall: 0.5219 - val_loss: 1.1321 - val_recall: 0.0342 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 370ms/step - loss: 0.3938 - recall: 0.8333 - val_loss: 0.9887 - val_recall: 0.0649 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.3938 - recall: 0.8333 - val_loss: 0.9887 - val_recall: 0.0649 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 373ms/step - loss: 0.2484 - recall: 0.8988 - val_loss: 0.6290 - val_recall: 0.6713 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 384ms/step - loss: 0.2484 - recall: 0.8988 - val_loss: 0.6290 - val_recall: 0.6713 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 368ms/step - loss: 0.2268 - recall: 0.9093 - val_loss: 0.6252 - val_recall: 0.7555 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 380ms/step - loss: 0.2268 - recall: 0.9093 - val_loss: 0.6252 - val_recall: 0.7555 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 368ms/step - loss: 0.1590 - recall: 0.9359 - val_loss: 0.8430 - val_recall: 0.7046 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 380ms/step - loss: 0.1590 - recall: 0.9359 - val_loss: 0.8430 - val_recall: 0.7046 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 367ms/step - loss: 0.1436 - recall: 0.9409 - val_loss: 0.5680 - val_recall: 0.8352 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m62s[0m 434ms/step - loss: 0.1436 - recall: 0.9409 - val_loss: 0.5680 - val_recall: 0.8352 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 370ms/step - loss: 0.1110 - recall: 0.9563 - val_loss: 0.7335 - val_recall: 0.8344 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 387ms/step - loss: 0.1110 - recall: 0.9563 - val_loss: 0.7335 - val_recall: 0.8344 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 373ms/step - loss: 0.1024 - recall: 0.9607 - val_loss: 0.9613 - val_recall: 0.8291 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.1024 - recall: 0.9607 - val_loss: 0.9613 - val_recall: 0.8291 - learning_rate: 0.0010
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 367ms/step - loss: 0.1047 - recall: 0.9615 - val_loss: 0.6784 - val_recall: 0.8475 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 381ms/step - loss: 0.1047 - recall: 0.9615 - val_loss: 0.6784 - val_recall: 0.8475 - learning_rate: 0.0010
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 372ms/step - loss: 0.0612 - recall: 0.9779 - val_loss: 0.7055 - val_recall: 0.8580 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.0612 - recall: 0.9779 - val_loss: 0.7055 - val_recall: 0.8580 - learning_rate: 1.0000e-04
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 370ms/step - loss: 0.0465 - recall: 0.9825 - val_loss: 0.7504 - val_recall: 0.8615 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 382ms/step - loss: 0.0465 - recall: 0.9825 - val_loss: 0.7504 - val_recall: 0.8615 - learning_rate: 1.0000e-04
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 372ms/step - loss: 0.0426 - recall: 0.9825 - val_loss: 0.8035 - val_recall: 0.8624 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 380ms/step - loss: 0.0426 - recall: 0.9825 - val_loss: 0.8035 - val_recall: 0.8624 - learning_rate: 1.0000e-04
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 370ms/step - loss: 0.0373 - recall: 0.9885 - val_loss: 0.7971 - val_recall: 0.8624 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.0373 - recall: 0.9885 - val_loss: 0.7971 - val_recall: 0.8624 - learning_rate: 1.0000e-05
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 372ms/step - loss: 0.0427 - recall: 0.9842 - val_loss: 0.7896 - val_recall: 0.8606 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 384ms/step - loss: 0.0427 - recall: 0.9842 - val_loss: 0.7896 - val_recall: 0.8606 - learning_rate: 1.0000e-05
     Epoch 15/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 365ms/step - loss: 0.0323 - recall: 0.9903 - val_loss: 0.7911 - val_recall: 0.8606 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 385ms/step - loss: 0.0323 - recall: 0.9903 - val_loss: 0.7911 - val_recall: 0.8606 - learning_rate: 1.0000e-05
     Epoch 16/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 369ms/step - loss: 0.0418 - recall: 0.9818 - val_loss: 0.7901 - val_recall: 0.8606 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 386ms/step - loss: 0.0418 - recall: 0.9818 - val_loss: 0.7901 - val_recall: 0.8606 - learning_rate: 1.0000e-06
     
 
 
@@ -3363,7 +3405,7 @@ model_dr_bnr_y_pred = model_dr_bnr.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 136ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 138ms/step
     
 
 
@@ -3379,7 +3421,7 @@ plot_training_history(model_dr_bnr_history, 'CNN With Dropout and Batch Normaliz
 
 
     
-![png](output_127_0.png)
+![png](output_128_0.png)
     
 
 
@@ -3423,7 +3465,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_128_0.png)
+![png](output_129_0.png)
     
 
 
