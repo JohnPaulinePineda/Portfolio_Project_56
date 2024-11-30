@@ -4083,37 +4083,37 @@ model_nr_simple_history = model_nr_simple.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 229ms/step - loss: 0.8697 - recall: 0.4612 - val_loss: 0.9379 - val_recall: 0.6556 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 223ms/step - loss: 0.8697 - recall: 0.4612 - val_loss: 0.9379 - val_recall: 0.6556 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 235ms/step - loss: 0.4279 - recall: 0.8129 - val_loss: 0.8684 - val_recall: 0.6792 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m30s[0m 205ms/step - loss: 0.4279 - recall: 0.8129 - val_loss: 0.8684 - val_recall: 0.6792 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 254ms/step - loss: 0.3339 - recall: 0.8637 - val_loss: 0.8071 - val_recall: 0.7239 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m29s[0m 204ms/step - loss: 0.3339 - recall: 0.8637 - val_loss: 0.8071 - val_recall: 0.7239 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 226ms/step - loss: 0.3062 - recall: 0.8771 - val_loss: 0.9367 - val_recall: 0.7528 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m30s[0m 205ms/step - loss: 0.3062 - recall: 0.8771 - val_loss: 0.9367 - val_recall: 0.7528 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m43s[0m 299ms/step - loss: 0.2505 - recall: 0.9024 - val_loss: 0.8099 - val_recall: 0.7450 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m29s[0m 202ms/step - loss: 0.2505 - recall: 0.9024 - val_loss: 0.8099 - val_recall: 0.7450 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 229ms/step - loss: 0.2282 - recall: 0.9033 - val_loss: 0.7319 - val_recall: 0.7862 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m29s[0m 199ms/step - loss: 0.2282 - recall: 0.9033 - val_loss: 0.7319 - val_recall: 0.7862 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 224ms/step - loss: 0.1857 - recall: 0.9301 - val_loss: 0.8285 - val_recall: 0.7783 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m29s[0m 202ms/step - loss: 0.1857 - recall: 0.9301 - val_loss: 0.8285 - val_recall: 0.7783 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 375ms/step - loss: 0.1783 - recall: 0.9361 - val_loss: 0.8437 - val_recall: 0.7642 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m29s[0m 203ms/step - loss: 0.1783 - recall: 0.9361 - val_loss: 0.8437 - val_recall: 0.7642 - learning_rate: 0.0010
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 229ms/step - loss: 0.1366 - recall: 0.9491 - val_loss: 0.8675 - val_recall: 0.8089 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 258ms/step - loss: 0.1366 - recall: 0.9491 - val_loss: 0.8675 - val_recall: 0.8089 - learning_rate: 0.0010
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 229ms/step - loss: 0.1127 - recall: 0.9611 - val_loss: 0.7600 - val_recall: 0.8186 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 235ms/step - loss: 0.1127 - recall: 0.9611 - val_loss: 0.7600 - val_recall: 0.8186 - learning_rate: 1.0000e-04
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 227ms/step - loss: 0.0880 - recall: 0.9663 - val_loss: 0.7769 - val_recall: 0.8177 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 253ms/step - loss: 0.0880 - recall: 0.9663 - val_loss: 0.7769 - val_recall: 0.8177 - learning_rate: 1.0000e-04
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 232ms/step - loss: 0.1055 - recall: 0.9612 - val_loss: 0.7722 - val_recall: 0.8221 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 230ms/step - loss: 0.1055 - recall: 0.9612 - val_loss: 0.7722 - val_recall: 0.8221 - learning_rate: 1.0000e-04
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 223ms/step - loss: 0.0787 - recall: 0.9733 - val_loss: 0.7732 - val_recall: 0.8221 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 220ms/step - loss: 0.0787 - recall: 0.9733 - val_loss: 0.7732 - val_recall: 0.8221 - learning_rate: 1.0000e-05
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 227ms/step - loss: 0.0926 - recall: 0.9680 - val_loss: 0.7768 - val_recall: 0.8221 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 230ms/step - loss: 0.0926 - recall: 0.9680 - val_loss: 0.7768 - val_recall: 0.8221 - learning_rate: 1.0000e-05
     Epoch 15/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 259ms/step - loss: 0.0824 - recall: 0.9691 - val_loss: 0.7803 - val_recall: 0.8212 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 224ms/step - loss: 0.0824 - recall: 0.9691 - val_loss: 0.7803 - val_recall: 0.8212 - learning_rate: 1.0000e-05
     Epoch 16/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 238ms/step - loss: 0.0939 - recall: 0.9701 - val_loss: 0.7808 - val_recall: 0.8203 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 223ms/step - loss: 0.0939 - recall: 0.9701 - val_loss: 0.7808 - val_recall: 0.8203 - learning_rate: 1.0000e-06
     
 
 
@@ -4123,11 +4123,11 @@ model_nr_simple_history = model_nr_simple.fit(train_gen,
 # for a simple CNN with no regularization
 # on the independent validation set
 ##################################
-model_nr_simple_y_pred = model_nr_simple.predict(val_gen)
+model_nr_simple_y_pred_val = model_nr_simple.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 103ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 97ms/step
     
 
 
@@ -4154,15 +4154,15 @@ plot_training_history(model_nr_simple_history, 'Simple CNN With No Regularizatio
 # for a simple CNN with no regularization
 # on the validation set
 ##################################
-model_nr_simple_predictions = np.array(list(map(lambda x: np.argmax(x), model_nr_simple_y_pred)))
-model_nr_simple_y_true = val_gen.classes
+model_nr_simple_predictions_val = np.array(list(map(lambda x: np.argmax(x), model_nr_simple_y_pred_val)))
+model_nr_simple_y_true_val = val_gen.classes
 
 ##################################
 # Formulating the confusion matrix
 # for a simple CNN with no regularization
 # on the validation set
 ##################################
-CMatrix = pd.DataFrame(confusion_matrix(model_nr_simple_y_true, model_nr_simple_predictions), columns=classes, index =classes)
+cmatrix_val = pd.DataFrame(confusion_matrix(model_nr_simple_y_true_val, model_nr_simple_predictions_val), columns=classes, index =classes)
 
 ##################################
 # Plotting the confusion matrix
@@ -4170,7 +4170,7 @@ CMatrix = pd.DataFrame(confusion_matrix(model_nr_simple_y_true, model_nr_simple_
 # on the validation set
 ##################################
 plt.figure(figsize=(10, 6))
-ax = sns.heatmap(CMatrix, annot = True, fmt = 'g' ,vmin = 0, vmax = 250,cmap = 'icefire')
+ax = sns.heatmap(cmatrix_val, annot = True, fmt = 'g' ,vmin = 0, vmax = 250,cmap = 'icefire')
 ax.set_xlabel('Predicted',fontsize = 14,weight = 'bold')
 ax.set_xticklabels(ax.get_xticklabels(),rotation =0)
 ax.set_ylabel('Actual',fontsize = 14,weight = 'bold') 
@@ -4201,7 +4201,7 @@ keras.backend.clear_session()
 # for a simple CNN with no regularization
 # for the entire validation set
 ##################################
-model_nr_simple_acc = accuracy_score(model_nr_simple_y_true, model_nr_simple_predictions)
+model_nr_simple_acc_val = accuracy_score(model_nr_simple_y_true_val, model_nr_simple_predictions_val)
 
 ##################################
 # Calculating the model 
@@ -4209,7 +4209,7 @@ model_nr_simple_acc = accuracy_score(model_nr_simple_y_true, model_nr_simple_pre
 # for a simple CNN with no regularization
 # for the entire validation set
 ##################################
-model_nr_simple_results_all = precision_recall_fscore_support(model_nr_simple_y_true, model_nr_simple_predictions, average='macro',zero_division = 1)
+model_nr_simple_results_all_val = precision_recall_fscore_support(model_nr_simple_y_true_val, model_nr_simple_predictions_val, average='macro',zero_division = 1)
 
 ##################################
 # Calculating the model 
@@ -4217,18 +4217,18 @@ model_nr_simple_results_all = precision_recall_fscore_support(model_nr_simple_y_
 # for a simple CNN with no regularization
 # for each category of the validation set
 ##################################
-model_nr_simple_results_class = precision_recall_fscore_support(model_nr_simple_y_true, model_nr_simple_predictions, average=None, zero_division = 1)
+model_nr_simple_results_class_val = precision_recall_fscore_support(model_nr_simple_y_true_val, model_nr_simple_predictions_val, average=None, zero_division = 1)
 
 ##################################
 # Consolidating all model evaluation metrics 
 # for a simple CNN with no regularization
 ##################################
 metric_columns = ['Precision','Recall','F-Score','Support']
-model_nr_simple_all_df = pd.concat([pd.DataFrame(list(model_nr_simple_results_class)).T,pd.DataFrame(list(model_nr_simple_results_all)).T])
-model_nr_simple_all_df.columns = metric_columns
-model_nr_simple_all_df.index = ['No Tumor', 'Glioma', 'Meningioma', 'Pituitary', 'Total']
+model_nr_simple_all_df_val = pd.concat([pd.DataFrame(list(model_nr_simple_results_class_val)).T,pd.DataFrame(list(model_nr_simple_results_all_val)).T])
+model_nr_simple_all_df_val.columns = metric_columns
+model_nr_simple_all_df_val.index = ['No Tumor', 'Glioma', 'Meningioma', 'Pituitary', 'Total']
 print('Simple CNN With No Regularization : Validation Set Classification Performance')
-model_nr_simple_all_df
+model_nr_simple_all_df_val
 
 ```
 
@@ -4319,8 +4319,8 @@ for i in range(3):
     for j in range(5):
         model_nr_simple_model_list.append('CNN_NR_Simple')
         model_nr_simple_measure_list.append(metric_columns[i])
-        model_nr_simple_category_list.append(model_nr_simple_all_df.index[j])
-        model_nr_simple_value_list.append(model_nr_simple_all_df.iloc[j,i])
+        model_nr_simple_category_list.append(model_nr_simple_all_df_val.index[j])
+        model_nr_simple_value_list.append(model_nr_simple_all_df_val.iloc[j,i])
 
 model_nr_simple_all_summary = pd.DataFrame(zip(model_nr_simple_model_list,
                                                model_nr_simple_measure_list,
@@ -4379,37 +4379,37 @@ model_nr_complex_history = model_nr_complex.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 373ms/step - loss: 1.0913 - recall: 0.3645 - val_loss: 0.8411 - val_recall: 0.6915 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 366ms/step - loss: 1.0913 - recall: 0.3645 - val_loss: 0.8411 - val_recall: 0.6915 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 359ms/step - loss: 0.4091 - recall: 0.8322 - val_loss: 0.8689 - val_recall: 0.6862 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 360ms/step - loss: 0.4091 - recall: 0.8322 - val_loss: 0.8689 - val_recall: 0.6862 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 365ms/step - loss: 0.2674 - recall: 0.8948 - val_loss: 0.8096 - val_recall: 0.7327 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 357ms/step - loss: 0.2674 - recall: 0.8948 - val_loss: 0.8096 - val_recall: 0.7327 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 365ms/step - loss: 0.2156 - recall: 0.9202 - val_loss: 0.8086 - val_recall: 0.7862 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 356ms/step - loss: 0.2156 - recall: 0.9202 - val_loss: 0.8086 - val_recall: 0.7862 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 365ms/step - loss: 0.1748 - recall: 0.9339 - val_loss: 0.8040 - val_recall: 0.7625 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 361ms/step - loss: 0.1748 - recall: 0.9339 - val_loss: 0.8040 - val_recall: 0.7625 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 367ms/step - loss: 0.1469 - recall: 0.9431 - val_loss: 0.7236 - val_recall: 0.7984 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 356ms/step - loss: 0.1469 - recall: 0.9431 - val_loss: 0.7236 - val_recall: 0.7984 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 359ms/step - loss: 0.1025 - recall: 0.9621 - val_loss: 0.7801 - val_recall: 0.7993 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 361ms/step - loss: 0.1025 - recall: 0.9621 - val_loss: 0.7801 - val_recall: 0.7993 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 361ms/step - loss: 0.0918 - recall: 0.9644 - val_loss: 0.9317 - val_recall: 0.8063 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 354ms/step - loss: 0.0918 - recall: 0.9644 - val_loss: 0.9317 - val_recall: 0.8063 - learning_rate: 0.0010
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 361ms/step - loss: 0.0861 - recall: 0.9650 - val_loss: 0.8448 - val_recall: 0.8238 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 354ms/step - loss: 0.0861 - recall: 0.9650 - val_loss: 0.8448 - val_recall: 0.8238 - learning_rate: 0.0010
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 368ms/step - loss: 0.0560 - recall: 0.9774 - val_loss: 0.8052 - val_recall: 0.8300 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 359ms/step - loss: 0.0560 - recall: 0.9774 - val_loss: 0.8052 - val_recall: 0.8300 - learning_rate: 1.0000e-04
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 362ms/step - loss: 0.0285 - recall: 0.9933 - val_loss: 0.8621 - val_recall: 0.8186 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 360ms/step - loss: 0.0285 - recall: 0.9933 - val_loss: 0.8621 - val_recall: 0.8186 - learning_rate: 1.0000e-04
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 361ms/step - loss: 0.0294 - recall: 0.9919 - val_loss: 0.8798 - val_recall: 0.8256 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 358ms/step - loss: 0.0294 - recall: 0.9919 - val_loss: 0.8798 - val_recall: 0.8256 - learning_rate: 1.0000e-04
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 363ms/step - loss: 0.0235 - recall: 0.9925 - val_loss: 0.8846 - val_recall: 0.8230 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 360ms/step - loss: 0.0235 - recall: 0.9925 - val_loss: 0.8846 - val_recall: 0.8230 - learning_rate: 1.0000e-05
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 367ms/step - loss: 0.0297 - recall: 0.9903 - val_loss: 0.8888 - val_recall: 0.8247 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 355ms/step - loss: 0.0297 - recall: 0.9903 - val_loss: 0.8888 - val_recall: 0.8247 - learning_rate: 1.0000e-05
     Epoch 15/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 368ms/step - loss: 0.0237 - recall: 0.9951 - val_loss: 0.9018 - val_recall: 0.8230 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 358ms/step - loss: 0.0237 - recall: 0.9951 - val_loss: 0.9018 - val_recall: 0.8230 - learning_rate: 1.0000e-05
     Epoch 16/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 361ms/step - loss: 0.0283 - recall: 0.9913 - val_loss: 0.9021 - val_recall: 0.8238 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 359ms/step - loss: 0.0283 - recall: 0.9913 - val_loss: 0.9021 - val_recall: 0.8238 - learning_rate: 1.0000e-06
     
 
 
@@ -4419,11 +4419,11 @@ model_nr_complex_history = model_nr_complex.fit(train_gen,
 # for a complex CNN with no regularization
 # on the independent validation set
 ##################################
-model_nr_complex_y_pred = model_nr_complex.predict(val_gen)
+model_nr_complex_y_pred_val = model_nr_complex.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 137ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 133ms/step
     
 
 
@@ -4450,15 +4450,15 @@ plot_training_history(model_nr_complex_history, 'Complex CNN With No Regularizat
 # for a complex CNN with no regularization
 # on the validation set
 ##################################
-model_nr_complex_predictions = np.array(list(map(lambda x: np.argmax(x), model_nr_complex_y_pred)))
-model_nr_complex_y_true = val_gen.classes
+model_nr_complex_predictions_val = np.array(list(map(lambda x: np.argmax(x), model_nr_complex_y_pred_val)))
+model_nr_complex_y_true_val = val_gen.classes
 
 ##################################
 # Formulating the confusion matrix
 # for a complex CNN with no regularization
 # on the validation set
 ##################################
-CMatrix = pd.DataFrame(confusion_matrix(model_nr_complex_y_true, model_nr_complex_predictions), columns=classes, index =classes)
+cmatrix_val = pd.DataFrame(confusion_matrix(model_nr_complex_y_true_val, model_nr_complex_predictions_val), columns=classes, index =classes)
 
 ##################################
 # Plotting the confusion matrix
@@ -4466,7 +4466,7 @@ CMatrix = pd.DataFrame(confusion_matrix(model_nr_complex_y_true, model_nr_comple
 # on the validation set
 ##################################
 plt.figure(figsize=(10, 6))
-ax = sns.heatmap(CMatrix, annot = True, fmt = 'g' ,vmin = 0, vmax = 250,cmap = 'icefire')
+ax = sns.heatmap(cmatrix_val, annot = True, fmt = 'g' ,vmin = 0, vmax = 250,cmap = 'icefire')
 ax.set_xlabel('Predicted',fontsize = 14,weight = 'bold')
 ax.set_xticklabels(ax.get_xticklabels(),rotation =0)
 ax.set_ylabel('Actual',fontsize = 14,weight = 'bold') 
@@ -4493,7 +4493,7 @@ keras.backend.clear_session()
 # for a complex CNN with no regularization
 # for the entire validation set
 ##################################
-model_nr_complex_acc = accuracy_score(model_nr_complex_y_true, model_nr_complex_predictions)
+model_nr_complex_acc_val = accuracy_score(model_nr_complex_y_true_val, model_nr_complex_predictions_val)
 
 ##################################
 # Calculating the model 
@@ -4501,7 +4501,7 @@ model_nr_complex_acc = accuracy_score(model_nr_complex_y_true, model_nr_complex_
 # for a complex CNN with no regularization
 # for the entire validation set
 ##################################
-model_nr_complex_results_all = precision_recall_fscore_support(model_nr_complex_y_true, model_nr_complex_predictions, average='macro',zero_division = 1)
+model_nr_complex_results_all_val = precision_recall_fscore_support(model_nr_complex_y_true_val, model_nr_complex_predictions_val, average='macro',zero_division = 1)
 
 ##################################
 # Calculating the model 
@@ -4509,18 +4509,18 @@ model_nr_complex_results_all = precision_recall_fscore_support(model_nr_complex_
 # for a complex CNN with no regularization
 # for each category of the validation set
 ##################################
-model_nr_complex_results_class = precision_recall_fscore_support(model_nr_complex_y_true, model_nr_complex_predictions, average=None, zero_division = 1)
+model_nr_complex_results_class_val = precision_recall_fscore_support(model_nr_complex_y_true_val, model_nr_complex_predictions_val, average=None, zero_division = 1)
 
 ##################################
 # Consolidating all model evaluation metrics 
 # for a complex CNN with no regularization
 ##################################
 metric_columns = ['Precision','Recall','F-Score','Support']
-model_nr_complex_all_df = pd.concat([pd.DataFrame(list(model_nr_complex_results_class)).T,pd.DataFrame(list(model_nr_complex_results_all)).T])
-model_nr_complex_all_df.columns = metric_columns
-model_nr_complex_all_df.index = ['No Tumor', 'Glioma', 'Meningioma', 'Pituitary', 'Total']
+model_nr_complex_all_df_val = pd.concat([pd.DataFrame(list(model_nr_complex_results_class_val)).T,pd.DataFrame(list(model_nr_complex_results_all_val)).T])
+model_nr_complex_all_df_val.columns = metric_columns
+model_nr_complex_all_df_val.index = ['No Tumor', 'Glioma', 'Meningioma', 'Pituitary', 'Total']
 print('Complex CNN With No Regularization : Validation Set Classification Performance')
-model_nr_complex_all_df
+model_nr_complex_all_df_val
 
 ```
 
@@ -4611,8 +4611,8 @@ for i in range(3):
     for j in range(5):
         model_nr_complex_model_list.append('CNN_NR_Complex')
         model_nr_complex_measure_list.append(metric_columns[i])
-        model_nr_complex_category_list.append(model_nr_complex_all_df.index[j])
-        model_nr_complex_value_list.append(model_nr_complex_all_df.iloc[j,i])
+        model_nr_complex_category_list.append(model_nr_complex_all_df_val.index[j])
+        model_nr_complex_value_list.append(model_nr_complex_all_df_val.iloc[j,i])
 
 model_nr_complex_all_summary = pd.DataFrame(zip(model_nr_complex_model_list,
                                                 model_nr_complex_measure_list,
@@ -4673,41 +4673,41 @@ model_dr_simple_history = model_dr_simple.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 239ms/step - loss: 1.3558 - recall: 0.1436 - val_loss: 1.0029 - val_recall: 0.4259 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 222ms/step - loss: 1.3558 - recall: 0.1436 - val_loss: 1.0029 - val_recall: 0.4259 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 239ms/step - loss: 0.7573 - recall: 0.5541 - val_loss: 0.8809 - val_recall: 0.5995 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 225ms/step - loss: 0.7573 - recall: 0.5541 - val_loss: 0.8809 - val_recall: 0.5995 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 243ms/step - loss: 0.6801 - recall: 0.5991 - val_loss: 0.8098 - val_recall: 0.6784 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 224ms/step - loss: 0.6801 - recall: 0.5991 - val_loss: 0.8098 - val_recall: 0.6784 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 234ms/step - loss: 0.5949 - recall: 0.6555 - val_loss: 0.9510 - val_recall: 0.6319 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 225ms/step - loss: 0.5949 - recall: 0.6555 - val_loss: 0.9510 - val_recall: 0.6319 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 237ms/step - loss: 0.5358 - recall: 0.6888 - val_loss: 0.8406 - val_recall: 0.6687 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 229ms/step - loss: 0.5358 - recall: 0.6888 - val_loss: 0.8406 - val_recall: 0.6687 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 226ms/step - loss: 0.5175 - recall: 0.7039 - val_loss: 0.7385 - val_recall: 0.6950 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 222ms/step - loss: 0.5175 - recall: 0.7039 - val_loss: 0.7385 - val_recall: 0.6950 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 222ms/step - loss: 0.5096 - recall: 0.7264 - val_loss: 0.8432 - val_recall: 0.7108 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 225ms/step - loss: 0.5096 - recall: 0.7264 - val_loss: 0.8432 - val_recall: 0.7108 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m50s[0m 349ms/step - loss: 0.5263 - recall: 0.7275 - val_loss: 0.7060 - val_recall: 0.7432 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m50s[0m 346ms/step - loss: 0.5263 - recall: 0.7275 - val_loss: 0.7060 - val_recall: 0.7432 - learning_rate: 0.0010
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 229ms/step - loss: 0.4338 - recall: 0.7747 - val_loss: 0.8316 - val_recall: 0.7546 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 224ms/step - loss: 0.4338 - recall: 0.7747 - val_loss: 0.8316 - val_recall: 0.7546 - learning_rate: 0.0010
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 223ms/step - loss: 0.4617 - recall: 0.7647 - val_loss: 0.8108 - val_recall: 0.7432 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 224ms/step - loss: 0.4617 - recall: 0.7647 - val_loss: 0.8108 - val_recall: 0.7432 - learning_rate: 0.0010
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 230ms/step - loss: 0.4197 - recall: 0.7834 - val_loss: 0.8501 - val_recall: 0.7406 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 224ms/step - loss: 0.4197 - recall: 0.7834 - val_loss: 0.8501 - val_recall: 0.7406 - learning_rate: 0.0010
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 225ms/step - loss: 0.4121 - recall: 0.7925 - val_loss: 0.7721 - val_recall: 0.7634 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 221ms/step - loss: 0.4121 - recall: 0.7925 - val_loss: 0.7721 - val_recall: 0.7634 - learning_rate: 1.0000e-04
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m31s[0m 219ms/step - loss: 0.3817 - recall: 0.8064 - val_loss: 0.7482 - val_recall: 0.7713 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 226ms/step - loss: 0.3817 - recall: 0.8064 - val_loss: 0.7482 - val_recall: 0.7713 - learning_rate: 1.0000e-04
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 222ms/step - loss: 0.3763 - recall: 0.8102 - val_loss: 0.7683 - val_recall: 0.7634 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 220ms/step - loss: 0.3763 - recall: 0.8102 - val_loss: 0.7683 - val_recall: 0.7634 - learning_rate: 1.0000e-04
     Epoch 15/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 228ms/step - loss: 0.3781 - recall: 0.7994 - val_loss: 0.7877 - val_recall: 0.7642 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 221ms/step - loss: 0.3781 - recall: 0.7994 - val_loss: 0.7877 - val_recall: 0.7642 - learning_rate: 1.0000e-05
     Epoch 16/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m30s[0m 209ms/step - loss: 0.3701 - recall: 0.8088 - val_loss: 0.7936 - val_recall: 0.7642 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 226ms/step - loss: 0.3701 - recall: 0.8088 - val_loss: 0.7936 - val_recall: 0.7642 - learning_rate: 1.0000e-05
     Epoch 17/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 222ms/step - loss: 0.3933 - recall: 0.8056 - val_loss: 0.7841 - val_recall: 0.7660 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 226ms/step - loss: 0.3933 - recall: 0.8056 - val_loss: 0.7841 - val_recall: 0.7660 - learning_rate: 1.0000e-05
     Epoch 18/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 230ms/step - loss: 0.3852 - recall: 0.7920 - val_loss: 0.7832 - val_recall: 0.7660 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 224ms/step - loss: 0.3852 - recall: 0.7920 - val_loss: 0.7832 - val_recall: 0.7660 - learning_rate: 1.0000e-06
     
 
 
@@ -4717,11 +4717,11 @@ model_dr_simple_history = model_dr_simple.fit(train_gen,
 # for a simple CNN with dropout regularization
 # on the independent validation set
 ##################################
-model_dr_simple_y_pred = model_dr_simple.predict(val_gen)
+model_dr_simple_y_pred_val = model_dr_simple.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 101ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 105ms/step
     
 
 
@@ -4748,15 +4748,15 @@ plot_training_history(model_dr_simple_history, 'Simple CNN With Dropout Regulari
 # for a simple CNN with dropout regularization
 # on the validation set
 ##################################
-model_dr_simple_predictions = np.array(list(map(lambda x: np.argmax(x), model_dr_simple_y_pred)))
-model_dr_simple_y_true=val_gen.classes
+model_dr_simple_predictions_val = np.array(list(map(lambda x: np.argmax(x), model_dr_simple_y_pred_val)))
+model_dr_simple_y_true_val = val_gen.classes
 
 ##################################
 # Formulating the confusion matrix
 # for a simple CNN with dropout regularization
 # on the validation set
 ##################################
-CMatrix = pd.DataFrame(confusion_matrix(model_dr_simple_y_true, model_dr_simple_predictions), columns=classes, index =classes)
+cmatrix_val = pd.DataFrame(confusion_matrix(model_dr_simple_y_true_val, model_dr_simple_predictions_val), columns=classes, index =classes)
 
 ##################################
 # Calculating the model 
@@ -4765,7 +4765,7 @@ CMatrix = pd.DataFrame(confusion_matrix(model_dr_simple_y_true, model_dr_simple_
 # for each category of the validation set
 ##################################
 plt.figure(figsize=(10, 6))
-ax = sns.heatmap(CMatrix, annot = True, fmt = 'g' ,vmin = 0, vmax = 250, cmap = 'icefire')
+ax = sns.heatmap(cmatrix_val, annot = True, fmt = 'g' ,vmin = 0, vmax = 250, cmap = 'icefire')
 ax.set_xlabel('Predicted',fontsize = 14,weight = 'bold')
 ax.set_xticklabels(ax.get_xticklabels(),rotation =0)
 ax.set_ylabel('Actual',fontsize = 14,weight = 'bold') 
@@ -4792,7 +4792,7 @@ keras.backend.clear_session()
 # for a simple CNN with dropout regularization
 # for the entire validation set
 ##################################
-model_dr_simple_acc = accuracy_score(model_dr_simple_y_true, model_dr_simple_predictions)
+model_dr_simple_acc_val = accuracy_score(model_dr_simple_y_true_val, model_dr_simple_predictions_val)
 
 ##################################
 # Calculating the model 
@@ -4800,7 +4800,7 @@ model_dr_simple_acc = accuracy_score(model_dr_simple_y_true, model_dr_simple_pre
 # for a simple CNN with dropout regularization
 # for the entire validation set
 ##################################
-model_dr_simple_results_all = precision_recall_fscore_support(model_dr_simple_y_true, model_dr_simple_predictions, average='macro',zero_division = 1)
+model_dr_simple_results_all_val = precision_recall_fscore_support(model_dr_simple_y_true_val, model_dr_simple_predictions_val, average='macro',zero_division = 1)
 
 ##################################
 # Calculating the model 
@@ -4808,18 +4808,18 @@ model_dr_simple_results_all = precision_recall_fscore_support(model_dr_simple_y_
 # for a simple CNN with dropout regularization
 # for each category of the validation set
 ##################################
-model_dr_simple_results_class = precision_recall_fscore_support(model_dr_simple_y_true, model_dr_simple_predictions, average=None, zero_division = 1)
+model_dr_simple_results_class_val = precision_recall_fscore_support(model_dr_simple_y_true_val, model_dr_simple_predictions_val, average=None, zero_division = 1)
 
 ##################################
 # Consolidating all model evaluation metrics 
 # for a simple CNN with dropout regularization
 ##################################
 metric_columns = ['Precision','Recall', 'F-Score','Support']
-model_dr_simple_all_df = pd.concat([pd.DataFrame(list(model_dr_simple_results_class)).T,pd.DataFrame(list(model_dr_simple_results_all)).T])
-model_dr_simple_all_df.columns = metric_columns
-model_dr_simple_all_df.index = ['No Tumor', 'Glioma', 'Meningioma', 'Pituitary', 'Total']
+model_dr_simple_all_df_val = pd.concat([pd.DataFrame(list(model_dr_simple_results_class_val)).T,pd.DataFrame(list(model_dr_simple_results_all_val)).T])
+model_dr_simple_all_df_val.columns = metric_columns
+model_dr_simple_all_df_val.index = ['No Tumor', 'Glioma', 'Meningioma', 'Pituitary', 'Total']
 print('Simple CNN With Dropout Regularization : Validation Set Classification Performance')
-model_dr_simple_all_df
+model_dr_simple_all_df_val
 
 ```
 
@@ -4910,8 +4910,8 @@ for i in range(3):
     for j in range(5):
         model_dr_simple_model_list.append('CNN_DR_Simple')
         model_dr_simple_measure_list.append(metric_columns[i])
-        model_dr_simple_category_list.append(model_dr_simple_all_df.index[j])
-        model_dr_simple_value_list.append(model_dr_simple_all_df.iloc[j,i])
+        model_dr_simple_category_list.append(model_dr_simple_all_df_val.index[j])
+        model_dr_simple_value_list.append(model_dr_simple_all_df_val.iloc[j,i])
 
 model_dr_simple_all_summary = pd.DataFrame(zip(model_dr_simple_model_list,
                                                model_dr_simple_measure_list,
@@ -4972,35 +4972,35 @@ model_dr_complex_history = model_dr_complex.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 369ms/step - loss: 1.0131 - recall: 0.3707 - val_loss: 0.8088 - val_recall: 0.6994 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 368ms/step - loss: 1.0131 - recall: 0.3707 - val_loss: 0.8088 - val_recall: 0.6994 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 357ms/step - loss: 0.4345 - recall: 0.8110 - val_loss: 0.7967 - val_recall: 0.6968 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 358ms/step - loss: 0.4345 - recall: 0.8110 - val_loss: 0.7967 - val_recall: 0.6968 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 354ms/step - loss: 0.2910 - recall: 0.8898 - val_loss: 0.7494 - val_recall: 0.7458 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 355ms/step - loss: 0.2910 - recall: 0.8898 - val_loss: 0.7494 - val_recall: 0.7458 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 357ms/step - loss: 0.2426 - recall: 0.9008 - val_loss: 0.7891 - val_recall: 0.7511 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 355ms/step - loss: 0.2426 - recall: 0.9008 - val_loss: 0.7891 - val_recall: 0.7511 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 362ms/step - loss: 0.1822 - recall: 0.9304 - val_loss: 0.6271 - val_recall: 0.7844 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 360ms/step - loss: 0.1822 - recall: 0.9304 - val_loss: 0.6271 - val_recall: 0.7844 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 355ms/step - loss: 0.1632 - recall: 0.9328 - val_loss: 0.7265 - val_recall: 0.7774 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 361ms/step - loss: 0.1632 - recall: 0.9328 - val_loss: 0.7265 - val_recall: 0.7774 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 356ms/step - loss: 0.1317 - recall: 0.9478 - val_loss: 0.8423 - val_recall: 0.7862 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 355ms/step - loss: 0.1317 - recall: 0.9478 - val_loss: 0.8423 - val_recall: 0.7862 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 360ms/step - loss: 0.1286 - recall: 0.9583 - val_loss: 0.8516 - val_recall: 0.8107 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 363ms/step - loss: 0.1286 - recall: 0.9583 - val_loss: 0.8516 - val_recall: 0.8107 - learning_rate: 0.0010
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 360ms/step - loss: 0.0860 - recall: 0.9707 - val_loss: 0.7973 - val_recall: 0.8124 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 358ms/step - loss: 0.0860 - recall: 0.9707 - val_loss: 0.7973 - val_recall: 0.8124 - learning_rate: 1.0000e-04
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 355ms/step - loss: 0.0758 - recall: 0.9745 - val_loss: 0.8234 - val_recall: 0.8081 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 369ms/step - loss: 0.0758 - recall: 0.9745 - val_loss: 0.8234 - val_recall: 0.8081 - learning_rate: 1.0000e-04
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 354ms/step - loss: 0.0523 - recall: 0.9825 - val_loss: 0.8551 - val_recall: 0.8098 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 373ms/step - loss: 0.0523 - recall: 0.9825 - val_loss: 0.8551 - val_recall: 0.8098 - learning_rate: 1.0000e-04
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 359ms/step - loss: 0.0571 - recall: 0.9813 - val_loss: 0.8562 - val_recall: 0.8054 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 393ms/step - loss: 0.0571 - recall: 0.9813 - val_loss: 0.8562 - val_recall: 0.8054 - learning_rate: 1.0000e-05
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 362ms/step - loss: 0.0540 - recall: 0.9823 - val_loss: 0.8620 - val_recall: 0.8089 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 364ms/step - loss: 0.0540 - recall: 0.9823 - val_loss: 0.8620 - val_recall: 0.8089 - learning_rate: 1.0000e-05
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 364ms/step - loss: 0.0564 - recall: 0.9793 - val_loss: 0.8652 - val_recall: 0.8098 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 362ms/step - loss: 0.0564 - recall: 0.9793 - val_loss: 0.8652 - val_recall: 0.8098 - learning_rate: 1.0000e-05
     Epoch 15/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 358ms/step - loss: 0.0538 - recall: 0.9812 - val_loss: 0.8655 - val_recall: 0.8098 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 361ms/step - loss: 0.0538 - recall: 0.9812 - val_loss: 0.8655 - val_recall: 0.8098 - learning_rate: 1.0000e-06
     
 
 
@@ -5010,11 +5010,11 @@ model_dr_complex_history = model_dr_complex.fit(train_gen,
 # for a complex CNN with dropout regularization
 # on the independent validation set
 ##################################
-model_dr_complex_y_pred = model_dr_complex.predict(val_gen)
+model_dr_complex_y_pred_val = model_dr_complex.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 131ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 135ms/step
     
 
 
@@ -5041,15 +5041,15 @@ plot_training_history(model_dr_complex_history, 'Complex CNN With Dropout Regula
 # for a complex CNN with dropout regularization
 # on the validation set
 ##################################
-model_dr_complex_predictions = np.array(list(map(lambda x: np.argmax(x), model_dr_complex_y_pred)))
-model_dr_complex_y_true=val_gen.classes
+model_dr_complex_predictions_val = np.array(list(map(lambda x: np.argmax(x), model_dr_complex_y_pred_val)))
+model_dr_complex_y_true_val = val_gen.classes
 
 ##################################
 # Formulating the confusion matrix
 # for a complex CNN with dropout regularization
 # on the validation set
 ##################################
-CMatrix = pd.DataFrame(confusion_matrix(model_dr_complex_y_true, model_dr_complex_predictions), columns=classes, index =classes)
+cmatrix_val = pd.DataFrame(confusion_matrix(model_dr_complex_y_true_val, model_dr_complex_predictions_val), columns=classes, index =classes)
 
 ##################################
 # Calculating the model 
@@ -5058,7 +5058,7 @@ CMatrix = pd.DataFrame(confusion_matrix(model_dr_complex_y_true, model_dr_comple
 # for each category of the validation set
 ##################################
 plt.figure(figsize=(10, 6))
-ax = sns.heatmap(CMatrix, annot = True, fmt = 'g' ,vmin = 0, vmax = 250, cmap = 'icefire')
+ax = sns.heatmap(cmatrix_val, annot = True, fmt = 'g' ,vmin = 0, vmax = 250, cmap = 'icefire')
 ax.set_xlabel('Predicted',fontsize = 14,weight = 'bold')
 ax.set_xticklabels(ax.get_xticklabels(),rotation =0)
 ax.set_ylabel('Actual',fontsize = 14,weight = 'bold') 
@@ -5085,7 +5085,7 @@ keras.backend.clear_session()
 # for a complex CNN with dropout regularization
 # for the entire validation set
 ##################################
-model_dr_complex_acc = accuracy_score(model_dr_complex_y_true, model_dr_complex_predictions)
+model_dr_complex_acc_val = accuracy_score(model_dr_complex_y_true_val, model_dr_complex_predictions_val)
 
 ##################################
 # Calculating the model 
@@ -5093,7 +5093,7 @@ model_dr_complex_acc = accuracy_score(model_dr_complex_y_true, model_dr_complex_
 # for a complex CNN with dropout regularization
 # for the entire validation set
 ##################################
-model_dr_complex_results_all = precision_recall_fscore_support(model_dr_complex_y_true, model_dr_complex_predictions, average='macro',zero_division = 1)
+model_dr_complex_results_all_val = precision_recall_fscore_support(model_dr_complex_y_true_val, model_dr_complex_predictions_val, average='macro',zero_division = 1)
 
 ##################################
 # Calculating the model 
@@ -5101,18 +5101,18 @@ model_dr_complex_results_all = precision_recall_fscore_support(model_dr_complex_
 # for a complex CNN with dropout regularization
 # for each category of the validation set
 ##################################
-model_dr_complex_results_class = precision_recall_fscore_support(model_dr_complex_y_true, model_dr_complex_predictions, average=None, zero_division = 1)
+model_dr_complex_results_class_val = precision_recall_fscore_support(model_dr_complex_y_true_val, model_dr_complex_predictions_val, average=None, zero_division = 1)
 
 ##################################
 # Consolidating all model evaluation metrics 
 # for a complex CNN with dropout regularization
 ##################################
 metric_columns = ['Precision','Recall', 'F-Score','Support']
-model_dr_complex_all_df = pd.concat([pd.DataFrame(list(model_dr_complex_results_class)).T,pd.DataFrame(list(model_dr_complex_results_all)).T])
-model_dr_complex_all_df.columns = metric_columns
-model_dr_complex_all_df.index = ['No Tumor', 'Glioma', 'Meningioma', 'Pituitary', 'Total']
+model_dr_complex_all_df_val = pd.concat([pd.DataFrame(list(model_dr_complex_results_class_val)).T,pd.DataFrame(list(model_dr_complex_results_all_val)).T])
+model_dr_complex_all_df_val.columns = metric_columns
+model_dr_complex_all_df_val.index = ['No Tumor', 'Glioma', 'Meningioma', 'Pituitary', 'Total']
 print('Complex CNN With Dropout Regularization : Validation Set Classification Performance')
-model_dr_complex_all_df
+model_dr_complex_all_df_val
 
 ```
 
@@ -5203,8 +5203,8 @@ for i in range(3):
     for j in range(5):
         model_dr_complex_model_list.append('CNN_DR_Complex')
         model_dr_complex_measure_list.append(metric_columns[i])
-        model_dr_complex_category_list.append(model_dr_complex_all_df.index[j])
-        model_dr_complex_value_list.append(model_dr_complex_all_df.iloc[j,i])
+        model_dr_complex_category_list.append(model_dr_complex_all_df_val.index[j])
+        model_dr_complex_value_list.append(model_dr_complex_all_df_val.iloc[j,i])
 
 model_dr_complex_all_summary = pd.DataFrame(zip(model_dr_complex_model_list,
                                                 model_dr_complex_measure_list,
@@ -5266,33 +5266,33 @@ model_bnr_simple_history = model_bnr_simple.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 261ms/step - loss: 1.7668 - recall: 0.5558 - val_loss: 1.0888 - val_recall: 0.0473 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 274ms/step - loss: 1.7668 - recall: 0.5558 - val_loss: 1.0888 - val_recall: 0.0473 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 261ms/step - loss: 0.3585 - recall: 0.8676 - val_loss: 0.8608 - val_recall: 0.3716 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 257ms/step - loss: 0.3585 - recall: 0.8676 - val_loss: 0.8608 - val_recall: 0.3716 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 262ms/step - loss: 0.2334 - recall: 0.9148 - val_loss: 0.7054 - val_recall: 0.6591 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 261ms/step - loss: 0.2334 - recall: 0.9148 - val_loss: 0.7054 - val_recall: 0.6591 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 267ms/step - loss: 0.2119 - recall: 0.9237 - val_loss: 0.5743 - val_recall: 0.8089 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 262ms/step - loss: 0.2119 - recall: 0.9237 - val_loss: 0.5743 - val_recall: 0.8089 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 265ms/step - loss: 0.2065 - recall: 0.9280 - val_loss: 0.6802 - val_recall: 0.8072 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 257ms/step - loss: 0.2065 - recall: 0.9280 - val_loss: 0.6802 - val_recall: 0.8072 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 258ms/step - loss: 0.1448 - recall: 0.9461 - val_loss: 0.8415 - val_recall: 0.8387 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 255ms/step - loss: 0.1448 - recall: 0.9461 - val_loss: 0.8415 - val_recall: 0.8387 - learning_rate: 0.0010
     Epoch 7/20
     [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 257ms/step - loss: 0.1309 - recall: 0.9561 - val_loss: 1.1974 - val_recall: 0.8107 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 260ms/step - loss: 0.0820 - recall: 0.9706 - val_loss: 0.9800 - val_recall: 0.8282 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 258ms/step - loss: 0.0820 - recall: 0.9706 - val_loss: 0.9800 - val_recall: 0.8282 - learning_rate: 1.0000e-04
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 259ms/step - loss: 0.0649 - recall: 0.9801 - val_loss: 1.0222 - val_recall: 0.8309 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 263ms/step - loss: 0.0649 - recall: 0.9801 - val_loss: 1.0222 - val_recall: 0.8309 - learning_rate: 1.0000e-04
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 263ms/step - loss: 0.0683 - recall: 0.9782 - val_loss: 1.0025 - val_recall: 0.8247 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 265ms/step - loss: 0.0683 - recall: 0.9782 - val_loss: 1.0025 - val_recall: 0.8247 - learning_rate: 1.0000e-04
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 259ms/step - loss: 0.0509 - recall: 0.9825 - val_loss: 0.9991 - val_recall: 0.8309 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 266ms/step - loss: 0.0509 - recall: 0.9825 - val_loss: 0.9991 - val_recall: 0.8309 - learning_rate: 1.0000e-05
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 261ms/step - loss: 0.0648 - recall: 0.9745 - val_loss: 0.9882 - val_recall: 0.8309 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m66s[0m 457ms/step - loss: 0.0648 - recall: 0.9745 - val_loss: 0.9882 - val_recall: 0.8309 - learning_rate: 1.0000e-05
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 255ms/step - loss: 0.0472 - recall: 0.9859 - val_loss: 0.9759 - val_recall: 0.8300 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 254ms/step - loss: 0.0472 - recall: 0.9859 - val_loss: 0.9759 - val_recall: 0.8300 - learning_rate: 1.0000e-05
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 254ms/step - loss: 0.0499 - recall: 0.9851 - val_loss: 0.9774 - val_recall: 0.8309 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 259ms/step - loss: 0.0499 - recall: 0.9851 - val_loss: 0.9774 - val_recall: 0.8309 - learning_rate: 1.0000e-06
     
 
 
@@ -5302,11 +5302,11 @@ model_bnr_simple_history = model_bnr_simple.fit(train_gen,
 # for a simple CNN with batch normalization regularization
 # on the independent validation set
 ##################################
-model_bnr_simple_y_pred = model_bnr_simple.predict(val_gen)
+model_bnr_simple_y_pred_val = model_bnr_simple.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m3s[0m 93ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 100ms/step
     
 
 
@@ -5333,15 +5333,15 @@ plot_training_history(model_bnr_simple_history, 'Simple CNN With Batch Normaliza
 # for a simple CNN with batch normalization regularization
 # on the validation set
 ##################################
-model_bnr_simple_predictions = np.array(list(map(lambda x: np.argmax(x), model_bnr_simple_y_pred)))
-model_bnr_simple_y_true=val_gen.classes
+model_bnr_simple_predictions_val = np.array(list(map(lambda x: np.argmax(x), model_bnr_simple_y_pred_val)))
+model_bnr_simple_y_true_val = val_gen.classes
 
 ##################################
 # Formulating the confusion matrix
 # for a simple CNN with batch normalization regularization
 # on the validation set
 ##################################
-CMatrix = pd.DataFrame(confusion_matrix(model_bnr_simple_y_true, model_bnr_simple_predictions), columns=classes, index =classes)
+cmatrix_val = pd.DataFrame(confusion_matrix(model_bnr_simple_y_true_val, model_bnr_simple_predictions_val), columns=classes, index =classes)
 
 ##################################
 # Calculating the model 
@@ -5350,7 +5350,7 @@ CMatrix = pd.DataFrame(confusion_matrix(model_bnr_simple_y_true, model_bnr_simpl
 # for each category of the validation set
 ##################################
 plt.figure(figsize=(10, 6))
-ax = sns.heatmap(CMatrix, annot = True, fmt = 'g' ,vmin = 0, vmax = 250, cmap = 'icefire')
+ax = sns.heatmap(cmatrix_val, annot = True, fmt = 'g' ,vmin = 0, vmax = 250, cmap = 'icefire')
 ax.set_xlabel('Predicted',fontsize = 14,weight = 'bold')
 ax.set_xticklabels(ax.get_xticklabels(),rotation =0)
 ax.set_ylabel('Actual',fontsize = 14,weight = 'bold') 
@@ -5377,7 +5377,7 @@ keras.backend.clear_session()
 # for a simple CNN with batch normalization regularization
 # for the entire validation set
 ##################################
-model_bnr_simple_acc = accuracy_score(model_bnr_simple_y_true, model_bnr_simple_predictions)
+model_bnr_simple_acc_val = accuracy_score(model_bnr_simple_y_true_val, model_bnr_simple_predictions_val)
 
 ##################################
 # Calculating the model 
@@ -5385,7 +5385,7 @@ model_bnr_simple_acc = accuracy_score(model_bnr_simple_y_true, model_bnr_simple_
 # for a simple CNN with batch normalization regularization
 # for the entire validation set
 ##################################
-model_bnr_simple_results_all = precision_recall_fscore_support(model_bnr_simple_y_true, model_bnr_simple_predictions, average='macro', zero_division = 1)
+model_bnr_simple_results_all_val = precision_recall_fscore_support(model_bnr_simple_y_true_val, model_bnr_simple_predictions_val, average='macro', zero_division = 1)
 
 ##################################
 # Calculating the model 
@@ -5393,18 +5393,18 @@ model_bnr_simple_results_all = precision_recall_fscore_support(model_bnr_simple_
 # for a simple CNN with batch normalization regularization
 # for each category of the validation set
 ##################################
-model_bnr_simple_results_class = precision_recall_fscore_support(model_bnr_simple_y_true, model_bnr_simple_predictions, average=None, zero_division = 1)
+model_bnr_simple_results_class_val = precision_recall_fscore_support(model_bnr_simple_y_true_val, model_bnr_simple_predictions_val, average=None, zero_division = 1)
 
 ##################################
 # Consolidating all model evaluation metrics 
 # for a simple CNN with batch normalization regularization
 ##################################
 metric_columns = ['Precision','Recall', 'F-Score','Support']
-model_bnr_simple_all_df = pd.concat([pd.DataFrame(list(model_bnr_simple_results_class)).T,pd.DataFrame(list(model_bnr_simple_results_all)).T])
-model_bnr_simple_all_df.columns = metric_columns
-model_bnr_simple_all_df.index = ['No Tumor', 'Glioma', 'Meningioma', 'Pituitary', 'Total']
+model_bnr_simple_all_df_val = pd.concat([pd.DataFrame(list(model_bnr_simple_results_class_val)).T,pd.DataFrame(list(model_bnr_simple_results_all_val)).T])
+model_bnr_simple_all_df_val.columns = metric_columns
+model_bnr_simple_all_df_val.index = ['No Tumor', 'Glioma', 'Meningioma', 'Pituitary', 'Total']
 print('Simple CNN With Batch Normalization Regularization : Validation Set Classification Performance')
-model_bnr_simple_all_df
+model_bnr_simple_all_df_val
 
 ```
 
@@ -5495,8 +5495,8 @@ for i in range(3):
     for j in range(5):
         model_bnr_simple_model_list.append('CNN_BNR_Simple')
         model_bnr_simple_measure_list.append(metric_columns[i])
-        model_bnr_simple_category_list.append(model_bnr_simple_all_df.index[j])
-        model_bnr_simple_value_list.append(model_bnr_simple_all_df.iloc[j,i])
+        model_bnr_simple_category_list.append(model_bnr_simple_all_df_val.index[j])
+        model_bnr_simple_value_list.append(model_bnr_simple_all_df_val.iloc[j,i])
 
 model_bnr_simple_all_summary = pd.DataFrame(zip(model_bnr_simple_model_list,
                                                 model_bnr_simple_measure_list,
@@ -5557,25 +5557,25 @@ model_bnr_complex_history = model_bnr_complex.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 387ms/step - loss: 2.4198 - recall: 0.4782 - val_loss: 1.1481 - val_recall: 0.0096 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m58s[0m 392ms/step - loss: 2.4198 - recall: 0.4782 - val_loss: 1.1481 - val_recall: 0.0096 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 378ms/step - loss: 0.3966 - recall: 0.8304 - val_loss: 0.9454 - val_recall: 0.1613 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m80s[0m 380ms/step - loss: 0.3966 - recall: 0.8304 - val_loss: 0.9454 - val_recall: 0.1613 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 390ms/step - loss: 0.2384 - recall: 0.9055 - val_loss: 0.7357 - val_recall: 0.5819 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 378ms/step - loss: 0.2384 - recall: 0.9055 - val_loss: 0.7357 - val_recall: 0.5819 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 384ms/step - loss: 0.2179 - recall: 0.9136 - val_loss: 0.6788 - val_recall: 0.7809 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 381ms/step - loss: 0.2179 - recall: 0.9136 - val_loss: 0.6788 - val_recall: 0.7809 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 381ms/step - loss: 0.1693 - recall: 0.9332 - val_loss: 0.8541 - val_recall: 0.7064 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 376ms/step - loss: 0.1693 - recall: 0.9332 - val_loss: 0.8541 - val_recall: 0.7064 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 380ms/step - loss: 0.1205 - recall: 0.9529 - val_loss: 0.8922 - val_recall: 0.7774 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 378ms/step - loss: 0.1205 - recall: 0.9529 - val_loss: 0.8922 - val_recall: 0.7774 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 381ms/step - loss: 0.1140 - recall: 0.9631 - val_loss: 1.1084 - val_recall: 0.7695 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 378ms/step - loss: 0.1140 - recall: 0.9631 - val_loss: 1.1084 - val_recall: 0.7695 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 375ms/step - loss: 0.0670 - recall: 0.9783 - val_loss: 0.8778 - val_recall: 0.8151 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 377ms/step - loss: 0.0670 - recall: 0.9783 - val_loss: 0.8778 - val_recall: 0.8151 - learning_rate: 1.0000e-04
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 380ms/step - loss: 0.0429 - recall: 0.9854 - val_loss: 0.8952 - val_recall: 0.8186 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 384ms/step - loss: 0.0429 - recall: 0.9854 - val_loss: 0.8952 - val_recall: 0.8186 - learning_rate: 1.0000e-04
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.0439 - recall: 0.9852 - val_loss: 0.8729 - val_recall: 0.8335 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 385ms/step - loss: 0.0439 - recall: 0.9852 - val_loss: 0.8729 - val_recall: 0.8335 - learning_rate: 1.0000e-04
     
 
 
@@ -5585,11 +5585,11 @@ model_bnr_complex_history = model_bnr_complex.fit(train_gen,
 # for a complex CNN with batch normalization regularization
 # on the independent validation set
 ##################################
-model_bnr_complex_y_pred = model_bnr_complex.predict(val_gen)
+model_bnr_complex_y_pred_val = model_bnr_complex.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 131ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 135ms/step
     
 
 
@@ -5616,15 +5616,15 @@ plot_training_history(model_bnr_complex_history, 'Complex CNN With Batch Normali
 # for a complex CNN with batch normalization regularization
 # on the validation set
 ##################################
-model_bnr_complex_predictions = np.array(list(map(lambda x: np.argmax(x), model_bnr_complex_y_pred)))
-model_bnr_complex_y_true=val_gen.classes
+model_bnr_complex_predictions_val = np.array(list(map(lambda x: np.argmax(x), model_bnr_complex_y_pred_val)))
+model_bnr_complex_y_true_val = val_gen.classes
 
 ##################################
 # Formulating the confusion matrix
 # for a complex CNN with batch normalization regularization
 # on the validation set
 ##################################
-CMatrix = pd.DataFrame(confusion_matrix(model_bnr_complex_y_true, model_bnr_complex_predictions), columns=classes, index =classes)
+cmatrix_val = pd.DataFrame(confusion_matrix(model_bnr_complex_y_true_val, model_bnr_complex_predictions_val), columns=classes, index =classes)
 
 ##################################
 # Calculating the model 
@@ -5633,7 +5633,7 @@ CMatrix = pd.DataFrame(confusion_matrix(model_bnr_complex_y_true, model_bnr_comp
 # for each category of the validation set
 ##################################
 plt.figure(figsize=(10, 6))
-ax = sns.heatmap(CMatrix, annot = True, fmt = 'g' ,vmin = 0, vmax = 250, cmap = 'icefire')
+ax = sns.heatmap(cmatrix_val, annot = True, fmt = 'g' ,vmin = 0, vmax = 250, cmap = 'icefire')
 ax.set_xlabel('Predicted',fontsize = 14,weight = 'bold')
 ax.set_xticklabels(ax.get_xticklabels(),rotation =0)
 ax.set_ylabel('Actual',fontsize = 14,weight = 'bold') 
@@ -5660,7 +5660,7 @@ keras.backend.clear_session()
 # for a complex CNN with batch normalization regularization
 # for the entire validation set
 ##################################
-model_bnr_complex_acc = accuracy_score(model_bnr_complex_y_true, model_bnr_complex_predictions)
+model_bnr_complex_acc_val = accuracy_score(model_bnr_complex_y_true_val, model_bnr_complex_predictions_val)
 
 ##################################
 # Calculating the model 
@@ -5668,7 +5668,7 @@ model_bnr_complex_acc = accuracy_score(model_bnr_complex_y_true, model_bnr_compl
 # for a complex CNN with batch normalization regularization
 # for the entire validation set
 ##################################
-model_bnr_complex_results_all = precision_recall_fscore_support(model_bnr_complex_y_true, model_bnr_complex_predictions, average='macro', zero_division = 1)
+model_bnr_complex_results_all_val = precision_recall_fscore_support(model_bnr_complex_y_true_val, model_bnr_complex_predictions_val, average='macro', zero_division = 1)
 
 ##################################
 # Calculating the model 
@@ -5676,18 +5676,18 @@ model_bnr_complex_results_all = precision_recall_fscore_support(model_bnr_comple
 # for a complex CNN with batch normalization regularization
 # for each category of the validation set
 ##################################
-model_bnr_complex_results_class = precision_recall_fscore_support(model_bnr_complex_y_true, model_bnr_complex_predictions, average=None, zero_division = 1)
+model_bnr_complex_results_class_val = precision_recall_fscore_support(model_bnr_complex_y_true_val, model_bnr_complex_predictions_val, average=None, zero_division = 1)
 
 ##################################
 # Consolidating all model evaluation metrics 
 # for a complex CNN with batch normalization regularization
 ##################################
 metric_columns = ['Precision','Recall', 'F-Score','Support']
-model_bnr_complex_all_df = pd.concat([pd.DataFrame(list(model_bnr_complex_results_class)).T,pd.DataFrame(list(model_bnr_complex_results_all)).T])
-model_bnr_complex_all_df.columns = metric_columns
-model_bnr_complex_all_df.index = ['No Tumor', 'Glioma', 'Meningioma', 'Pituitary', 'Total']
+model_bnr_complex_all_df_val = pd.concat([pd.DataFrame(list(model_bnr_complex_results_class_val)).T,pd.DataFrame(list(model_bnr_complex_results_all_val)).T])
+model_bnr_complex_all_df_val.columns = metric_columns
+model_bnr_complex_all_df_val.index = ['No Tumor', 'Glioma', 'Meningioma', 'Pituitary', 'Total']
 print('Complex CNN With Batch Normalization Regularization : Validation Set Classification Performance')
-model_bnr_complex_all_df
+model_bnr_complex_all_df_val
 
 ```
 
@@ -5778,8 +5778,8 @@ for i in range(3):
     for j in range(5):
         model_bnr_complex_model_list.append('CNN_BNR_Complex')
         model_bnr_complex_measure_list.append(metric_columns[i])
-        model_bnr_complex_category_list.append(model_bnr_complex_all_df.index[j])
-        model_bnr_complex_value_list.append(model_bnr_complex_all_df.iloc[j,i])
+        model_bnr_complex_category_list.append(model_bnr_complex_all_df_val.index[j])
+        model_bnr_complex_value_list.append(model_bnr_complex_all_df_val.iloc[j,i])
 
 model_bnr_complex_all_summary = pd.DataFrame(zip(model_bnr_complex_model_list,
                                                  model_bnr_complex_measure_list,
@@ -5842,25 +5842,25 @@ model_cdrbnr_simple_history = model_cdrbnr_simple.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m42s[0m 281ms/step - loss: 1.6579 - recall: 0.1515 - val_loss: 1.3345 - val_recall: 0.0018 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 255ms/step - loss: 1.6579 - recall: 0.1515 - val_loss: 1.3345 - val_recall: 0.0018 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 268ms/step - loss: 1.0206 - recall: 0.3417 - val_loss: 1.1807 - val_recall: 0.0649 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 271ms/step - loss: 1.0206 - recall: 0.3417 - val_loss: 1.1807 - val_recall: 0.0649 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 256ms/step - loss: 0.9324 - recall: 0.3955 - val_loss: 1.0523 - val_recall: 0.2366 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 259ms/step - loss: 0.9324 - recall: 0.3955 - val_loss: 1.0523 - val_recall: 0.2366 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 256ms/step - loss: 0.7758 - recall: 0.4966 - val_loss: 0.9607 - val_recall: 0.4137 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 273ms/step - loss: 0.7758 - recall: 0.4966 - val_loss: 0.9607 - val_recall: 0.4137 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 259ms/step - loss: 0.7319 - recall: 0.5117 - val_loss: 1.0513 - val_recall: 0.4496 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 262ms/step - loss: 0.7319 - recall: 0.5117 - val_loss: 1.0513 - val_recall: 0.4496 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 261ms/step - loss: 0.6944 - recall: 0.5397 - val_loss: 1.0002 - val_recall: 0.5127 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 259ms/step - loss: 0.6944 - recall: 0.5397 - val_loss: 1.0002 - val_recall: 0.5127 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 260ms/step - loss: 0.6810 - recall: 0.5275 - val_loss: 1.1606 - val_recall: 0.6056 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 256ms/step - loss: 0.6810 - recall: 0.5275 - val_loss: 1.1606 - val_recall: 0.6056 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 256ms/step - loss: 0.6298 - recall: 0.5520 - val_loss: 0.9720 - val_recall: 0.5951 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 254ms/step - loss: 0.6298 - recall: 0.5520 - val_loss: 0.9720 - val_recall: 0.5951 - learning_rate: 1.0000e-04
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 254ms/step - loss: 0.5942 - recall: 0.5613 - val_loss: 0.9829 - val_recall: 0.5960 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 259ms/step - loss: 0.5942 - recall: 0.5613 - val_loss: 0.9829 - val_recall: 0.5960 - learning_rate: 1.0000e-04
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 257ms/step - loss: 0.6268 - recall: 0.5480 - val_loss: 1.0679 - val_recall: 0.5942 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 262ms/step - loss: 0.6268 - recall: 0.5480 - val_loss: 1.0679 - val_recall: 0.5942 - learning_rate: 1.0000e-04
     
 
 
@@ -5870,11 +5870,11 @@ model_cdrbnr_simple_history = model_cdrbnr_simple.fit(train_gen,
 # for a simple CNN with dropout and batch normalization regularization
 # on the independent validation set
 ##################################
-model_cdrbnr_simple_y_pred = model_cdrbnr_simple.predict(val_gen)
+model_cdrbnr_simple_y_pred_val = model_cdrbnr_simple.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 100ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m3s[0m 91ms/step
     
 
 
@@ -5901,15 +5901,15 @@ plot_training_history(model_cdrbnr_simple_history, 'Simple CNN With Dropout and 
 # for a simple CNN with dropout and batch normalization regularization
 # on the validation set
 ##################################
-model_cdrbnr_simple_predictions = np.array(list(map(lambda x: np.argmax(x), model_cdrbnr_simple_y_pred)))
-model_cdrbnr_simple_y_true=val_gen.classes
+model_cdrbnr_simple_predictions_val = np.array(list(map(lambda x: np.argmax(x), model_cdrbnr_simple_y_pred_val)))
+model_cdrbnr_simple_y_true_val = val_gen.classes
 
 ##################################
 # Formulating the confusion matrix
 # for a simple CNN with dropout and batch normalization regularization
 # on the validation set
 ##################################
-CMatrix = pd.DataFrame(confusion_matrix(model_cdrbnr_simple_y_true, model_cdrbnr_simple_predictions), columns=classes, index =classes)
+cmatrix_val = pd.DataFrame(confusion_matrix(model_cdrbnr_simple_y_true_val, model_cdrbnr_simple_predictions_val), columns=classes, index =classes)
 
 ##################################
 # Calculating the model 
@@ -5918,7 +5918,7 @@ CMatrix = pd.DataFrame(confusion_matrix(model_cdrbnr_simple_y_true, model_cdrbnr
 # for each category of the validation set
 ##################################
 plt.figure(figsize=(10, 6))
-ax = sns.heatmap(CMatrix, annot = True, fmt = 'g' ,vmin = 0, vmax = 250, cmap = 'icefire')
+ax = sns.heatmap(cmatrix_val, annot = True, fmt = 'g' ,vmin = 0, vmax = 250, cmap = 'icefire')
 ax.set_xlabel('Predicted',fontsize = 14,weight = 'bold')
 ax.set_xticklabels(ax.get_xticklabels(),rotation =0)
 ax.set_ylabel('Actual',fontsize = 14,weight = 'bold') 
@@ -5945,7 +5945,7 @@ keras.backend.clear_session()
 # for a simple CNN with dropout and batch normalization regularization
 # for the entire validation set
 ##################################
-model_cdrbnr_simple_acc = accuracy_score(model_cdrbnr_simple_y_true, model_cdrbnr_simple_predictions)
+model_cdrbnr_simple_acc_val = accuracy_score(model_cdrbnr_simple_y_true_val, model_cdrbnr_simple_predictions_val)
 
 ##################################
 # Calculating the model 
@@ -5953,7 +5953,7 @@ model_cdrbnr_simple_acc = accuracy_score(model_cdrbnr_simple_y_true, model_cdrbn
 # for a simple CNN with dropout and batch normalization regularization
 # for the entire validation set
 ##################################
-model_cdrbnr_simple_results_all = precision_recall_fscore_support(model_cdrbnr_simple_y_true, model_cdrbnr_simple_predictions, average='macro', zero_division = 1)
+model_cdrbnr_simple_results_all_val = precision_recall_fscore_support(model_cdrbnr_simple_y_true_val, model_cdrbnr_simple_predictions_val, average='macro', zero_division = 1)
 
 ##################################
 # Calculating the model 
@@ -5961,18 +5961,18 @@ model_cdrbnr_simple_results_all = precision_recall_fscore_support(model_cdrbnr_s
 # for a simple CNN with dropout and batch normalization regularization
 # for each category of the validation set
 ##################################
-model_cdrbnr_simple_results_class = precision_recall_fscore_support(model_cdrbnr_simple_y_true, model_cdrbnr_simple_predictions, average=None, zero_division = 1)
+model_cdrbnr_simple_results_class_val = precision_recall_fscore_support(model_cdrbnr_simple_y_true_val, model_cdrbnr_simple_predictions_val, average=None, zero_division = 1)
 
 ##################################
 # Consolidating all model evaluation metrics 
 # for a simple CNN with dropout and batch normalization regularization
 ##################################
 metric_columns = ['Precision','Recall', 'F-Score','Support']
-model_cdrbnr_simple_all_df = pd.concat([pd.DataFrame(list(model_cdrbnr_simple_results_class)).T,pd.DataFrame(list(model_cdrbnr_simple_results_all)).T])
-model_cdrbnr_simple_all_df.columns = metric_columns
-model_cdrbnr_simple_all_df.index = ['No Tumor', 'Glioma', 'Meningioma', 'Pituitary', 'Total']
+model_cdrbnr_simple_all_df_val = pd.concat([pd.DataFrame(list(model_cdrbnr_simple_results_class_val)).T,pd.DataFrame(list(model_cdrbnr_simple_results_all_val)).T])
+model_cdrbnr_simple_all_df_val.columns = metric_columns
+model_cdrbnr_simple_all_df_val.index = ['No Tumor', 'Glioma', 'Meningioma', 'Pituitary', 'Total']
 print('Simple CNN With Dropout and Batch Normalization Regularization : Validation Set Classification Performance')
-model_cdrbnr_simple_all_df
+model_cdrbnr_simple_all_df_val
 
 ```
 
@@ -6098,37 +6098,37 @@ model_cdrbnr_complex_history = model_cdrbnr_complex.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m59s[0m 395ms/step - loss: 1.7995 - recall: 0.5219 - val_loss: 1.1321 - val_recall: 0.0342 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m58s[0m 393ms/step - loss: 1.7995 - recall: 0.5219 - val_loss: 1.1321 - val_recall: 0.0342 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m80s[0m 383ms/step - loss: 0.3938 - recall: 0.8333 - val_loss: 0.9887 - val_recall: 0.0649 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 385ms/step - loss: 0.3938 - recall: 0.8333 - val_loss: 0.9887 - val_recall: 0.0649 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 384ms/step - loss: 0.2484 - recall: 0.8988 - val_loss: 0.6290 - val_recall: 0.6713 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 379ms/step - loss: 0.2484 - recall: 0.8988 - val_loss: 0.6290 - val_recall: 0.6713 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.2268 - recall: 0.9093 - val_loss: 0.6252 - val_recall: 0.7555 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 385ms/step - loss: 0.2268 - recall: 0.9093 - val_loss: 0.6252 - val_recall: 0.7555 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 382ms/step - loss: 0.1590 - recall: 0.9359 - val_loss: 0.8430 - val_recall: 0.7046 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 387ms/step - loss: 0.1590 - recall: 0.9359 - val_loss: 0.8430 - val_recall: 0.7046 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m113s[0m 790ms/step - loss: 0.1436 - recall: 0.9409 - val_loss: 0.5680 - val_recall: 0.8352 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 388ms/step - loss: 0.1436 - recall: 0.9409 - val_loss: 0.5680 - val_recall: 0.8352 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.1110 - recall: 0.9563 - val_loss: 0.7335 - val_recall: 0.8344 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 380ms/step - loss: 0.1110 - recall: 0.9563 - val_loss: 0.7335 - val_recall: 0.8344 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.1024 - recall: 0.9607 - val_loss: 0.9613 - val_recall: 0.8291 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 380ms/step - loss: 0.1024 - recall: 0.9607 - val_loss: 0.9613 - val_recall: 0.8291 - learning_rate: 0.0010
     Epoch 9/20
     [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.1047 - recall: 0.9615 - val_loss: 0.6784 - val_recall: 0.8475 - learning_rate: 0.0010
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 382ms/step - loss: 0.0612 - recall: 0.9779 - val_loss: 0.7055 - val_recall: 0.8580 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 379ms/step - loss: 0.0612 - recall: 0.9779 - val_loss: 0.7055 - val_recall: 0.8580 - learning_rate: 1.0000e-04
     Epoch 11/20
     [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 381ms/step - loss: 0.0465 - recall: 0.9825 - val_loss: 0.7504 - val_recall: 0.8615 - learning_rate: 1.0000e-04
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 382ms/step - loss: 0.0426 - recall: 0.9825 - val_loss: 0.8035 - val_recall: 0.8624 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.0426 - recall: 0.9825 - val_loss: 0.8035 - val_recall: 0.8624 - learning_rate: 1.0000e-04
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 385ms/step - loss: 0.0373 - recall: 0.9885 - val_loss: 0.7971 - val_recall: 0.8624 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 379ms/step - loss: 0.0373 - recall: 0.9885 - val_loss: 0.7971 - val_recall: 0.8624 - learning_rate: 1.0000e-05
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 385ms/step - loss: 0.0427 - recall: 0.9842 - val_loss: 0.7896 - val_recall: 0.8606 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.0427 - recall: 0.9842 - val_loss: 0.7896 - val_recall: 0.8606 - learning_rate: 1.0000e-05
     Epoch 15/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 381ms/step - loss: 0.0323 - recall: 0.9903 - val_loss: 0.7911 - val_recall: 0.8606 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.0323 - recall: 0.9903 - val_loss: 0.7911 - val_recall: 0.8606 - learning_rate: 1.0000e-05
     Epoch 16/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 381ms/step - loss: 0.0418 - recall: 0.9818 - val_loss: 0.7901 - val_recall: 0.8606 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.0418 - recall: 0.9818 - val_loss: 0.7901 - val_recall: 0.8606 - learning_rate: 1.0000e-06
     
 
 
@@ -6146,8 +6146,8 @@ for i in range(3):
     for j in range(5):
         model_cdrbnr_simple_model_list.append('CNN_CDRBNR_Simple')
         model_cdrbnr_simple_measure_list.append(metric_columns[i])
-        model_cdrbnr_simple_category_list.append(model_cdrbnr_simple_all_df.index[j])
-        model_cdrbnr_simple_value_list.append(model_cdrbnr_simple_all_df.iloc[j,i])
+        model_cdrbnr_simple_category_list.append(model_cdrbnr_simple_all_df_val.index[j])
+        model_cdrbnr_simple_value_list.append(model_cdrbnr_simple_all_df_val.iloc[j,i])
 
 model_cdrbnr_simple_all_summary = pd.DataFrame(zip(model_cdrbnr_simple_model_list,
                                                    model_cdrbnr_simple_measure_list,
@@ -6167,11 +6167,11 @@ model_cdrbnr_simple_all_summary = pd.DataFrame(zip(model_cdrbnr_simple_model_lis
 # for a complex CNN with dropout and batch normalization regularization
 # on the independent validation set
 ##################################
-model_cdrbnr_complex_y_pred = model_cdrbnr_complex.predict(val_gen)
+model_cdrbnr_complex_y_pred_val = model_cdrbnr_complex.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 134ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 142ms/step
     
 
 
@@ -6198,15 +6198,15 @@ plot_training_history(model_cdrbnr_complex_history, 'Complex CNN With Dropout an
 # for a complex CNN with dropout and batch normalization regularization
 # on the validation set
 ##################################
-model_cdrbnr_complex_predictions = np.array(list(map(lambda x: np.argmax(x), model_cdrbnr_complex_y_pred)))
-model_cdrbnr_complex_y_true=val_gen.classes
+model_cdrbnr_complex_predictions_val = np.array(list(map(lambda x: np.argmax(x), model_cdrbnr_complex_y_pred_val)))
+model_cdrbnr_complex_y_true_val = val_gen.classes
 
 ##################################
 # Formulating the confusion matrix
 # for a complex CNN with dropout and batch normalization regularization
 # on the validation set
 ##################################
-CMatrix = pd.DataFrame(confusion_matrix(model_cdrbnr_complex_y_true, model_cdrbnr_complex_predictions), columns=classes, index =classes)
+cmatrix_val = pd.DataFrame(confusion_matrix(model_cdrbnr_complex_y_true_val, model_cdrbnr_complex_predictions_val), columns=classes, index =classes)
 
 ##################################
 # Calculating the model 
@@ -6215,7 +6215,7 @@ CMatrix = pd.DataFrame(confusion_matrix(model_cdrbnr_complex_y_true, model_cdrbn
 # for each category of the validation set
 ##################################
 plt.figure(figsize=(10, 6))
-ax = sns.heatmap(CMatrix, annot = True, fmt = 'g' ,vmin = 0, vmax = 250, cmap = 'icefire')
+ax = sns.heatmap(cmatrix_val, annot = True, fmt = 'g' ,vmin = 0, vmax = 250, cmap = 'icefire')
 ax.set_xlabel('Predicted',fontsize = 14,weight = 'bold')
 ax.set_xticklabels(ax.get_xticklabels(),rotation =0)
 ax.set_ylabel('Actual',fontsize = 14,weight = 'bold') 
@@ -6242,7 +6242,7 @@ keras.backend.clear_session()
 # for a complex CNN with dropout and batch normalization regularization
 # for the entire validation set
 ##################################
-model_cdrbnr_complex_acc = accuracy_score(model_cdrbnr_complex_y_true, model_cdrbnr_complex_predictions)
+model_cdrbnr_complex_acc_val = accuracy_score(model_cdrbnr_complex_y_true_val, model_cdrbnr_complex_predictions_val)
 
 ##################################
 # Calculating the model 
@@ -6250,7 +6250,7 @@ model_cdrbnr_complex_acc = accuracy_score(model_cdrbnr_complex_y_true, model_cdr
 # for a complex CNN with dropout and batch normalization regularization
 # for the entire validation set
 ##################################
-model_cdrbnr_complex_results_all = precision_recall_fscore_support(model_cdrbnr_complex_y_true, model_cdrbnr_complex_predictions, average='macro', zero_division = 1)
+model_cdrbnr_complex_results_all_val = precision_recall_fscore_support(model_cdrbnr_complex_y_true_val, model_cdrbnr_complex_predictions_val, average='macro', zero_division = 1)
 
 ##################################
 # Calculating the model 
@@ -6258,18 +6258,18 @@ model_cdrbnr_complex_results_all = precision_recall_fscore_support(model_cdrbnr_
 # for a complex CNN with dropout and batch normalization regularization
 # for each category of the validation set
 ##################################
-model_cdrbnr_complex_results_class = precision_recall_fscore_support(model_cdrbnr_complex_y_true, model_cdrbnr_complex_predictions, average=None, zero_division = 1)
+model_cdrbnr_complex_results_class_val = precision_recall_fscore_support(model_cdrbnr_complex_y_true_val, model_cdrbnr_complex_predictions_val, average=None, zero_division = 1)
 
 ##################################
 # Consolidating all model evaluation metrics 
 # for a complex CNN with dropout and batch normalization regularization
 ##################################
 metric_columns = ['Precision','Recall', 'F-Score','Support']
-model_cdrbnr_complex_all_df = pd.concat([pd.DataFrame(list(model_cdrbnr_complex_results_class)).T,pd.DataFrame(list(model_cdrbnr_complex_results_all)).T])
-model_cdrbnr_complex_all_df.columns = metric_columns
-model_cdrbnr_complex_all_df.index = ['No Tumor', 'Glioma', 'Meningioma', 'Pituitary', 'Total']
+model_cdrbnr_complex_all_df_val = pd.concat([pd.DataFrame(list(model_cdrbnr_complex_results_class_val)).T,pd.DataFrame(list(model_cdrbnr_complex_results_all_val)).T])
+model_cdrbnr_complex_all_df_val.columns = metric_columns
+model_cdrbnr_complex_all_df_val.index = ['No Tumor', 'Glioma', 'Meningioma', 'Pituitary', 'Total']
 print('Complex CNN With Dropout and Batch Normalization Regularization : Validation Set Classification Performance')
-model_cdrbnr_complex_all_df
+model_cdrbnr_complex_all_df_val
 
 ```
 
@@ -6360,8 +6360,8 @@ for i in range(3):
     for j in range(5):
         model_cdrbnr_complex_model_list.append('CNN_CDRBNR_Complex')
         model_cdrbnr_complex_measure_list.append(metric_columns[i])
-        model_cdrbnr_complex_category_list.append(model_cdrbnr_complex_all_df.index[j])
-        model_cdrbnr_complex_value_list.append(model_cdrbnr_complex_all_df.iloc[j,i])
+        model_cdrbnr_complex_category_list.append(model_cdrbnr_complex_all_df_val.index[j])
+        model_cdrbnr_complex_value_list.append(model_cdrbnr_complex_all_df_val.iloc[j,i])
 
 model_cdrbnr_complex_all_summary = pd.DataFrame(zip(model_cdrbnr_complex_model_list,
                                                     model_cdrbnr_complex_measure_list,
@@ -6862,6 +6862,168 @@ for container in cnn_model_performance_comparison_fscore_plot.containers:
 
 
 ### 1.6.8 Model Testing <a class="anchor" id="1.6.9"></a>
+
+
+```python
+##################################
+# Evaluating the model
+# for a complex CNN with dropout and batch normalization regularization
+# on the independent test set
+##################################
+model_cdrbnr_complex_y_pred_test = model_cdrbnr_complex.predict(test_gen)
+```
+
+    [1m41/41[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m6s[0m 133ms/step
+    
+
+
+```python
+##################################
+# Consolidating the predictions
+# for a complex CNN with dropout and batch normalization regularization
+# on the test set
+##################################
+model_cdrbnr_complex_predictions_test = np.array(list(map(lambda x: np.argmax(x), model_cdrbnr_complex_y_pred_test)))
+model_cdrbnr_complex_y_true_test = test_gen.classes
+
+##################################
+# Formulating the confusion matrix
+# for a complex CNN with dropout and batch normalization regularization
+# on the test set
+##################################
+cmatrix_test = pd.DataFrame(confusion_matrix(model_cdrbnr_complex_y_true_test, model_cdrbnr_complex_predictions_test), columns=classes, index =classes)
+
+##################################
+# Calculating the model 
+# Precision, Recall, F-score and Support
+# for a complex CNN with dropout and batch normalization regularization
+# for each category of the test set
+##################################
+plt.figure(figsize=(10, 6))
+ax = sns.heatmap(cmatrix_test, annot = True, fmt = 'g' ,vmin = 0, vmax = 250, cmap = 'icefire')
+ax.set_xlabel('Predicted',fontsize = 14,weight = 'bold')
+ax.set_xticklabels(ax.get_xticklabels(),rotation =0)
+ax.set_ylabel('Actual',fontsize = 14,weight = 'bold') 
+ax.set_yticklabels(ax.get_yticklabels(),rotation =0)
+ax.set_title('Complex CNN With Dropout and Batch Normalization Regularization : Test Set Confusion Matrix',fontsize = 14, weight = 'bold', pad=20);
+
+```
+
+
+    
+![png](output_226_0.png)
+    
+
+
+
+```python
+##################################
+# Calculating the model accuracy
+# for a complex CNN with dropout and batch normalization regularization
+# for the entire test set
+##################################
+model_cdrbnr_complex_acc_test = accuracy_score(model_cdrbnr_complex_y_true_test, model_cdrbnr_complex_predictions_test)
+
+##################################
+# Calculating the model 
+# Precision, Recall, F-score and Support
+# for a complex CNN with dropout and batch normalization regularization
+# for the entire test set
+##################################
+model_cdrbnr_complex_results_all_test = precision_recall_fscore_support(model_cdrbnr_complex_y_true_test, model_cdrbnr_complex_predictions_test, average='macro', zero_division = 1)
+
+##################################
+# Calculating the model 
+# Precision, Recall, F-score and Support
+# for a complex CNN with dropout and batch normalization regularization
+# for each category of the test set
+##################################
+model_cdrbnr_complex_results_class_test = precision_recall_fscore_support(model_cdrbnr_complex_y_true_test, model_cdrbnr_complex_predictions_test, average=None, zero_division = 1)
+
+##################################
+# Consolidating all model evaluation metrics 
+# for a complex CNN with dropout and batch normalization regularization
+##################################
+metric_columns = ['Precision','Recall', 'F-Score','Support']
+model_cdrbnr_complex_all_df_test = pd.concat([pd.DataFrame(list(model_cdrbnr_complex_results_class_test)).T,pd.DataFrame(list(model_cdrbnr_complex_results_all_test)).T])
+model_cdrbnr_complex_all_df_test.columns = metric_columns
+model_cdrbnr_complex_all_df_test.index = ['No Tumor', 'Glioma', 'Meningioma', 'Pituitary', 'Total']
+print('Complex CNN With Dropout and Batch Normalization Regularization : Test Set Classification Performance')
+model_cdrbnr_complex_all_df_test
+
+```
+
+    Complex CNN With Dropout and Batch Normalization Regularization : Test Set Classification Performance
+    
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Precision</th>
+      <th>Recall</th>
+      <th>F-Score</th>
+      <th>Support</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>No Tumor</th>
+      <td>0.860215</td>
+      <td>0.987654</td>
+      <td>0.919540</td>
+      <td>405.0</td>
+    </tr>
+    <tr>
+      <th>Glioma</th>
+      <td>0.923345</td>
+      <td>0.883333</td>
+      <td>0.902896</td>
+      <td>300.0</td>
+    </tr>
+    <tr>
+      <th>Meningioma</th>
+      <td>0.864542</td>
+      <td>0.709150</td>
+      <td>0.779174</td>
+      <td>306.0</td>
+    </tr>
+    <tr>
+      <th>Pituitary</th>
+      <td>0.938312</td>
+      <td>0.963333</td>
+      <td>0.950658</td>
+      <td>300.0</td>
+    </tr>
+    <tr>
+      <th>Total</th>
+      <td>0.896603</td>
+      <td>0.885868</td>
+      <td>0.888067</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
 
 ### 1.6.9 Model Inference <a class="anchor" id="1.6.10"></a>
 
