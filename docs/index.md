@@ -15,19 +15,18 @@
         * [1.5.2 Hypothesis Testing](#1.5.2)
     * [1.6 Predictive Model Development](#1.6)
         * [1.6.1 Pre-Modelling Data Preparation](#1.6.1)
-        * [1.6.2 Data Splitting](#1.6.2)
-        * [1.6.3 Convolutional Neural Network Sequential Layer Development](#1.6.3)
-            * [1.6.3.1 CNN With No Regularization](#1.6.3.1)
-            * [1.6.3.2 CNN With Dropout Regularization](#1.6.3.2)
-            * [1.6.3.3 CNN With Batch Normalization Regularization](#1.6.3.3)
-            * [1.6.3.4 CNN With Dropout and Batch Normalization Regularization](#1.6.3.4)
-        * [1.6.4 CNN With No Regularization Model Fitting | Hyperparameter Tuning | Validation](#1.6.4)
-        * [1.6.5 CNN With Dropout Regularization Model Fitting | Hyperparameter Tuning | Validation](#1.6.5)
-        * [1.6.6 CNN With Batch Normalization Regularization Model Fitting | Hyperparameter Tuning | Validation](#1.6.6)
-        * [1.6.7 CNN With Dropout and Batch Normalization Regularization Model Fitting | Hyperparameter Tuning | Validation](#1.6.7)
-        * [1.6.8 Model Selection](#1.6.8)
-        * [1.6.9 Model Testing](#1.6.9)
-        * [1.6.10 Model Inference](#1.6.10)
+        * [1.6.2 Convolutional Neural Network Sequential Layer Development](#1.6.2)
+            * [1.6.2.1 CNN With No Regularization](#1.6.2.1)
+            * [1.6.2.2 CNN With Dropout Regularization](#1.6.2.2)
+            * [1.6.2.3 CNN With Batch Normalization Regularization](#1.6.2.3)
+            * [1.6.2.4 CNN With Dropout and Batch Normalization Regularization](#1.6.2.4)
+        * [1.6.3 CNN With No Regularization Model Fitting | Hyperparameter Tuning | Validation](#1.6.3)
+        * [1.6.4 CNN With Dropout Regularization Model Fitting | Hyperparameter Tuning | Validation](#1.6.4)
+        * [1.6.5 CNN With Batch Normalization Regularization Model Fitting | Hyperparameter Tuning | Validation](#1.6.5)
+        * [1.6.6 CNN With Dropout and Batch Normalization Regularization Model Fitting | Hyperparameter Tuning | Validation](#1.6.6)
+        * [1.6.7 Model Selection](#1.6.7)
+        * [1.6.8 Model Testing](#1.6.8)
+        * [1.6.9 Model Inference](#1.6.9)
     * [1.7 Predictive Model Deployment Using Streamlit and Streamlit Community Cloud](#1.7)
         * [1.7.1 Model Application Programming Interface Code Development](#1.7.1)
         * [1.7.2 User Interface Application Code Development](#1.7.2)
@@ -141,30 +140,37 @@ PIPELINES_PATH = r"pipelines"
 ```python
 ##################################
 # Defining the image category levels
+# for the training data
 ##################################
-diagnosis_code_dictionary = {'Tr-no': 0,
-                             'Tr-noTr': 0,
-                             'Tr-gl': 1,
-                             'Tr-glTr': 1,
-                             'Tr-me': 2,
-                             'Tr-meTr': 2,
-                             'Tr-pi': 3,
-                             'Tr-piTr': 3}
+diagnosis_code_dictionary_train = {'Tr-no': 0,
+                                   'Tr-noTr': 0,
+                                   'Tr-gl': 1,
+                                   'Tr-glTr': 1,
+                                   'Tr-me': 2,
+                                   'Tr-meTr': 2,
+                                   'Tr-pi': 3,
+                                   'Tr-piTr': 3}
 
 ##################################
 # Defining the image category descriptions
+# for the training data
 ##################################
-diagnosis_description_dictionary = {'Tr-no': 'No Tumor',
-                                    'Tr-noTr': 'No Tumor',
-                                    'Tr-gl': 'Glioma',
-                                    'Tr-glTr': 'Glioma',
-                                    'Tr-me': 'Meningioma',
-                                    'Tr-meTr': 'Meningioma',
-                                    'Tr-pi': 'Pituitary',
-                                    'Tr-piTr': 'Pituitary'}
+diagnosis_description_dictionary_train = {'Tr-no': 'No Tumor',
+                                          'Tr-noTr': 'No Tumor',
+                                          'Tr-gl': 'Glioma',
+                                          'Tr-glTr': 'Glioma',
+                                          'Tr-me': 'Meningioma',
+                                          'Tr-meTr': 'Meningioma',
+                                          'Tr-pi': 'Pituitary',
+                                          'Tr-piTr': 'Pituitary'}
 
+```
+
+
+```python
 ##################################
 # Consolidating the image path
+# for the training data
 ##################################
 imageid_path_dictionary_train = {os.path.splitext(os.path.basename(x))[0]: x for x in glob(os.path.join("..", DATASETS_FINAL_TRAIN_PATH, '*','*.jpg'))}
 
@@ -174,6 +180,7 @@ imageid_path_dictionary_train = {os.path.splitext(os.path.basename(x))[0]: x for
 ```python
 ##################################
 # Taking a snapshot of the dictionary
+# for the training data
 ##################################
 dict(list(imageid_path_dictionary_train.items())[0:5]) 
 
@@ -194,22 +201,22 @@ dict(list(imageid_path_dictionary_train.items())[0:5])
 ```python
 ##################################
 # Consolidating the information
-# from the dataset
+# from the training datas
 # into a dataframe
 ##################################
 mri_images_train = pd.DataFrame.from_dict(imageid_path_dictionary_train, orient = 'index').reset_index()
 mri_images_train.columns = ['Image_ID','Path']
 classes = mri_images_train.Image_ID.str.split('_').str[0]
 mri_images_train['Diagnosis'] = classes
-mri_images_train['Target'] = mri_images_train['Diagnosis'].map(diagnosis_code_dictionary.get) 
-mri_images_train['Class'] = mri_images_train['Diagnosis'].map(diagnosis_description_dictionary.get) 
+mri_images_train['Target'] = mri_images_train['Diagnosis'].map(diagnosis_code_dictionary_train.get) 
+mri_images_train['Class'] = mri_images_train['Diagnosis'].map(diagnosis_description_dictionary_train.get) 
 
 ```
 
 
 ```python
 ##################################
-# Performing a general exploration of the dataset
+# Performing a general exploration of the training data
 ##################################
 print('Dataset Dimensions: ')
 display(mri_images_train.shape)
@@ -227,6 +234,7 @@ display(mri_images_train.shape)
 ```python
 ##################################
 # Listing the column names and data types
+# for the training data
 ##################################
 print('Column Names and Data Types:')
 display(mri_images_train.dtypes)
@@ -248,7 +256,7 @@ display(mri_images_train.dtypes)
 
 ```python
 ##################################
-# Taking a snapshot of the dataset
+# Taking a snapshot of the training data
 ##################################
 mri_images_train.head()
 
@@ -333,6 +341,7 @@ mri_images_train.head()
 ```python
 ##################################
 # Performing a general exploration of the numeric variables
+# for the training data
 ##################################
 print('Numeric Variable Summary:')
 display(mri_images_train.describe(include='number').transpose())
@@ -391,7 +400,8 @@ display(mri_images_train.describe(include='number').transpose())
 
 ```python
 ##################################
-# Performing a general exploration of the object variable
+# Performing a general exploration of the object variables
+# for the training data
 ##################################
 print('Object Variable Summary:')
 display(mri_images_train.describe(include='object').transpose())
@@ -464,6 +474,7 @@ display(mri_images_train.describe(include='object').transpose())
 ```python
 ##################################
 # Performing a general exploration of the target variable
+# for the training data
 ##################################
 mri_images_train.Class.value_counts()
 
@@ -485,6 +496,7 @@ mri_images_train.Class.value_counts()
 ```python
 ##################################
 # Performing a general exploration of the target variable
+# for the training data
 ##################################
 mri_images_train.Class.value_counts(normalize=True)
 
@@ -502,12 +514,390 @@ mri_images_train.Class.value_counts(normalize=True)
 
 
 
+
+```python
+##################################
+# Defining the image category levels
+# for the training data
+##################################
+diagnosis_code_dictionary_test = {'Te-no': 0,
+                                  'Te-noTr': 0,
+                                  'Te-gl': 1,
+                                  'Te-glTr': 1,
+                                  'Tr-me': 2,
+                                  'Te-meTr': 2,
+                                  'Te-pi': 3,
+                                  'Te-piTr': 3}
+
+##################################
+# Defining the image category descriptions
+# for the training data
+##################################
+diagnosis_description_dictionary_test = {'Te-no': 'No Tumor',
+                                         'Te-noTr': 'No Tumor',
+                                         'Te-gl': 'Glioma',
+                                         'Te-glTr': 'Glioma',
+                                         'Te-me': 'Meningioma',
+                                         'Te-meTr': 'Meningioma',
+                                         'Te-pi': 'Pituitary',
+                                         'Te-piTr': 'Pituitary'}
+```
+
+
+```python
+##################################
+# Consolidating the image path
+# for the testing data
+##################################
+imageid_path_dictionary_test = {os.path.splitext(os.path.basename(x))[0]: x for x in glob(os.path.join("..", DATASETS_FINAL_TEST_PATH, '*','*.jpg'))}
+
+```
+
+
+```python
+##################################
+# Taking a snapshot of the dictionary
+# for the testing data
+##################################
+dict(list(imageid_path_dictionary_test.items())[0:5])
+
+```
+
+
+
+
+    {'Te-glTr_0000': '..\\datasets\\Brain_Tumor_MRI_Dataset\\Testing\\glioma\\Te-glTr_0000.jpg',
+     'Te-glTr_0001': '..\\datasets\\Brain_Tumor_MRI_Dataset\\Testing\\glioma\\Te-glTr_0001.jpg',
+     'Te-glTr_0002': '..\\datasets\\Brain_Tumor_MRI_Dataset\\Testing\\glioma\\Te-glTr_0002.jpg',
+     'Te-glTr_0003': '..\\datasets\\Brain_Tumor_MRI_Dataset\\Testing\\glioma\\Te-glTr_0003.jpg',
+     'Te-glTr_0004': '..\\datasets\\Brain_Tumor_MRI_Dataset\\Testing\\glioma\\Te-glTr_0004.jpg'}
+
+
+
+
+```python
+##################################
+# Consolidating the information
+# from the testing datas
+# into a dataframe
+##################################
+mri_images_test = pd.DataFrame.from_dict(imageid_path_dictionary_test, orient = 'index').reset_index()
+mri_images_test.columns = ['Image_ID','Path']
+classes = mri_images_test.Image_ID.str.split('_').str[0]
+mri_images_test['Diagnosis'] = classes
+mri_images_test['Target'] = mri_images_test['Diagnosis'].map(diagnosis_code_dictionary_test.get) 
+mri_images_test['Class'] = mri_images_test['Diagnosis'].map(diagnosis_description_dictionary_test.get)
+
+```
+
+
+```python
+##################################
+# Performing a general exploration of the testing data
+##################################
+print('Dataset Dimensions: ')
+display(mri_images_test.shape)
+
+```
+
+    Dataset Dimensions: 
+    
+
+
+    (1311, 5)
+
+
+
+```python
+##################################
+# Listing the column names and data types
+# for the testing data
+##################################
+print('Column Names and Data Types:')
+display(mri_images_test.dtypes)
+
+```
+
+    Column Names and Data Types:
+    
+
+
+    Image_ID      object
+    Path          object
+    Diagnosis     object
+    Target       float64
+    Class         object
+    dtype: object
+
+
+
+```python
+##################################
+# Taking a snapshot of the testing data
+##################################
+mri_images_test.head()
+
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Image_ID</th>
+      <th>Path</th>
+      <th>Diagnosis</th>
+      <th>Target</th>
+      <th>Class</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Te-glTr_0000</td>
+      <td>..\datasets\Brain_Tumor_MRI_Dataset\Testing\gl...</td>
+      <td>Te-glTr</td>
+      <td>1.0</td>
+      <td>Glioma</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Te-glTr_0001</td>
+      <td>..\datasets\Brain_Tumor_MRI_Dataset\Testing\gl...</td>
+      <td>Te-glTr</td>
+      <td>1.0</td>
+      <td>Glioma</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Te-glTr_0002</td>
+      <td>..\datasets\Brain_Tumor_MRI_Dataset\Testing\gl...</td>
+      <td>Te-glTr</td>
+      <td>1.0</td>
+      <td>Glioma</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Te-glTr_0003</td>
+      <td>..\datasets\Brain_Tumor_MRI_Dataset\Testing\gl...</td>
+      <td>Te-glTr</td>
+      <td>1.0</td>
+      <td>Glioma</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Te-glTr_0004</td>
+      <td>..\datasets\Brain_Tumor_MRI_Dataset\Testing\gl...</td>
+      <td>Te-glTr</td>
+      <td>1.0</td>
+      <td>Glioma</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+##################################
+# Performing a general exploration of the numeric variables
+# for the testing data
+##################################
+print('Numeric Variable Summary:')
+display(mri_images_test.describe(include='number').transpose())
+
+```
+
+    Numeric Variable Summary:
+    
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>count</th>
+      <th>mean</th>
+      <th>std</th>
+      <th>min</th>
+      <th>25%</th>
+      <th>50%</th>
+      <th>75%</th>
+      <th>max</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Target</th>
+      <td>1015.0</td>
+      <td>1.20197</td>
+      <td>1.245741</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>3.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Performing a general exploration of the object variables
+# for the testing data
+##################################
+print('Object Variable Summary:')
+display(mri_images_test.describe(include='object').transpose())
+
+```
+
+    Object Variable Summary:
+    
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>count</th>
+      <th>unique</th>
+      <th>top</th>
+      <th>freq</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Image_ID</th>
+      <td>1311</td>
+      <td>1311</td>
+      <td>Te-pi_0299</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Path</th>
+      <td>1311</td>
+      <td>1311</td>
+      <td>..\datasets\Brain_Tumor_MRI_Dataset\Testing\pi...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Diagnosis</th>
+      <td>1311</td>
+      <td>8</td>
+      <td>Te-no</td>
+      <td>395</td>
+    </tr>
+    <tr>
+      <th>Class</th>
+      <td>1311</td>
+      <td>4</td>
+      <td>No Tumor</td>
+      <td>405</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Performing a general exploration of the target variable
+# for the testing data
+##################################
+mri_images_test.Class.value_counts()
+
+```
+
+
+
+
+    Class
+    No Tumor      405
+    Meningioma    306
+    Glioma        300
+    Pituitary     300
+    Name: count, dtype: int64
+
+
+
+
+```python
+##################################
+# Performing a general exploration of the target variable
+# for the testing data
+##################################
+mri_images_test.Class.value_counts(normalize=True)
+
+```
+
+
+
+
+    Class
+    No Tumor      0.308924
+    Meningioma    0.233410
+    Glioma        0.228833
+    Pituitary     0.228833
+    Name: proportion, dtype: float64
+
+
+
 ## 1.3 Data Quality Assessment <a class="anchor" id="1.3"></a>
 
 
 ```python
 ##################################
 # Counting the number of duplicated images
+# for the training data
 ##################################
 mri_images_train.duplicated().sum()
 
@@ -541,14 +931,52 @@ mri_images_train.isnull().sum()
 
 
 
+
+```python
+##################################
+# Counting the number of duplicated images
+# for the testing data
+##################################
+mri_images_test.duplicated().sum()
+
+```
+
+
+
+
+    np.int64(0)
+
+
+
+
+```python
+##################################
+# Gathering the number of null images
+##################################
+mri_images_test.isnull().sum()
+
+```
+
+
+
+
+    Image_ID       0
+    Path           0
+    Diagnosis      0
+    Target       296
+    Class          0
+    dtype: int64
+
+
+
 ## 1.4 Data Preprocessing <a class="anchor" id="1.4"></a>
 
 
 ```python
 ##################################
 # Including the pixel information
-# of the actual images
-# in array format
+# of the actual images in array format
+# for the training data
 # into a dataframe
 ##################################
 mri_images_train['Image'] = mri_images_train['Path'].map(lambda x: np.asarray(Image.open(x).resize((200,200))))
@@ -559,6 +987,7 @@ mri_images_train['Image'] = mri_images_train['Path'].map(lambda x: np.asarray(Im
 ```python
 ##################################
 # Listing the column names and data types
+# for the training data
 ##################################
 print('Column Names and Data Types:')
 display(mri_images_train.dtypes)
@@ -581,7 +1010,7 @@ display(mri_images_train.dtypes)
 
 ```python
 ##################################
-# Taking a snapshot of the dataset
+# Taking a snapshot of the training data
 ##################################
 mri_images_train.head()
 
@@ -671,7 +1100,7 @@ mri_images_train.head()
 
 ```python
 ##################################
-# Taking a snapshot of the dataset
+# Taking a snapshot of the training data
 ##################################
 n_samples = 5
 fig, m_axs = plt.subplots(4, n_samples, figsize = (2*n_samples, 10))
@@ -688,7 +1117,7 @@ for n_axs, (type_name, type_rows) in zip(m_axs, mri_images_train.sort_values(['C
 
 
     
-![png](output_27_0.png)
+![png](output_41_0.png)
     
 
 
@@ -696,6 +1125,7 @@ for n_axs, (type_name, type_rows) in zip(m_axs, mri_images_train.sort_values(['C
 ```python
 ##################################
 # Sampling a single image
+# from the training data
 ##################################
 samples, features = mri_images_train.shape
 plt.figure()
@@ -757,7 +1187,7 @@ plt.show()
 
 
     
-![png](output_29_0.png)
+![png](output_43_0.png)
     
 
 
@@ -903,10 +1333,11 @@ display(image.min())
 # Identifying the path for the images
 # and defining image categories 
 ##################################
-path = (os.path.join("..", DATASETS_FINAL_TRAIN_PATH))
+path_train = (os.path.join("..", DATASETS_FINAL_TRAIN_PATH))
 classes=["notumor", "glioma", "meningioma", "pituitary"]
 num_classes = len(classes)
 batch_size = 32
+
 ```
 
 
@@ -932,7 +1363,7 @@ train_datagen = ImageDataGenerator(rescale=1./255,
 ##################################
 # Loading the model training images
 ##################################
-train_gen = train_datagen.flow_from_directory(directory=path, 
+train_gen = train_datagen.flow_from_directory(directory=path_train, 
                                               target_size=(227, 227),
                                               class_mode='categorical',
                                               subset='training',
@@ -952,10 +1383,6 @@ train_gen = train_datagen.flow_from_directory(directory=path,
 # Loading samples of augmented images
 # for the training set
 ##################################
-##################################
-# Loading samples of augmented images
-# for the training set
-##################################
 fig, axes = plt.subplots(1, 5, figsize=(15, 3))
 
 for i in range(5):
@@ -970,7 +1397,7 @@ plt.show()
 
 
     
-![png](output_40_0.png)
+![png](output_54_0.png)
     
 
 
@@ -978,7 +1405,7 @@ plt.show()
 ```python
 ##################################
 # Creating subsets of images
-# for model validation
+# for model validation and
 # setting the parameters for
 # real-time data augmentation
 # at each epoch
@@ -990,7 +1417,7 @@ val_datagen = ImageDataGenerator(rescale=1./255,
 ##################################
 # Loading the model evaluation images
 ##################################
-val_gen = val_datagen.flow_from_directory(directory=path, 
+val_gen = val_datagen.flow_from_directory(directory=path_train, 
                                             target_size=(227, 227),
                                             class_mode='categorical',
                                             subset='validation',
@@ -1022,7 +1449,428 @@ plt.show()
 
 
     
-![png](output_42_0.png)
+![png](output_56_0.png)
+    
+
+
+
+```python
+##################################
+# Including the pixel information
+# of the actual images in array format
+# for the testing data
+# into a dataframe
+##################################
+mri_images_test['Image'] = mri_images_test['Path'].map(lambda x: np.asarray(Image.open(x).resize((200,200))))
+
+```
+
+
+```python
+##################################
+# Listing the column names and data types
+# for the testing data
+##################################
+print('Column Names and Data Types:')
+display(mri_images_test.dtypes)
+
+```
+
+    Column Names and Data Types:
+    
+
+
+    Image_ID      object
+    Path          object
+    Diagnosis     object
+    Target       float64
+    Class         object
+    Image         object
+    dtype: object
+
+
+
+```python
+##################################
+# Taking a snapshot of the testing data
+##################################
+mri_images_test.head()
+
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Image_ID</th>
+      <th>Path</th>
+      <th>Diagnosis</th>
+      <th>Target</th>
+      <th>Class</th>
+      <th>Image</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Te-glTr_0000</td>
+      <td>..\datasets\Brain_Tumor_MRI_Dataset\Testing\gl...</td>
+      <td>Te-glTr</td>
+      <td>1.0</td>
+      <td>Glioma</td>
+      <td>[[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], ...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Te-glTr_0001</td>
+      <td>..\datasets\Brain_Tumor_MRI_Dataset\Testing\gl...</td>
+      <td>Te-glTr</td>
+      <td>1.0</td>
+      <td>Glioma</td>
+      <td>[[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], ...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Te-glTr_0002</td>
+      <td>..\datasets\Brain_Tumor_MRI_Dataset\Testing\gl...</td>
+      <td>Te-glTr</td>
+      <td>1.0</td>
+      <td>Glioma</td>
+      <td>[[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], ...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Te-glTr_0003</td>
+      <td>..\datasets\Brain_Tumor_MRI_Dataset\Testing\gl...</td>
+      <td>Te-glTr</td>
+      <td>1.0</td>
+      <td>Glioma</td>
+      <td>[[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], ...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Te-glTr_0004</td>
+      <td>..\datasets\Brain_Tumor_MRI_Dataset\Testing\gl...</td>
+      <td>Te-glTr</td>
+      <td>1.0</td>
+      <td>Glioma</td>
+      <td>[[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], ...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+##################################
+# Taking a snapshot of the testing data
+##################################
+n_samples = 5
+fig, m_axs = plt.subplots(4, n_samples, figsize = (2*n_samples, 10))
+for n_axs, (type_name, type_rows) in zip(m_axs, mri_images_test.sort_values(['Class']).groupby('Class')):
+    n_axs[2].set_title(type_name, fontsize = 14, weight = 'bold')
+    for c_ax, (_, c_row) in zip(n_axs, type_rows.sample(n_samples, random_state=123).iterrows()):       
+        picture = c_row['Path']
+        image = cv2.imread(picture)
+        resized_image = cv2.resize(image, (500,500))
+        c_ax.imshow(resized_image)
+        c_ax.axis('off')
+
+```
+
+
+    
+![png](output_60_0.png)
+    
+
+
+
+```python
+##################################
+# Sampling a single image
+# from the testing data
+##################################
+samples, features = mri_images_test.shape
+plt.figure()
+pic_id = random.randrange(0, samples)
+picture = mri_images_test['Path'][pic_id]
+image = cv2.imread(picture)
+
+```
+
+
+    <Figure size 640x480 with 0 Axes>
+
+
+
+```python
+##################################
+# Plotting using subplots
+##################################
+plt.figure(figsize=(15, 5))
+
+##################################
+# Formulating the original image
+##################################
+plt.subplot(1, 4, 1)
+plt.imshow(image)
+plt.title('Original Image', fontsize = 14, weight = 'bold')
+plt.axis('off')
+
+##################################
+# Formulating the blue channel
+##################################
+plt.subplot(1, 4, 2)
+plt.imshow(image[ : , : , 0])
+plt.title('Blue Channel', fontsize = 14, weight = 'bold')
+plt.axis('off')
+
+##################################
+# Formulating the green channel
+##################################
+plt.subplot(1, 4, 3)
+plt.imshow(image[ : , : , 1])
+plt.title('Green Channel', fontsize = 14, weight = 'bold')
+plt.axis('off')
+
+##################################
+# Formulating the red channel
+##################################
+plt.subplot(1, 4, 4)
+plt.imshow(image[ : , : , 2])
+plt.title('Red Channel', fontsize = 14, weight = 'bold')
+plt.axis('off')
+
+##################################
+# Consolidating all images
+##################################
+plt.show()
+
+```
+
+
+    
+![png](output_62_0.png)
+    
+
+
+
+```python
+##################################
+# Determining the image shape
+##################################
+print('Image Shape:')
+display(image.shape)
+
+```
+
+    Image Shape:
+    
+
+
+    (512, 512, 3)
+
+
+
+```python
+##################################
+# Determining the image height
+##################################
+print('Image Height:')
+display(image.shape[0])
+
+```
+
+    Image Height:
+    
+
+
+    512
+
+
+
+```python
+##################################
+# Determining the image width
+##################################
+print('Image Width:')
+display(image.shape[1])
+
+```
+
+    Image Width:
+    
+
+
+    512
+
+
+
+```python
+##################################
+# Determining the image dimension
+##################################
+print('Image Dimension:')
+display(image.ndim)
+
+```
+
+    Image Dimension:
+    
+
+
+    3
+
+
+
+```python
+##################################
+# Determining the image size
+##################################
+print('Image Size:')
+display(image.size)
+
+```
+
+    Image Size:
+    
+
+
+    786432
+
+
+
+```python
+##################################
+# Determining the image data type
+##################################
+print('Image Data Type:')
+display(image.dtype)
+
+```
+
+    Image Data Type:
+    
+
+
+    dtype('uint8')
+
+
+
+```python
+##################################
+# Determining the maximum RGB value
+##################################
+print('Image Maximum RGB:')
+display(image.max())
+
+```
+
+    Image Maximum RGB:
+    
+
+
+    np.uint8(255)
+
+
+
+```python
+##################################
+# Determining the minimum RGB value
+##################################
+print('Image Minimum RGB:')
+display(image.min())
+
+```
+
+    Image Minimum RGB:
+    
+
+
+    np.uint8(0)
+
+
+
+```python
+##################################
+# Identifying the path for the images
+# and defining image categories 
+##################################
+path_test = (os.path.join("..", DATASETS_FINAL_TEST_PATH))
+classes=["notumor", "glioma", "meningioma", "pituitary"]
+num_classes = len(classes)
+batch_size = 32
+
+```
+
+
+```python
+##################################
+# Creating subsets of images
+# for model testing and
+# setting the parameters for
+# real-time data augmentation
+# at each epoch
+##################################
+set_seed()
+test_datagen = ImageDataGenerator(rescale=1./255)
+
+##################################
+# Loading the model testing images
+##################################
+test_gen = test_datagen.flow_from_directory(directory=path_test, 
+                                            target_size=(227, 227),
+                                            class_mode='categorical',
+                                            shuffle=False, 
+                                            classes=classes,
+                                            batch_size=batch_size, 
+                                            color_mode="grayscale")
+
+```
+
+    Found 1311 images belonging to 4 classes.
+    
+
+
+```python
+##################################
+# Loading samples of augmented images
+# for the testing set
+##################################
+fig, axes = plt.subplots(1, 5, figsize=(15, 3))
+
+for i in range(5):
+    batch = next(test_gen)
+    images, labels = batch
+    axes[i].imshow(images[0]) 
+    axes[i].set_title(f"Label: {labels[0]}")
+    axes[i].axis('off')
+plt.show()
+
+```
+
+
+    
+![png](output_73_0.png)
     
 
 
@@ -1036,6 +1884,7 @@ plt.show()
 # Consolidating summary statistics
 # for the image pixel values
 ##################################
+samples, features = mri_images_train.shape
 mean_val = []
 std_dev_val = []
 max_val = []
@@ -1160,7 +2009,7 @@ plt.title('Image Pixel Intensity Mean Distribution by Category', fontsize=14, we
 
 
     
-![png](output_50_0.png)
+![png](output_81_0.png)
     
 
 
@@ -1177,7 +2026,7 @@ plt.title('Image Pixel Intensity Maximum Distribution by Category', fontsize=14,
 
 
     
-![png](output_51_0.png)
+![png](output_82_0.png)
     
 
 
@@ -1194,7 +2043,7 @@ plt.title('Image Pixel Intensity Minimum Distribution by Category', fontsize=14,
 
 
     
-![png](output_52_0.png)
+![png](output_83_0.png)
     
 
 
@@ -1211,7 +2060,7 @@ plt.title('Image Pixel Intensity Standard Deviation Distribution by Category', f
 
 
     
-![png](output_53_0.png)
+![png](output_84_0.png)
     
 
 
@@ -1235,7 +2084,7 @@ plt.title('Image Pixel Intensity Mean and Standard Deviation Distribution', font
 
 
     
-![png](output_54_0.png)
+![png](output_85_0.png)
     
 
 
@@ -1261,7 +2110,7 @@ scatterplot.fig.tight_layout()
 
 
     
-![png](output_55_0.png)
+![png](output_86_0.png)
     
 
 
@@ -1298,7 +2147,7 @@ for x0, y0, path in zip(DF_sample['Mean'], DF_sample['StDev'], paths):
 
 
     
-![png](output_56_0.png)
+![png](output_87_0.png)
     
 
 
@@ -1334,7 +2183,7 @@ for x0, y0, path_glioma in zip(DF_sample['Mean'], DF_sample['StDev'], paths):
 
 
     
-![png](output_57_0.png)
+![png](output_88_0.png)
     
 
 
@@ -1370,7 +2219,7 @@ for x0, y0, path_meningioma in zip(DF_sample['Mean'], DF_sample['StDev'], paths)
 
 
     
-![png](output_58_0.png)
+![png](output_89_0.png)
     
 
 
@@ -1406,7 +2255,7 @@ for x0, y0, path_pituitary in zip(DF_sample['Mean'], DF_sample['StDev'], paths):
 
 
     
-![png](output_59_0.png)
+![png](output_90_0.png)
     
 
 
@@ -1442,7 +2291,7 @@ for x0, y0, path_no_tumor in zip(DF_sample['Mean'], DF_sample['StDev'], paths):
 
 
     
-![png](output_60_0.png)
+![png](output_91_0.png)
     
 
 
@@ -1474,7 +2323,7 @@ for x0, y0, path in zip(DF_sample['Min'], DF_sample['StDev'], paths):
 
 
     
-![png](output_61_0.png)
+![png](output_92_0.png)
     
 
 
@@ -1507,7 +2356,7 @@ for x0, y0, path_glioma in zip(DF_sample['Min'], DF_sample['StDev'], paths):
 
 
     
-![png](output_62_0.png)
+![png](output_93_0.png)
     
 
 
@@ -1540,7 +2389,7 @@ for x0, y0, path_meningioma in zip(DF_sample['Min'], DF_sample['StDev'], paths):
 
 
     
-![png](output_63_0.png)
+![png](output_94_0.png)
     
 
 
@@ -1573,7 +2422,7 @@ for x0, y0, path_pituitary in zip(DF_sample['Min'], DF_sample['StDev'], paths):
 
 
     
-![png](output_64_0.png)
+![png](output_95_0.png)
     
 
 
@@ -1606,7 +2455,7 @@ for x0, y0, path_no_tumor in zip(DF_sample['Min'], DF_sample['StDev'], paths):
 
 
     
-![png](output_65_0.png)
+![png](output_96_0.png)
     
 
 
@@ -1638,7 +2487,7 @@ for x0, y0, path in zip(DF_sample['Max'], DF_sample['StDev'], paths):
 
 
     
-![png](output_66_0.png)
+![png](output_97_0.png)
     
 
 
@@ -1671,7 +2520,7 @@ for x0, y0, path_glioma in zip(DF_sample['Max'], DF_sample['StDev'], paths):
 
 
     
-![png](output_67_0.png)
+![png](output_98_0.png)
     
 
 
@@ -1704,7 +2553,7 @@ for x0, y0, path_meningioma in zip(DF_sample['Max'], DF_sample['StDev'], paths):
 
 
     
-![png](output_68_0.png)
+![png](output_99_0.png)
     
 
 
@@ -1737,7 +2586,7 @@ for x0, y0, path_pituitary in zip(DF_sample['Max'], DF_sample['StDev'], paths):
 
 
     
-![png](output_69_0.png)
+![png](output_100_0.png)
     
 
 
@@ -1770,7 +2619,7 @@ for x0, y0, path_no_tumor in zip(DF_sample['Max'], DF_sample['StDev'], paths):
 
 
     
-![png](output_70_0.png)
+![png](output_101_0.png)
     
 
 
@@ -1780,9 +2629,7 @@ for x0, y0, path_no_tumor in zip(DF_sample['Max'], DF_sample['StDev'], paths):
 
 ### 1.6.1 Pre-Modelling Data Preparation <a class="anchor" id="1.6.1"></a>
 
-### 1.6.2 Data Splitting <a class="anchor" id="1.6.2"></a>
-
-### 1.6.3 Convolutional Neural Network Sequential Layer Development <a class="anchor" id="1.6.3"></a>
+### 1.6.2 Convolutional Neural Network Sequential Layer Development <a class="anchor" id="1.6.2"></a>
 
 
 ```python
@@ -1923,7 +2770,7 @@ cdrbnr_complex_model_checkpoint = ModelCheckpoint(
 )
 ```
 
-#### 1.6.3.1 CNN With No Regularization <a class="anchor" id="1.6.3.1"></a>
+#### 1.6.2.1 CNN With No Regularization <a class="anchor" id="1.6.2.1"></a>
 
 
 ```python
@@ -2222,7 +3069,7 @@ print("\nTotal Parameters in the Model:", total_parameters)
     Total Parameters in the Model: 6446468
     
 
-#### 1.6.3.2 CNN With Dropout Regularization <a class="anchor" id="1.6.3.2"></a>
+#### 1.6.2.2 CNN With Dropout Regularization <a class="anchor" id="1.6.2.2"></a>
 
 
 ```python
@@ -2533,7 +3380,7 @@ print("\nTotal Parameters in the Model:", total_parameters)
     Total Parameters in the Model: 6446468
     
 
-#### 1.6.3.3 CNN With Batch Normalization Regularization <a class="anchor" id="1.6.3.3"></a>
+#### 1.6.2.3 CNN With Batch Normalization Regularization <a class="anchor" id="1.6.2.3"></a>
 
 
 ```python
@@ -2855,7 +3702,7 @@ print("\nTotal Parameters in the Model:", total_parameters)
     Total Parameters in the Model: 6446724
     
 
-#### 1.6.3.4 CNN With Dropout and Batch Normalization Regularization <a class="anchor" id="1.6.3.4"></a>
+#### 1.6.2.4 CNN With Dropout and Batch Normalization Regularization <a class="anchor" id="1.6.2.4"></a>
 
 
 ```python
@@ -3190,7 +4037,7 @@ print("\nTotal Parameters in the Model:", total_parameters)
     Total Parameters in the Model: 6446724
     
 
-### 1.6.4 CNN With No Regularization Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.4"></a>
+### 1.6.3 CNN With No Regularization Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.3"></a>
 
 
 ```python
@@ -3236,37 +4083,37 @@ model_nr_simple_history = model_nr_simple.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 250ms/step - loss: 0.8697 - recall: 0.4612 - val_loss: 0.9379 - val_recall: 0.6556 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 229ms/step - loss: 0.8697 - recall: 0.4612 - val_loss: 0.9379 - val_recall: 0.6556 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 249ms/step - loss: 0.4279 - recall: 0.8129 - val_loss: 0.8684 - val_recall: 0.6792 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 235ms/step - loss: 0.4279 - recall: 0.8129 - val_loss: 0.8684 - val_recall: 0.6792 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 246ms/step - loss: 0.3339 - recall: 0.8637 - val_loss: 0.8071 - val_recall: 0.7239 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 254ms/step - loss: 0.3339 - recall: 0.8637 - val_loss: 0.8071 - val_recall: 0.7239 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 239ms/step - loss: 0.3062 - recall: 0.8771 - val_loss: 0.9367 - val_recall: 0.7528 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 226ms/step - loss: 0.3062 - recall: 0.8771 - val_loss: 0.9367 - val_recall: 0.7528 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 235ms/step - loss: 0.2505 - recall: 0.9024 - val_loss: 0.8099 - val_recall: 0.7450 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m43s[0m 299ms/step - loss: 0.2505 - recall: 0.9024 - val_loss: 0.8099 - val_recall: 0.7450 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 233ms/step - loss: 0.2282 - recall: 0.9033 - val_loss: 0.7319 - val_recall: 0.7862 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 229ms/step - loss: 0.2282 - recall: 0.9033 - val_loss: 0.7319 - val_recall: 0.7862 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 234ms/step - loss: 0.1857 - recall: 0.9301 - val_loss: 0.8285 - val_recall: 0.7783 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 224ms/step - loss: 0.1857 - recall: 0.9301 - val_loss: 0.8285 - val_recall: 0.7783 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 231ms/step - loss: 0.1783 - recall: 0.9361 - val_loss: 0.8437 - val_recall: 0.7642 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 375ms/step - loss: 0.1783 - recall: 0.9361 - val_loss: 0.8437 - val_recall: 0.7642 - learning_rate: 0.0010
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 234ms/step - loss: 0.1366 - recall: 0.9491 - val_loss: 0.8675 - val_recall: 0.8089 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 229ms/step - loss: 0.1366 - recall: 0.9491 - val_loss: 0.8675 - val_recall: 0.8089 - learning_rate: 0.0010
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 238ms/step - loss: 0.1127 - recall: 0.9611 - val_loss: 0.7600 - val_recall: 0.8186 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 229ms/step - loss: 0.1127 - recall: 0.9611 - val_loss: 0.7600 - val_recall: 0.8186 - learning_rate: 1.0000e-04
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 267ms/step - loss: 0.0880 - recall: 0.9663 - val_loss: 0.7769 - val_recall: 0.8177 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 227ms/step - loss: 0.0880 - recall: 0.9663 - val_loss: 0.7769 - val_recall: 0.8177 - learning_rate: 1.0000e-04
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 270ms/step - loss: 0.1055 - recall: 0.9612 - val_loss: 0.7722 - val_recall: 0.8221 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 232ms/step - loss: 0.1055 - recall: 0.9612 - val_loss: 0.7722 - val_recall: 0.8221 - learning_rate: 1.0000e-04
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 274ms/step - loss: 0.0787 - recall: 0.9733 - val_loss: 0.7732 - val_recall: 0.8221 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 223ms/step - loss: 0.0787 - recall: 0.9733 - val_loss: 0.7732 - val_recall: 0.8221 - learning_rate: 1.0000e-05
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 262ms/step - loss: 0.0926 - recall: 0.9680 - val_loss: 0.7768 - val_recall: 0.8221 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 227ms/step - loss: 0.0926 - recall: 0.9680 - val_loss: 0.7768 - val_recall: 0.8221 - learning_rate: 1.0000e-05
     Epoch 15/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 269ms/step - loss: 0.0824 - recall: 0.9691 - val_loss: 0.7803 - val_recall: 0.8212 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 259ms/step - loss: 0.0824 - recall: 0.9691 - val_loss: 0.7803 - val_recall: 0.8212 - learning_rate: 1.0000e-05
     Epoch 16/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 239ms/step - loss: 0.0939 - recall: 0.9701 - val_loss: 0.7808 - val_recall: 0.8203 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 238ms/step - loss: 0.0939 - recall: 0.9701 - val_loss: 0.7808 - val_recall: 0.8203 - learning_rate: 1.0000e-06
     
 
 
@@ -3280,7 +4127,7 @@ model_nr_simple_y_pred = model_nr_simple.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 100ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 103ms/step
     
 
 
@@ -3296,7 +4143,7 @@ plot_training_history(model_nr_simple_history, 'Simple CNN With No Regularizatio
 
 
     
-![png](output_127_0.png)
+![png](output_157_0.png)
     
 
 
@@ -3343,7 +4190,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_128_1.png)
+![png](output_158_1.png)
     
 
 
@@ -3532,35 +4379,35 @@ model_nr_complex_history = model_nr_complex.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 372ms/step - loss: 1.0913 - recall: 0.3645 - val_loss: 0.8411 - val_recall: 0.6915 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 373ms/step - loss: 1.0913 - recall: 0.3645 - val_loss: 0.8411 - val_recall: 0.6915 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 361ms/step - loss: 0.4091 - recall: 0.8322 - val_loss: 0.8689 - val_recall: 0.6862 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 359ms/step - loss: 0.4091 - recall: 0.8322 - val_loss: 0.8689 - val_recall: 0.6862 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 368ms/step - loss: 0.2674 - recall: 0.8948 - val_loss: 0.8096 - val_recall: 0.7327 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 365ms/step - loss: 0.2674 - recall: 0.8948 - val_loss: 0.8096 - val_recall: 0.7327 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 367ms/step - loss: 0.2156 - recall: 0.9202 - val_loss: 0.8086 - val_recall: 0.7862 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 365ms/step - loss: 0.2156 - recall: 0.9202 - val_loss: 0.8086 - val_recall: 0.7862 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 357ms/step - loss: 0.1748 - recall: 0.9339 - val_loss: 0.8040 - val_recall: 0.7625 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 365ms/step - loss: 0.1748 - recall: 0.9339 - val_loss: 0.8040 - val_recall: 0.7625 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 363ms/step - loss: 0.1469 - recall: 0.9431 - val_loss: 0.7236 - val_recall: 0.7984 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 367ms/step - loss: 0.1469 - recall: 0.9431 - val_loss: 0.7236 - val_recall: 0.7984 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m81s[0m 357ms/step - loss: 0.1025 - recall: 0.9621 - val_loss: 0.7801 - val_recall: 0.7993 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 359ms/step - loss: 0.1025 - recall: 0.9621 - val_loss: 0.7801 - val_recall: 0.7993 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 353ms/step - loss: 0.0918 - recall: 0.9644 - val_loss: 0.9317 - val_recall: 0.8063 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 361ms/step - loss: 0.0918 - recall: 0.9644 - val_loss: 0.9317 - val_recall: 0.8063 - learning_rate: 0.0010
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 357ms/step - loss: 0.0861 - recall: 0.9650 - val_loss: 0.8448 - val_recall: 0.8238 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 361ms/step - loss: 0.0861 - recall: 0.9650 - val_loss: 0.8448 - val_recall: 0.8238 - learning_rate: 0.0010
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 367ms/step - loss: 0.0560 - recall: 0.9774 - val_loss: 0.8052 - val_recall: 0.8300 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 368ms/step - loss: 0.0560 - recall: 0.9774 - val_loss: 0.8052 - val_recall: 0.8300 - learning_rate: 1.0000e-04
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 377ms/step - loss: 0.0285 - recall: 0.9933 - val_loss: 0.8621 - val_recall: 0.8186 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 362ms/step - loss: 0.0285 - recall: 0.9933 - val_loss: 0.8621 - val_recall: 0.8186 - learning_rate: 1.0000e-04
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 359ms/step - loss: 0.0294 - recall: 0.9919 - val_loss: 0.8798 - val_recall: 0.8256 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 361ms/step - loss: 0.0294 - recall: 0.9919 - val_loss: 0.8798 - val_recall: 0.8256 - learning_rate: 1.0000e-04
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 359ms/step - loss: 0.0235 - recall: 0.9925 - val_loss: 0.8846 - val_recall: 0.8230 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 363ms/step - loss: 0.0235 - recall: 0.9925 - val_loss: 0.8846 - val_recall: 0.8230 - learning_rate: 1.0000e-05
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 355ms/step - loss: 0.0297 - recall: 0.9903 - val_loss: 0.8888 - val_recall: 0.8247 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 367ms/step - loss: 0.0297 - recall: 0.9903 - val_loss: 0.8888 - val_recall: 0.8247 - learning_rate: 1.0000e-05
     Epoch 15/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 359ms/step - loss: 0.0237 - recall: 0.9951 - val_loss: 0.9018 - val_recall: 0.8230 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 368ms/step - loss: 0.0237 - recall: 0.9951 - val_loss: 0.9018 - val_recall: 0.8230 - learning_rate: 1.0000e-05
     Epoch 16/20
     [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 361ms/step - loss: 0.0283 - recall: 0.9913 - val_loss: 0.9021 - val_recall: 0.8238 - learning_rate: 1.0000e-06
     
@@ -3576,7 +4423,7 @@ model_nr_complex_y_pred = model_nr_complex.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 133ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 137ms/step
     
 
 
@@ -3592,7 +4439,7 @@ plot_training_history(model_nr_complex_history, 'Complex CNN With No Regularizat
 
 
     
-![png](output_134_0.png)
+![png](output_164_0.png)
     
 
 
@@ -3635,7 +4482,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_135_0.png)
+![png](output_165_0.png)
     
 
 
@@ -3778,7 +4625,7 @@ model_nr_complex_all_summary = pd.DataFrame(zip(model_nr_complex_model_list,
 
 ```
 
-### 1.6.5 CNN With Dropout Regularization Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.5"></a>
+### 1.6.4 CNN With Dropout Regularization Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.4"></a>
 
 
 ```python
@@ -3826,41 +4673,41 @@ model_dr_simple_history = model_dr_simple.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 238ms/step - loss: 1.3558 - recall: 0.1436 - val_loss: 1.0029 - val_recall: 0.4259 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 239ms/step - loss: 1.3558 - recall: 0.1436 - val_loss: 1.0029 - val_recall: 0.4259 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 238ms/step - loss: 0.7573 - recall: 0.5541 - val_loss: 0.8809 - val_recall: 0.5995 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 239ms/step - loss: 0.7573 - recall: 0.5541 - val_loss: 0.8809 - val_recall: 0.5995 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 220ms/step - loss: 0.6801 - recall: 0.5991 - val_loss: 0.8098 - val_recall: 0.6784 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 243ms/step - loss: 0.6801 - recall: 0.5991 - val_loss: 0.8098 - val_recall: 0.6784 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 225ms/step - loss: 0.5949 - recall: 0.6555 - val_loss: 0.9510 - val_recall: 0.6319 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 234ms/step - loss: 0.5949 - recall: 0.6555 - val_loss: 0.9510 - val_recall: 0.6319 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 228ms/step - loss: 0.5358 - recall: 0.6888 - val_loss: 0.8406 - val_recall: 0.6687 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 237ms/step - loss: 0.5358 - recall: 0.6888 - val_loss: 0.8406 - val_recall: 0.6687 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 224ms/step - loss: 0.5175 - recall: 0.7039 - val_loss: 0.7385 - val_recall: 0.6950 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 226ms/step - loss: 0.5175 - recall: 0.7039 - val_loss: 0.7385 - val_recall: 0.6950 - learning_rate: 0.0010
     Epoch 7/20
     [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 222ms/step - loss: 0.5096 - recall: 0.7264 - val_loss: 0.8432 - val_recall: 0.7108 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 222ms/step - loss: 0.5263 - recall: 0.7275 - val_loss: 0.7060 - val_recall: 0.7432 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m50s[0m 349ms/step - loss: 0.5263 - recall: 0.7275 - val_loss: 0.7060 - val_recall: 0.7432 - learning_rate: 0.0010
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 221ms/step - loss: 0.4338 - recall: 0.7747 - val_loss: 0.8316 - val_recall: 0.7546 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 229ms/step - loss: 0.4338 - recall: 0.7747 - val_loss: 0.8316 - val_recall: 0.7546 - learning_rate: 0.0010
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 221ms/step - loss: 0.4617 - recall: 0.7647 - val_loss: 0.8108 - val_recall: 0.7432 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 223ms/step - loss: 0.4617 - recall: 0.7647 - val_loss: 0.8108 - val_recall: 0.7432 - learning_rate: 0.0010
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 220ms/step - loss: 0.4197 - recall: 0.7834 - val_loss: 0.8501 - val_recall: 0.7406 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 230ms/step - loss: 0.4197 - recall: 0.7834 - val_loss: 0.8501 - val_recall: 0.7406 - learning_rate: 0.0010
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 224ms/step - loss: 0.4121 - recall: 0.7925 - val_loss: 0.7721 - val_recall: 0.7634 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 225ms/step - loss: 0.4121 - recall: 0.7925 - val_loss: 0.7721 - val_recall: 0.7634 - learning_rate: 1.0000e-04
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 224ms/step - loss: 0.3817 - recall: 0.8064 - val_loss: 0.7482 - val_recall: 0.7713 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m31s[0m 219ms/step - loss: 0.3817 - recall: 0.8064 - val_loss: 0.7482 - val_recall: 0.7713 - learning_rate: 1.0000e-04
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 227ms/step - loss: 0.3763 - recall: 0.8102 - val_loss: 0.7683 - val_recall: 0.7634 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 222ms/step - loss: 0.3763 - recall: 0.8102 - val_loss: 0.7683 - val_recall: 0.7634 - learning_rate: 1.0000e-04
     Epoch 15/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 223ms/step - loss: 0.3781 - recall: 0.7994 - val_loss: 0.7877 - val_recall: 0.7642 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 228ms/step - loss: 0.3781 - recall: 0.7994 - val_loss: 0.7877 - val_recall: 0.7642 - learning_rate: 1.0000e-05
     Epoch 16/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 219ms/step - loss: 0.3701 - recall: 0.8088 - val_loss: 0.7936 - val_recall: 0.7642 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m30s[0m 209ms/step - loss: 0.3701 - recall: 0.8088 - val_loss: 0.7936 - val_recall: 0.7642 - learning_rate: 1.0000e-05
     Epoch 17/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 225ms/step - loss: 0.3933 - recall: 0.8056 - val_loss: 0.7841 - val_recall: 0.7660 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 222ms/step - loss: 0.3933 - recall: 0.8056 - val_loss: 0.7841 - val_recall: 0.7660 - learning_rate: 1.0000e-05
     Epoch 18/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 221ms/step - loss: 0.3852 - recall: 0.7920 - val_loss: 0.7832 - val_recall: 0.7660 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 230ms/step - loss: 0.3852 - recall: 0.7920 - val_loss: 0.7832 - val_recall: 0.7660 - learning_rate: 1.0000e-06
     
 
 
@@ -3874,7 +4721,7 @@ model_dr_simple_y_pred = model_dr_simple.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m3s[0m 94ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 101ms/step
     
 
 
@@ -3890,7 +4737,7 @@ plot_training_history(model_dr_simple_history, 'Simple CNN With Dropout Regulari
 
 
     
-![png](output_142_0.png)
+![png](output_172_0.png)
     
 
 
@@ -3934,7 +4781,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_143_0.png)
+![png](output_173_0.png)
     
 
 
@@ -4125,35 +4972,35 @@ model_dr_complex_history = model_dr_complex.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 370ms/step - loss: 1.0131 - recall: 0.3707 - val_loss: 0.8088 - val_recall: 0.6994 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 369ms/step - loss: 1.0131 - recall: 0.3707 - val_loss: 0.8088 - val_recall: 0.6994 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 361ms/step - loss: 0.4345 - recall: 0.8110 - val_loss: 0.7967 - val_recall: 0.6968 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 357ms/step - loss: 0.4345 - recall: 0.8110 - val_loss: 0.7967 - val_recall: 0.6968 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 356ms/step - loss: 0.2910 - recall: 0.8898 - val_loss: 0.7494 - val_recall: 0.7458 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 354ms/step - loss: 0.2910 - recall: 0.8898 - val_loss: 0.7494 - val_recall: 0.7458 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 360ms/step - loss: 0.2426 - recall: 0.9008 - val_loss: 0.7891 - val_recall: 0.7511 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 357ms/step - loss: 0.2426 - recall: 0.9008 - val_loss: 0.7891 - val_recall: 0.7511 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 366ms/step - loss: 0.1822 - recall: 0.9304 - val_loss: 0.6271 - val_recall: 0.7844 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 362ms/step - loss: 0.1822 - recall: 0.9304 - val_loss: 0.6271 - val_recall: 0.7844 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 365ms/step - loss: 0.1632 - recall: 0.9328 - val_loss: 0.7265 - val_recall: 0.7774 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 355ms/step - loss: 0.1632 - recall: 0.9328 - val_loss: 0.7265 - val_recall: 0.7774 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 362ms/step - loss: 0.1317 - recall: 0.9478 - val_loss: 0.8423 - val_recall: 0.7862 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 356ms/step - loss: 0.1317 - recall: 0.9478 - val_loss: 0.8423 - val_recall: 0.7862 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 353ms/step - loss: 0.1286 - recall: 0.9583 - val_loss: 0.8516 - val_recall: 0.8107 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 360ms/step - loss: 0.1286 - recall: 0.9583 - val_loss: 0.8516 - val_recall: 0.8107 - learning_rate: 0.0010
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m50s[0m 351ms/step - loss: 0.0860 - recall: 0.9707 - val_loss: 0.7973 - val_recall: 0.8124 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 360ms/step - loss: 0.0860 - recall: 0.9707 - val_loss: 0.7973 - val_recall: 0.8124 - learning_rate: 1.0000e-04
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 356ms/step - loss: 0.0758 - recall: 0.9745 - val_loss: 0.8234 - val_recall: 0.8081 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 355ms/step - loss: 0.0758 - recall: 0.9745 - val_loss: 0.8234 - val_recall: 0.8081 - learning_rate: 1.0000e-04
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 353ms/step - loss: 0.0523 - recall: 0.9825 - val_loss: 0.8551 - val_recall: 0.8098 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 354ms/step - loss: 0.0523 - recall: 0.9825 - val_loss: 0.8551 - val_recall: 0.8098 - learning_rate: 1.0000e-04
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 355ms/step - loss: 0.0571 - recall: 0.9813 - val_loss: 0.8562 - val_recall: 0.8054 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 359ms/step - loss: 0.0571 - recall: 0.9813 - val_loss: 0.8562 - val_recall: 0.8054 - learning_rate: 1.0000e-05
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 352ms/step - loss: 0.0540 - recall: 0.9823 - val_loss: 0.8620 - val_recall: 0.8089 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 362ms/step - loss: 0.0540 - recall: 0.9823 - val_loss: 0.8620 - val_recall: 0.8089 - learning_rate: 1.0000e-05
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 355ms/step - loss: 0.0564 - recall: 0.9793 - val_loss: 0.8652 - val_recall: 0.8098 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 364ms/step - loss: 0.0564 - recall: 0.9793 - val_loss: 0.8652 - val_recall: 0.8098 - learning_rate: 1.0000e-05
     Epoch 15/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 353ms/step - loss: 0.0538 - recall: 0.9812 - val_loss: 0.8655 - val_recall: 0.8098 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 358ms/step - loss: 0.0538 - recall: 0.9812 - val_loss: 0.8655 - val_recall: 0.8098 - learning_rate: 1.0000e-06
     
 
 
@@ -4183,7 +5030,7 @@ plot_training_history(model_dr_complex_history, 'Complex CNN With Dropout Regula
 
 
     
-![png](output_149_0.png)
+![png](output_179_0.png)
     
 
 
@@ -4227,7 +5074,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_150_0.png)
+![png](output_180_0.png)
     
 
 
@@ -4370,7 +5217,7 @@ model_dr_complex_all_summary = pd.DataFrame(zip(model_dr_complex_model_list,
 
 ```
 
-### 1.6.6 CNN With Batch Normalization Regularization Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.6"></a>
+### 1.6.5 CNN With Batch Normalization Regularization Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.5"></a>
 
 
 ```python
@@ -4419,33 +5266,33 @@ model_bnr_simple_history = model_bnr_simple.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 249ms/step - loss: 1.7668 - recall: 0.5558 - val_loss: 1.0888 - val_recall: 0.0473 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 261ms/step - loss: 1.7668 - recall: 0.5558 - val_loss: 1.0888 - val_recall: 0.0473 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 254ms/step - loss: 0.3585 - recall: 0.8676 - val_loss: 0.8608 - val_recall: 0.3716 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 261ms/step - loss: 0.3585 - recall: 0.8676 - val_loss: 0.8608 - val_recall: 0.3716 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 251ms/step - loss: 0.2334 - recall: 0.9148 - val_loss: 0.7054 - val_recall: 0.6591 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 262ms/step - loss: 0.2334 - recall: 0.9148 - val_loss: 0.7054 - val_recall: 0.6591 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 254ms/step - loss: 0.2119 - recall: 0.9237 - val_loss: 0.5743 - val_recall: 0.8089 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 267ms/step - loss: 0.2119 - recall: 0.9237 - val_loss: 0.5743 - val_recall: 0.8089 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 259ms/step - loss: 0.2065 - recall: 0.9280 - val_loss: 0.6802 - val_recall: 0.8072 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 265ms/step - loss: 0.2065 - recall: 0.9280 - val_loss: 0.6802 - val_recall: 0.8072 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 267ms/step - loss: 0.1448 - recall: 0.9461 - val_loss: 0.8415 - val_recall: 0.8387 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 258ms/step - loss: 0.1448 - recall: 0.9461 - val_loss: 0.8415 - val_recall: 0.8387 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 265ms/step - loss: 0.1309 - recall: 0.9561 - val_loss: 1.1974 - val_recall: 0.8107 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 257ms/step - loss: 0.1309 - recall: 0.9561 - val_loss: 1.1974 - val_recall: 0.8107 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 257ms/step - loss: 0.0820 - recall: 0.9706 - val_loss: 0.9800 - val_recall: 0.8282 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 260ms/step - loss: 0.0820 - recall: 0.9706 - val_loss: 0.9800 - val_recall: 0.8282 - learning_rate: 1.0000e-04
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 257ms/step - loss: 0.0649 - recall: 0.9801 - val_loss: 1.0222 - val_recall: 0.8309 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 259ms/step - loss: 0.0649 - recall: 0.9801 - val_loss: 1.0222 - val_recall: 0.8309 - learning_rate: 1.0000e-04
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 265ms/step - loss: 0.0683 - recall: 0.9782 - val_loss: 1.0025 - val_recall: 0.8247 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 263ms/step - loss: 0.0683 - recall: 0.9782 - val_loss: 1.0025 - val_recall: 0.8247 - learning_rate: 1.0000e-04
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 265ms/step - loss: 0.0509 - recall: 0.9825 - val_loss: 0.9991 - val_recall: 0.8309 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 259ms/step - loss: 0.0509 - recall: 0.9825 - val_loss: 0.9991 - val_recall: 0.8309 - learning_rate: 1.0000e-05
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m40s[0m 275ms/step - loss: 0.0648 - recall: 0.9745 - val_loss: 0.9882 - val_recall: 0.8309 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 261ms/step - loss: 0.0648 - recall: 0.9745 - val_loss: 0.9882 - val_recall: 0.8309 - learning_rate: 1.0000e-05
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 266ms/step - loss: 0.0472 - recall: 0.9859 - val_loss: 0.9759 - val_recall: 0.8300 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 255ms/step - loss: 0.0472 - recall: 0.9859 - val_loss: 0.9759 - val_recall: 0.8300 - learning_rate: 1.0000e-05
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 266ms/step - loss: 0.0499 - recall: 0.9851 - val_loss: 0.9774 - val_recall: 0.8309 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 254ms/step - loss: 0.0499 - recall: 0.9851 - val_loss: 0.9774 - val_recall: 0.8309 - learning_rate: 1.0000e-06
     
 
 
@@ -4459,7 +5306,7 @@ model_bnr_simple_y_pred = model_bnr_simple.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 101ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m3s[0m 93ms/step
     
 
 
@@ -4475,7 +5322,7 @@ plot_training_history(model_bnr_simple_history, 'Simple CNN With Batch Normaliza
 
 
     
-![png](output_157_0.png)
+![png](output_187_0.png)
     
 
 
@@ -4519,7 +5366,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_158_0.png)
+![png](output_188_0.png)
     
 
 
@@ -4710,25 +5557,25 @@ model_bnr_complex_history = model_bnr_complex.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m58s[0m 391ms/step - loss: 2.4198 - recall: 0.4782 - val_loss: 1.1481 - val_recall: 0.0096 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 387ms/step - loss: 2.4198 - recall: 0.4782 - val_loss: 1.1481 - val_recall: 0.0096 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 398ms/step - loss: 0.3966 - recall: 0.8304 - val_loss: 0.9454 - val_recall: 0.1613 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 378ms/step - loss: 0.3966 - recall: 0.8304 - val_loss: 0.9454 - val_recall: 0.1613 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 389ms/step - loss: 0.2384 - recall: 0.9055 - val_loss: 0.7357 - val_recall: 0.5819 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 390ms/step - loss: 0.2384 - recall: 0.9055 - val_loss: 0.7357 - val_recall: 0.5819 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 390ms/step - loss: 0.2179 - recall: 0.9136 - val_loss: 0.6788 - val_recall: 0.7809 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 384ms/step - loss: 0.2179 - recall: 0.9136 - val_loss: 0.6788 - val_recall: 0.7809 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 389ms/step - loss: 0.1693 - recall: 0.9332 - val_loss: 0.8541 - val_recall: 0.7064 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 381ms/step - loss: 0.1693 - recall: 0.9332 - val_loss: 0.8541 - val_recall: 0.7064 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 385ms/step - loss: 0.1205 - recall: 0.9529 - val_loss: 0.8922 - val_recall: 0.7774 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 380ms/step - loss: 0.1205 - recall: 0.9529 - val_loss: 0.8922 - val_recall: 0.7774 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 375ms/step - loss: 0.1140 - recall: 0.9631 - val_loss: 1.1084 - val_recall: 0.7695 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 381ms/step - loss: 0.1140 - recall: 0.9631 - val_loss: 1.1084 - val_recall: 0.7695 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 377ms/step - loss: 0.0670 - recall: 0.9783 - val_loss: 0.8778 - val_recall: 0.8151 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 375ms/step - loss: 0.0670 - recall: 0.9783 - val_loss: 0.8778 - val_recall: 0.8151 - learning_rate: 1.0000e-04
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 371ms/step - loss: 0.0429 - recall: 0.9854 - val_loss: 0.8952 - val_recall: 0.8186 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 380ms/step - loss: 0.0429 - recall: 0.9854 - val_loss: 0.8952 - val_recall: 0.8186 - learning_rate: 1.0000e-04
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 374ms/step - loss: 0.0439 - recall: 0.9852 - val_loss: 0.8729 - val_recall: 0.8335 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.0439 - recall: 0.9852 - val_loss: 0.8729 - val_recall: 0.8335 - learning_rate: 1.0000e-04
     
 
 
@@ -4742,7 +5589,7 @@ model_bnr_complex_y_pred = model_bnr_complex.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 134ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 131ms/step
     
 
 
@@ -4758,7 +5605,7 @@ plot_training_history(model_bnr_complex_history, 'Complex CNN With Batch Normali
 
 
     
-![png](output_164_0.png)
+![png](output_194_0.png)
     
 
 
@@ -4802,7 +5649,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_165_0.png)
+![png](output_195_0.png)
     
 
 
@@ -4945,7 +5792,7 @@ model_bnr_complex_all_summary = pd.DataFrame(zip(model_bnr_complex_model_list,
 
 ```
 
-### 1.6.7 CNN With Dropout and Batch Normalization Regularization Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.7"></a>
+### 1.6.6 CNN With Dropout and Batch Normalization Regularization Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.6"></a>
 
 
 ```python
@@ -4995,25 +5842,25 @@ model_cdrbnr_simple_history = model_cdrbnr_simple.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 260ms/step - loss: 1.6579 - recall: 0.1515 - val_loss: 1.3345 - val_recall: 0.0018 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m42s[0m 281ms/step - loss: 1.6579 - recall: 0.1515 - val_loss: 1.3345 - val_recall: 0.0018 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 256ms/step - loss: 1.0206 - recall: 0.3417 - val_loss: 1.1807 - val_recall: 0.0649 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 268ms/step - loss: 1.0206 - recall: 0.3417 - val_loss: 1.1807 - val_recall: 0.0649 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 254ms/step - loss: 0.9324 - recall: 0.3955 - val_loss: 1.0523 - val_recall: 0.2366 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 256ms/step - loss: 0.9324 - recall: 0.3955 - val_loss: 1.0523 - val_recall: 0.2366 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 265ms/step - loss: 0.7758 - recall: 0.4966 - val_loss: 0.9607 - val_recall: 0.4137 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 256ms/step - loss: 0.7758 - recall: 0.4966 - val_loss: 0.9607 - val_recall: 0.4137 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 253ms/step - loss: 0.7319 - recall: 0.5117 - val_loss: 1.0513 - val_recall: 0.4496 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 259ms/step - loss: 0.7319 - recall: 0.5117 - val_loss: 1.0513 - val_recall: 0.4496 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 252ms/step - loss: 0.6944 - recall: 0.5397 - val_loss: 1.0002 - val_recall: 0.5127 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 261ms/step - loss: 0.6944 - recall: 0.5397 - val_loss: 1.0002 - val_recall: 0.5127 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 258ms/step - loss: 0.6810 - recall: 0.5275 - val_loss: 1.1606 - val_recall: 0.6056 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 260ms/step - loss: 0.6810 - recall: 0.5275 - val_loss: 1.1606 - val_recall: 0.6056 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 258ms/step - loss: 0.6298 - recall: 0.5520 - val_loss: 0.9720 - val_recall: 0.5951 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 256ms/step - loss: 0.6298 - recall: 0.5520 - val_loss: 0.9720 - val_recall: 0.5951 - learning_rate: 1.0000e-04
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 255ms/step - loss: 0.5942 - recall: 0.5613 - val_loss: 0.9829 - val_recall: 0.5960 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 254ms/step - loss: 0.5942 - recall: 0.5613 - val_loss: 0.9829 - val_recall: 0.5960 - learning_rate: 1.0000e-04
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 258ms/step - loss: 0.6268 - recall: 0.5480 - val_loss: 1.0679 - val_recall: 0.5942 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 257ms/step - loss: 0.6268 - recall: 0.5480 - val_loss: 1.0679 - val_recall: 0.5942 - learning_rate: 1.0000e-04
     
 
 
@@ -5027,7 +5874,7 @@ model_cdrbnr_simple_y_pred = model_cdrbnr_simple.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 96ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 100ms/step
     
 
 
@@ -5043,7 +5890,7 @@ plot_training_history(model_cdrbnr_simple_history, 'Simple CNN With Dropout and 
 
 
     
-![png](output_172_0.png)
+![png](output_202_0.png)
     
 
 
@@ -5087,7 +5934,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_173_0.png)
+![png](output_203_0.png)
     
 
 
@@ -5251,37 +6098,37 @@ model_cdrbnr_complex_history = model_cdrbnr_complex.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 384ms/step - loss: 1.7995 - recall: 0.5219 - val_loss: 1.1321 - val_recall: 0.0342 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m59s[0m 395ms/step - loss: 1.7995 - recall: 0.5219 - val_loss: 1.1321 - val_recall: 0.0342 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.3938 - recall: 0.8333 - val_loss: 0.9887 - val_recall: 0.0649 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m80s[0m 383ms/step - loss: 0.3938 - recall: 0.8333 - val_loss: 0.9887 - val_recall: 0.0649 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 380ms/step - loss: 0.2484 - recall: 0.8988 - val_loss: 0.6290 - val_recall: 0.6713 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 384ms/step - loss: 0.2484 - recall: 0.8988 - val_loss: 0.6290 - val_recall: 0.6713 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 379ms/step - loss: 0.2268 - recall: 0.9093 - val_loss: 0.6252 - val_recall: 0.7555 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.2268 - recall: 0.9093 - val_loss: 0.6252 - val_recall: 0.7555 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 377ms/step - loss: 0.1590 - recall: 0.9359 - val_loss: 0.8430 - val_recall: 0.7046 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 382ms/step - loss: 0.1590 - recall: 0.9359 - val_loss: 0.8430 - val_recall: 0.7046 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m62s[0m 434ms/step - loss: 0.1436 - recall: 0.9409 - val_loss: 0.5680 - val_recall: 0.8352 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m113s[0m 790ms/step - loss: 0.1436 - recall: 0.9409 - val_loss: 0.5680 - val_recall: 0.8352 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 379ms/step - loss: 0.1110 - recall: 0.9563 - val_loss: 0.7335 - val_recall: 0.8344 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.1110 - recall: 0.9563 - val_loss: 0.7335 - val_recall: 0.8344 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 379ms/step - loss: 0.1024 - recall: 0.9607 - val_loss: 0.9613 - val_recall: 0.8291 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.1024 - recall: 0.9607 - val_loss: 0.9613 - val_recall: 0.8291 - learning_rate: 0.0010
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 376ms/step - loss: 0.1047 - recall: 0.9615 - val_loss: 0.6784 - val_recall: 0.8475 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.1047 - recall: 0.9615 - val_loss: 0.6784 - val_recall: 0.8475 - learning_rate: 0.0010
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 390ms/step - loss: 0.0612 - recall: 0.9779 - val_loss: 0.7055 - val_recall: 0.8580 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 382ms/step - loss: 0.0612 - recall: 0.9779 - val_loss: 0.7055 - val_recall: 0.8580 - learning_rate: 1.0000e-04
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 392ms/step - loss: 0.0465 - recall: 0.9825 - val_loss: 0.7504 - val_recall: 0.8615 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 381ms/step - loss: 0.0465 - recall: 0.9825 - val_loss: 0.7504 - val_recall: 0.8615 - learning_rate: 1.0000e-04
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 387ms/step - loss: 0.0426 - recall: 0.9825 - val_loss: 0.8035 - val_recall: 0.8624 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 382ms/step - loss: 0.0426 - recall: 0.9825 - val_loss: 0.8035 - val_recall: 0.8624 - learning_rate: 1.0000e-04
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 390ms/step - loss: 0.0373 - recall: 0.9885 - val_loss: 0.7971 - val_recall: 0.8624 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 385ms/step - loss: 0.0373 - recall: 0.9885 - val_loss: 0.7971 - val_recall: 0.8624 - learning_rate: 1.0000e-05
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 386ms/step - loss: 0.0427 - recall: 0.9842 - val_loss: 0.7896 - val_recall: 0.8606 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 385ms/step - loss: 0.0427 - recall: 0.9842 - val_loss: 0.7896 - val_recall: 0.8606 - learning_rate: 1.0000e-05
     Epoch 15/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 390ms/step - loss: 0.0323 - recall: 0.9903 - val_loss: 0.7911 - val_recall: 0.8606 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 381ms/step - loss: 0.0323 - recall: 0.9903 - val_loss: 0.7911 - val_recall: 0.8606 - learning_rate: 1.0000e-05
     Epoch 16/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 382ms/step - loss: 0.0418 - recall: 0.9818 - val_loss: 0.7901 - val_recall: 0.8606 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 381ms/step - loss: 0.0418 - recall: 0.9818 - val_loss: 0.7901 - val_recall: 0.8606 - learning_rate: 1.0000e-06
     
 
 
@@ -5324,7 +6171,7 @@ model_cdrbnr_complex_y_pred = model_cdrbnr_complex.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 137ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 134ms/step
     
 
 
@@ -5340,7 +6187,7 @@ plot_training_history(model_cdrbnr_complex_history, 'Complex CNN With Dropout an
 
 
     
-![png](output_179_0.png)
+![png](output_209_0.png)
     
 
 
@@ -5384,7 +6231,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_180_0.png)
+![png](output_210_0.png)
     
 
 
@@ -5526,7 +6373,7 @@ model_cdrbnr_complex_all_summary = pd.DataFrame(zip(model_cdrbnr_complex_model_l
                                                          'Metric.Value'])
 ```
 
-### 1.6.8 Model Selection <a class="anchor" id="1.6.8"></a>
+### 1.6.7 Model Selection <a class="anchor" id="1.6.7"></a>
 
 
 ```python
@@ -5698,7 +6545,7 @@ for container in cnn_model_performance_comparison_precision_plot.containers:
 
 
     
-![png](output_187_0.png)
+![png](output_217_0.png)
     
 
 
@@ -5854,7 +6701,7 @@ for container in cnn_model_performance_comparison_recall_plot.containers:
 
 
     
-![png](output_190_0.png)
+![png](output_220_0.png)
     
 
 
@@ -6010,13 +6857,13 @@ for container in cnn_model_performance_comparison_fscore_plot.containers:
 
 
     
-![png](output_193_0.png)
+![png](output_223_0.png)
     
 
 
-### 1.6.9 Model Testing <a class="anchor" id="1.6.9"></a>
+### 1.6.8 Model Testing <a class="anchor" id="1.6.9"></a>
 
-### 1.6.10 Model Inference <a class="anchor" id="1.6.10"></a>
+### 1.6.9 Model Inference <a class="anchor" id="1.6.10"></a>
 
 ## 1.7 Predictive Model Development <a class="anchor" id="1.7"></a>
 
