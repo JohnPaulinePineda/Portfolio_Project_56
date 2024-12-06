@@ -2631,6 +2631,24 @@ for x0, y0, path_no_tumor in zip(DF_sample['Max'], DF_sample['StDev'], paths):
 
 ### 1.6.2 Convolutional Neural Network Sequential Layer Development <a class="anchor" id="1.6.2"></a>
 
+1. The [convolutional neural network model](https://www.tensorflow.org/api_docs/python/tf/keras/models) from the <mark style="background-color: #CCECFF"><b>keras.models</b></mark> Python library API was implemented using a [sequential model](https://keras.io/guides/sequential_model/) structure.
+2. Specialized functions were applied to fine-tune the training process dynamically and automate certain actions including:
+    * <span style="color: #FF0000">EarlyStopping</span> to stop training when a monitored metric stops improving which helps to prevent overfitting and saves time, with fixed hyperparameters as follows:
+        * <span style="color: #FF0000">monitor</span> = validation loss (metric to track)
+        * <span style="color: #FF0000">patience</span> = 10 (number of epochs with no improvement after which training stops)
+        * <span style="color: #FF0000">restore_best_weights</span> = true (model's weights will be restored to those from the epoch with the best value of the monitored metric)
+        * <span style="color: #FF0000">min_delta</span> = 0.0001 (minimum change in the monitored metric to qualify as an improvement)
+    * <span style="color: #FF0000">ReduceLROnPlateau</span> to reduce the learning rate when a monitored metric has stopped improving which helps the model converge better by fine-tuning updates, with fixed hyperparameters as follows:
+        * <span style="color: #FF0000">monitor</span> = validation loss (metric to track)
+        * <span style="color: #FF0000">factor</span> = 0.10 (percentage by which the learning rate is reduced)
+        * <span style="color: #FF0000">patience</span> = 3 (number of epochs with no improvement after which training stops)
+        * <span style="color: #FF0000">min_lr</span> = 0.000001 (lower bound for the learning rate to prevent it from becoming too small)
+    * <span style="color: #FF0000">ModelCheckpoint</span> to save the model at specified intervals during training and enabling the sunsequent restoration of the best-performing model, with fixed hyperparameters as follows:
+        * <span style="color: #FF0000">monitor</span> = validation loss (metric to track)
+        * <span style="color: #FF0000">save_best_only</span> = true (only saves the model when the monitored metric improves)
+        * <span style="color: #FF0000">save_weights_only</span> = false (saving the entire model and not just the weights)
+          
+
 
 ```python
 ##################################
@@ -2701,7 +2719,7 @@ CDRBNR_COMPLEX_BEST_MODEL_PATH = os.path.join("..", MODELS_PATH, "cdrbnr_complex
 early_stopping = EarlyStopping(
     monitor='val_loss',                      # Defining the metric to monitor
     patience=10,                             # Defining the number of epochs to wait before stopping if no improvement
-    min_delta=1e-4 ,                         # Defining the minimum change in the monitored quantity to qualify as an improvement
+    min_delta=1e-4,                         # Defining the minimum change in the monitored quantity to qualify as an improvement
     restore_best_weights=True                # Restoring the weights from the best epoch
 )
 
@@ -2771,6 +2789,65 @@ cdrbnr_complex_model_checkpoint = ModelCheckpoint(
 ```
 
 #### 1.6.2.1 CNN With No Regularization <a class="anchor" id="1.6.2.1"></a>
+
+1. The simple model contains 7 layers with fixed hyperparameters as follows:
+    * <span style="color: #FF0000">Conv2D: nr_simple_conv2d_0</span>
+        * <span style="color: #FF0000">filters</span> = 8
+        * <span style="color: #FF0000">kernel_size</span> = 3x3
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+        * <span style="color: #FF0000">padding</span> = same (output size equals input size)
+        * <span style="color: #FF0000">input_shape</span> = 227x227x1
+    * <span style="color: #FF0000">MaxPooling2D: nr_simple_max_pooling2d_0</span>
+        * <span style="color: #FF0000">pool_size</span> = 2x2
+    * <span style="color: #FF0000">Conv2D: nr_simple_conv2d_1</span>
+        * <span style="color: #FF0000">filters</span> = 16
+        * <span style="color: #FF0000">kernel_size</span> = 3x3
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+        * <span style="color: #FF0000">padding</span> = same (output size equals input size)
+    * <span style="color: #FF0000">MaxPooling2D: nr_simple_max_pooling2d_1</span>
+        * <span style="color: #FF0000">pool_size</span> = 2x2
+    * <span style="color: #FF0000">Flatten: nr_simple_flatten</span>
+    * <span style="color: #FF0000">Dense: nr_simple_dense_0</span>
+        * <span style="color: #FF0000">units</span> = 32
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+    * <span style="color: #FF0000">Dense: nr_simple_dense_1</span>
+        * <span style="color: #FF0000">units</span> = 4
+        * <span style="color: #FF0000">activation</span> = softmax
+2. The complex model contains 9 layers with fixed hyperparameters as follows:
+    * <span style="color: #FF0000">Conv2D: nr_complex_conv2d_0</span>
+        * <span style="color: #FF0000">filters</span> = 16
+        * <span style="color: #FF0000">kernel_size</span> = 3x3
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+        * <span style="color: #FF0000">padding</span> = same (output size equals input size)
+        * <span style="color: #FF0000">input_shape</span> = 227x227x1
+    * <span style="color: #FF0000">MaxPooling2D: nr_complex_max_pooling2d_0</span>
+        * <span style="color: #FF0000">pool_size</span> = 2x2
+    * <span style="color: #FF0000">Conv2D: nr_complex_conv2d_1</span>
+        * <span style="color: #FF0000">filters</span> = 32
+        * <span style="color: #FF0000">kernel_size</span> = 3x3
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+        * <span style="color: #FF0000">padding</span> = same (output size equals input size)
+    * <span style="color: #FF0000">MaxPooling2D: nr_complex_max_pooling2d_1</span>
+        * <span style="color: #FF0000">pool_size</span> = 2x2
+    * <span style="color: #FF0000">Conv2D: nr_complex_conv2d_2</span>
+        * <span style="color: #FF0000">filters</span> = 64
+        * <span style="color: #FF0000">kernel_size</span> = 3x3
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+        * <span style="color: #FF0000">padding</span> = same (output size equals input size)
+    * <span style="color: #FF0000">MaxPooling2D: nr_complex_max_pooling2d_2</span>
+        * <span style="color: #FF0000">pool_size</span> = 2x2
+    * <span style="color: #FF0000">Flatten: nr_complex_flatten</span>
+    * <span style="color: #FF0000">Dense: nr_complex_dense_0</span>
+        * <span style="color: #FF0000">units</span> = 128
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+    * <span style="color: #FF0000">Dense: nr_complex_dense_1</span>
+        * <span style="color: #FF0000">units</span> = 4
+        * <span style="color: #FF0000">activation</span> = softmax
+3. Additional fixed hyperparameters used during model compilation are as follows:
+    * <span style="color: #FF0000">loss</span> = categorical_crossentropy
+    * <span style="color: #FF0000">optimizer</span> = adam (adaptive moment estimation)
+    * <span style="color: #FF0000">metrics</span> = recall
+
 
 
 ```python
@@ -3070,6 +3147,69 @@ print("\nTotal Parameters in the Model:", total_parameters)
     
 
 #### 1.6.2.2 CNN With Dropout Regularization <a class="anchor" id="1.6.2.2"></a>
+
+1. The simple model contains 8 layers with fixed hyperparameters as follows:
+    * <span style="color: #FF0000">Conv2D: dr_simple_conv2d_0</span>
+        * <span style="color: #FF0000">filters</span> = 8
+        * <span style="color: #FF0000">kernel_size</span> = 3x3
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+        * <span style="color: #FF0000">padding</span> = same (output size equals input size)
+        * <span style="color: #FF0000">input_shape</span> = 227x227x1
+    * <span style="color: #FF0000">MaxPooling2D: dr_simple_max_pooling2d_0</span>
+        * <span style="color: #FF0000">pool_size</span> = 2x2
+    * <span style="color: #FF0000">Conv2D: dr_simple_conv2d_1</span>
+        * <span style="color: #FF0000">filters</span> = 16
+        * <span style="color: #FF0000">kernel_size</span> = 3x3
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+        * <span style="color: #FF0000">padding</span> = same (output size equals input size)
+    * <span style="color: #FF0000">MaxPooling2D: dr_simple_max_pooling2d_1</span>
+        * <span style="color: #FF0000">pool_size</span> = 2x2
+    * <span style="color: #FF0000">Flatten: dr_simple_flatten</span>
+    * <span style="color: #FF0000">Dense: dr_simple_dense_0</span>
+        * <span style="color: #FF0000">units</span> = 32
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+    * <span style="color: #FF0000">Dropout: dr_simple_dropout</span>
+        * <span style="color: #FF0000">rate</span> = 0.25
+    * <span style="color: #FF0000">Dense: dr_simple_dense_1</span>
+        * <span style="color: #FF0000">units</span> = 4
+        * <span style="color: #FF0000">activation</span> = softmax
+2. The complex model contains 10 layers with fixed hyperparameters as follows:
+    * <span style="color: #FF0000">Conv2D: dr_complex_conv2d_0</span>
+        * <span style="color: #FF0000">filters</span> = 16
+        * <span style="color: #FF0000">kernel_size</span> = 3x3
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+        * <span style="color: #FF0000">padding</span> = same (output size equals input size)
+        * <span style="color: #FF0000">input_shape</span> = 227x227x1
+    * <span style="color: #FF0000">MaxPooling2D: dr_complex_max_pooling2d_0</span>
+        * <span style="color: #FF0000">pool_size</span> = 2x2
+    * <span style="color: #FF0000">Conv2D: dr_complex_conv2d_1</span>
+        * <span style="color: #FF0000">filters</span> = 32
+        * <span style="color: #FF0000">kernel_size</span> = 3x3
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+        * <span style="color: #FF0000">padding</span> = same (output size equals input size)
+    * <span style="color: #FF0000">MaxPooling2D: dr_complex_max_pooling2d_1</span>
+        * <span style="color: #FF0000">pool_size</span> = 2x2
+    * <span style="color: #FF0000">Conv2D: dr_complex_conv2d_2</span>
+        * <span style="color: #FF0000">filters</span> = 64
+        * <span style="color: #FF0000">kernel_size</span> = 3x3
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+        * <span style="color: #FF0000">padding</span> = same (output size equals input size)
+    * <span style="color: #FF0000">MaxPooling2D: dr_complex_max_pooling2d_2</span>
+        * <span style="color: #FF0000">pool_size</span> = 2x2
+    * <span style="color: #FF0000">Flatten: dr_complex_flatten</span>
+    * <span style="color: #FF0000">Dense: dr_complex_dense_0</span>
+        * <span style="color: #FF0000">units</span> = 128
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+    * <span style="color: #FF0000">Dropout: dr_complex_dropout</span>
+        * <span style="color: #FF0000">rate</span> = 0.25
+    * <span style="color: #FF0000">Dense: dr_complex_dense_1</span>
+        * <span style="color: #FF0000">units</span> = 4
+        * <span style="color: #FF0000">activation</span> = softmax
+3. Additional fixed hyperparameters used during model compilation are as follows:
+    * <span style="color: #FF0000">loss</span> = categorical_crossentropy
+    * <span style="color: #FF0000">optimizer</span> = adam (adaptive moment estimation)
+    * <span style="color: #FF0000">metrics</span> = recall
+
 
 
 ```python
@@ -3381,6 +3521,71 @@ print("\nTotal Parameters in the Model:", total_parameters)
     
 
 #### 1.6.2.3 CNN With Batch Normalization Regularization <a class="anchor" id="1.6.2.3"></a>
+
+1. The simple model contains 9 layers with fixed hyperparameters as follows:
+    * <span style="color: #FF0000">Conv2D: bnr_simple_conv2d_0</span>
+        * <span style="color: #FF0000">filters</span> = 8
+        * <span style="color: #FF0000">kernel_size</span> = 3x3
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+        * <span style="color: #FF0000">padding</span> = same (output size equals input size)
+        * <span style="color: #FF0000">input_shape</span> = 227x227x1
+    * <span style="color: #FF0000">MaxPooling2D: bnr_simple_max_pooling2d_0</span>
+        * <span style="color: #FF0000">pool_size</span> = 2x2
+    * <span style="color: #FF0000">Conv2D: bnr_simple_conv2d_1</span>
+        * <span style="color: #FF0000">filters</span> = 16
+        * <span style="color: #FF0000">kernel_size</span> = 3x3
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+        * <span style="color: #FF0000">padding</span> = same (output size equals input size)
+    * <span style="color: #FF0000">BatchNormalization: bnr_simple_batch_normalization</span>
+    * <span style="color: #FF0000">Activation: bnr_simple_activation</span>
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+    * <span style="color: #FF0000">MaxPooling2D: bnr_simple_max_pooling2d_1</span>
+        * <span style="color: #FF0000">pool_size</span> = 2x2
+    * <span style="color: #FF0000">Flatten: bnr_simple_flatten</span>
+    * <span style="color: #FF0000">Dense: bnr_simple_dense_0</span>
+        * <span style="color: #FF0000">units</span> = 32
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+    * <span style="color: #FF0000">Dense: bnr_simple_dense_1</span>
+        * <span style="color: #FF0000">units</span> = 4
+        * <span style="color: #FF0000">activation</span> = softmax
+2. The complex model contains 10 layers with fixed hyperparameters as follows:
+    * <span style="color: #FF0000">Conv2D: bnr_complex_conv2d_0</span>
+        * <span style="color: #FF0000">filters</span> = 16
+        * <span style="color: #FF0000">kernel_size</span> = 3x3
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+        * <span style="color: #FF0000">padding</span> = same (output size equals input size)
+        * <span style="color: #FF0000">input_shape</span> = 227x227x1
+    * <span style="color: #FF0000">MaxPooling2D: bnr_complex_max_pooling2d_0</span>
+        * <span style="color: #FF0000">pool_size</span> = 2x2
+    * <span style="color: #FF0000">Conv2D: bnr_complex_conv2d_1</span>
+        * <span style="color: #FF0000">filters</span> = 32
+        * <span style="color: #FF0000">kernel_size</span> = 3x3
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+        * <span style="color: #FF0000">padding</span> = same (output size equals input size)
+    * <span style="color: #FF0000">BatchNormalization: bnr_complex_batch_normalization</span>
+    * <span style="color: #FF0000">Activation: bnr_complex_activation</span>
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+    * <span style="color: #FF0000">MaxPooling2D: bnr_complex_max_pooling2d_1</span>
+        * <span style="color: #FF0000">pool_size</span> = 2x2
+    * <span style="color: #FF0000">Conv2D: bnr_complex_conv2d_2</span>
+        * <span style="color: #FF0000">filters</span> = 64
+        * <span style="color: #FF0000">kernel_size</span> = 3x3
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+        * <span style="color: #FF0000">padding</span> = same (output size equals input size)
+    * <span style="color: #FF0000">MaxPooling2D: bnr_complex_max_pooling2d_2</span>
+        * <span style="color: #FF0000">pool_size</span> = 2x2
+    * <span style="color: #FF0000">Flatten: bnr_complex_flatten</span>
+    * <span style="color: #FF0000">Dense: bnr_complex_dense_0</span>
+        * <span style="color: #FF0000">units</span> = 128
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+    * <span style="color: #FF0000">Dense: bnr_complex_dense_1</span>
+        * <span style="color: #FF0000">units</span> = 4
+        * <span style="color: #FF0000">activation</span> = softmax
+3. Additional fixed hyperparameters used during model compilation are as follows:
+    * <span style="color: #FF0000">loss</span> = categorical_crossentropy
+    * <span style="color: #FF0000">optimizer</span> = adam (adaptive moment estimation)
+    * <span style="color: #FF0000">metrics</span> = recall
+
 
 
 ```python
@@ -3703,6 +3908,75 @@ print("\nTotal Parameters in the Model:", total_parameters)
     
 
 #### 1.6.2.4 CNN With Dropout and Batch Normalization Regularization <a class="anchor" id="1.6.2.4"></a>
+
+1. The simple model contains 10 layers with fixed hyperparameters as follows:
+    * <span style="color: #FF0000">Conv2D: cdrbnr_simple_conv2d_0</span>
+        * <span style="color: #FF0000">filters</span> = 8
+        * <span style="color: #FF0000">kernel_size</span> = 3x3
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+        * <span style="color: #FF0000">padding</span> = same (output size equals input size)
+        * <span style="color: #FF0000">input_shape</span> = 227x227x1
+    * <span style="color: #FF0000">MaxPooling2D: cdrbnr_simple_max_pooling2d_0</span>
+        * <span style="color: #FF0000">pool_size</span> = 2x2
+    * <span style="color: #FF0000">Conv2D: cdrbnr_simple_conv2d_1</span>
+        * <span style="color: #FF0000">filters</span> = 16
+        * <span style="color: #FF0000">kernel_size</span> = 3x3
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+        * <span style="color: #FF0000">padding</span> = same (output size equals input size)
+    * <span style="color: #FF0000">BatchNormalization: cdrbnr_simple_batch_normalization</span>
+    * <span style="color: #FF0000">Activation: cdrbnr_simple_activation</span>
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+    * <span style="color: #FF0000">MaxPooling2D: cdrbnr_simple_max_pooling2d_1</span>
+        * <span style="color: #FF0000">pool_size</span> = 2x2
+    * <span style="color: #FF0000">Flatten: cdrbnr_simple_flatten</span>
+    * <span style="color: #FF0000">Dense: cdrbnr_simple_dense_0</span>
+        * <span style="color: #FF0000">units</span> = 32
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+    * <span style="color: #FF0000">Dropout: cdrbnr_simple_dropout</span>
+        * <span style="color: #FF0000">rate</span> = 0.25
+    * <span style="color: #FF0000">Dense: cdrbnr_simple_dense_1</span>
+        * <span style="color: #FF0000">units</span> = 4
+        * <span style="color: #FF0000">activation</span> = softmax
+2. The complex model contains 11 layers with fixed hyperparameters as follows:
+    * <span style="color: #FF0000">Conv2D: cdrbnr_complex_conv2d_0</span>
+        * <span style="color: #FF0000">filters</span> = 16
+        * <span style="color: #FF0000">kernel_size</span> = 3x3
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+        * <span style="color: #FF0000">padding</span> = same (output size equals input size)
+        * <span style="color: #FF0000">input_shape</span> = 227x227x1
+    * <span style="color: #FF0000">MaxPooling2D: cdrbnr_complex_max_pooling2d_0</span>
+        * <span style="color: #FF0000">pool_size</span> = 2x2
+    * <span style="color: #FF0000">Conv2D: cdrbnr_complex_conv2d_1</span>
+        * <span style="color: #FF0000">filters</span> = 32
+        * <span style="color: #FF0000">kernel_size</span> = 3x3
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+        * <span style="color: #FF0000">padding</span> = same (output size equals input size)
+    * <span style="color: #FF0000">BatchNormalization: cdrbnr_complex_batch_normalization</span>
+    * <span style="color: #FF0000">Activation: cdrbnr_complex_activation</span>
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+    * <span style="color: #FF0000">MaxPooling2D: cdrbnr_complex_max_pooling2d_1</span>
+        * <span style="color: #FF0000">pool_size</span> = 2x2
+    * <span style="color: #FF0000">Conv2D: cdrbnr_complex_conv2d_2</span>
+        * <span style="color: #FF0000">filters</span> = 64
+        * <span style="color: #FF0000">kernel_size</span> = 3x3
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+        * <span style="color: #FF0000">padding</span> = same (output size equals input size)
+    * <span style="color: #FF0000">MaxPooling2D: cdrbnr_complex_max_pooling2d_2</span>
+        * <span style="color: #FF0000">pool_size</span> = 2x2
+    * <span style="color: #FF0000">Flatten: cdrbnr_complex_flatten</span>
+    * <span style="color: #FF0000">Dense: cdrbnr_complex_dense_0</span>
+        * <span style="color: #FF0000">units</span> = 128
+        * <span style="color: #FF0000">activation</span> = relu (rectified linear unit)
+    * <span style="color: #FF0000">Dropout: cdrbnr_complex_dropout</span>
+        * <span style="color: #FF0000">rate</span> = 0.25
+    * <span style="color: #FF0000">Dense: cdrbnr_complex_dense_1</span>
+        * <span style="color: #FF0000">units</span> = 4
+        * <span style="color: #FF0000">activation</span> = softmax
+3. Additional fixed hyperparameters used during model compilation are as follows:
+    * <span style="color: #FF0000">loss</span> = categorical_crossentropy
+    * <span style="color: #FF0000">optimizer</span> = adam (adaptive moment estimation)
+    * <span style="color: #FF0000">metrics</span> = recall
+
 
 
 ```python
@@ -4039,6 +4313,67 @@ print("\nTotal Parameters in the Model:", total_parameters)
 
 ### 1.6.3 CNN With No Regularization Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.3"></a>
 
+1. The simple model contained 1,607,044 trainable parameters broken down per layer as follows:
+    * <span style="color: #FF0000">Conv2D: nr_simple_conv2d_0</span>
+        * output size = 227x227x8
+        * number of parameters = 80
+    * <span style="color: #FF0000">MaxPooling2D: nr_simple_max_pooling2d_0</span>
+        * output size = 113x113x8
+        * number of parameters = 0
+    * <span style="color: #FF0000">Conv2D: nr_simple_conv2d_1</span>
+        * output size = 113x113x16
+        * number of parameters = 1,168 
+    * <span style="color: #FF0000">MaxPooling2D: nr_simple_max_pooling2d_1</span>
+        * output size = 56x56x16
+        * number of parameters = 0
+    * <span style="color: #FF0000">Flatten: nr_simple_flatten</span>
+        * output size = 50,176
+        * number of parameters = 0
+    * <span style="color: #FF0000">Dense: nr_simple_dense_0</span>
+        * output size = 32
+        * number of parameters = 1,605,664
+    * <span style="color: #FF0000">Dense: nr_simple_dense_1</span>
+        * output size = 4
+        * number of parameters = 132
+2. The complex model contained 6,446,468 trainable parameters broken down per layer as follows:
+    * <span style="color: #FF0000">Conv2D: nr_complex_conv2d_0</span>
+        * output size = 227x227x16
+        * number of parameters = 160
+    * <span style="color: #FF0000">MaxPooling2D: nr_complex_max_pooling2d_0</span>
+        * output size = 113x113x16
+        * number of parameters = 0
+    * <span style="color: #FF0000">Conv2D: nr_complex_conv2d_1</span>
+        * output size = 113x113x32
+        * number of parameters = 4,640
+    * <span style="color: #FF0000">MaxPooling2D: nr_complex_max_pooling2d_1</span>
+        * output size = 56x56x32
+        * number of parameters = 0
+    * <span style="color: #FF0000">Conv2D: nr_complex_conv2d_2</span>
+        * output size = 56x56x64
+        * number of parameters = 18,496 
+    * <span style="color: #FF0000">MaxPooling2D: nr_complex_max_pooling2d_2</span>
+        * output size = 28x28x64
+        * number of parameters = 0
+    * <span style="color: #FF0000">Flatten: nr_complex_flatten</span>
+        * output size = 50,176
+        * number of parameters = 0
+    * <span style="color: #FF0000">Dense: nr_complex_dense_0</span>
+        * output size = 128
+        * number of parameters = 6,422,656
+    * <span style="color: #FF0000">Dense: nr_complex_dense_1</span>
+        * output size = 4
+        * number of parameters = 516
+3. The model performance on the validation set for all image categories is summarized as follows:
+    * Simple
+        * **Precision** = 0.8047
+        * **Recall** = 0.7926
+        * **F1 Score** = 0.7946
+    * Complex
+        * **Precision** = 0.7963
+        * **Recall** = 0.7960
+        * **F1 Score** = 0.7944
+
+
 
 ```python
 ##################################
@@ -4082,37 +4417,37 @@ model_nr_simple_history = model_nr_simple.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 250ms/step - loss: 0.8697 - recall: 0.4612 - val_loss: 0.9379 - val_recall: 0.6556 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 245ms/step - loss: 0.8697 - recall: 0.4612 - val_loss: 0.9379 - val_recall: 0.6556 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 231ms/step - loss: 0.4279 - recall: 0.8129 - val_loss: 0.8684 - val_recall: 0.6792 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m42s[0m 252ms/step - loss: 0.4279 - recall: 0.8129 - val_loss: 0.8684 - val_recall: 0.6792 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 230ms/step - loss: 0.3339 - recall: 0.8637 - val_loss: 0.8071 - val_recall: 0.7239 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m40s[0m 246ms/step - loss: 0.3339 - recall: 0.8637 - val_loss: 0.8071 - val_recall: 0.7239 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 221ms/step - loss: 0.3062 - recall: 0.8771 - val_loss: 0.9367 - val_recall: 0.7528 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m40s[0m 240ms/step - loss: 0.3062 - recall: 0.8771 - val_loss: 0.9367 - val_recall: 0.7528 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 226ms/step - loss: 0.2505 - recall: 0.9024 - val_loss: 0.8099 - val_recall: 0.7450 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 236ms/step - loss: 0.2505 - recall: 0.9024 - val_loss: 0.8099 - val_recall: 0.7450 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 263ms/step - loss: 0.2282 - recall: 0.9033 - val_loss: 0.7319 - val_recall: 0.7862 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m42s[0m 244ms/step - loss: 0.2282 - recall: 0.9033 - val_loss: 0.7319 - val_recall: 0.7862 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 228ms/step - loss: 0.1857 - recall: 0.9301 - val_loss: 0.8285 - val_recall: 0.7783 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m42s[0m 249ms/step - loss: 0.1857 - recall: 0.9301 - val_loss: 0.8285 - val_recall: 0.7783 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 226ms/step - loss: 0.1783 - recall: 0.9361 - val_loss: 0.8437 - val_recall: 0.7642 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 242ms/step - loss: 0.1783 - recall: 0.9361 - val_loss: 0.8437 - val_recall: 0.7642 - learning_rate: 0.0010
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 226ms/step - loss: 0.1366 - recall: 0.9491 - val_loss: 0.8675 - val_recall: 0.8089 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 237ms/step - loss: 0.1366 - recall: 0.9491 - val_loss: 0.8675 - val_recall: 0.8089 - learning_rate: 0.0010
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 228ms/step - loss: 0.1127 - recall: 0.9611 - val_loss: 0.7600 - val_recall: 0.8186 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 237ms/step - loss: 0.1127 - recall: 0.9611 - val_loss: 0.7600 - val_recall: 0.8186 - learning_rate: 1.0000e-04
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 226ms/step - loss: 0.0880 - recall: 0.9663 - val_loss: 0.7769 - val_recall: 0.8177 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 241ms/step - loss: 0.0880 - recall: 0.9663 - val_loss: 0.7769 - val_recall: 0.8177 - learning_rate: 1.0000e-04
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 225ms/step - loss: 0.1055 - recall: 0.9612 - val_loss: 0.7722 - val_recall: 0.8221 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m107s[0m 748ms/step - loss: 0.1055 - recall: 0.9612 - val_loss: 0.7722 - val_recall: 0.8221 - learning_rate: 1.0000e-04
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 224ms/step - loss: 0.0787 - recall: 0.9733 - val_loss: 0.7732 - val_recall: 0.8221 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m70s[0m 244ms/step - loss: 0.0787 - recall: 0.9733 - val_loss: 0.7732 - val_recall: 0.8221 - learning_rate: 1.0000e-05
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 221ms/step - loss: 0.0926 - recall: 0.9680 - val_loss: 0.7768 - val_recall: 0.8221 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 245ms/step - loss: 0.0926 - recall: 0.9680 - val_loss: 0.7768 - val_recall: 0.8221 - learning_rate: 1.0000e-05
     Epoch 15/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 227ms/step - loss: 0.0824 - recall: 0.9691 - val_loss: 0.7803 - val_recall: 0.8212 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 239ms/step - loss: 0.0824 - recall: 0.9691 - val_loss: 0.7803 - val_recall: 0.8212 - learning_rate: 1.0000e-05
     Epoch 16/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 227ms/step - loss: 0.0939 - recall: 0.9701 - val_loss: 0.7808 - val_recall: 0.8203 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 233ms/step - loss: 0.0939 - recall: 0.9701 - val_loss: 0.7808 - val_recall: 0.8203 - learning_rate: 1.0000e-06
     
 
 
@@ -4126,7 +4461,7 @@ model_nr_simple_y_pred_val = model_nr_simple.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 104ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 110ms/step
     
 
 
@@ -4381,37 +4716,37 @@ model_nr_complex_history = model_nr_complex.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 367ms/step - loss: 1.0913 - recall: 0.3645 - val_loss: 0.8411 - val_recall: 0.6915 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 373ms/step - loss: 1.0913 - recall: 0.3645 - val_loss: 0.8411 - val_recall: 0.6915 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m80s[0m 354ms/step - loss: 0.4091 - recall: 0.8322 - val_loss: 0.8689 - val_recall: 0.6862 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m80s[0m 357ms/step - loss: 0.4091 - recall: 0.8322 - val_loss: 0.8689 - val_recall: 0.6862 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 360ms/step - loss: 0.2674 - recall: 0.8948 - val_loss: 0.8096 - val_recall: 0.7327 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 362ms/step - loss: 0.2674 - recall: 0.8948 - val_loss: 0.8096 - val_recall: 0.7327 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m83s[0m 370ms/step - loss: 0.2156 - recall: 0.9202 - val_loss: 0.8086 - val_recall: 0.7862 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m82s[0m 364ms/step - loss: 0.2156 - recall: 0.9202 - val_loss: 0.8086 - val_recall: 0.7862 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 362ms/step - loss: 0.1748 - recall: 0.9339 - val_loss: 0.8040 - val_recall: 0.7625 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m82s[0m 360ms/step - loss: 0.1748 - recall: 0.9339 - val_loss: 0.8040 - val_recall: 0.7625 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 362ms/step - loss: 0.1469 - recall: 0.9431 - val_loss: 0.7236 - val_recall: 0.7984 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m83s[0m 370ms/step - loss: 0.1469 - recall: 0.9431 - val_loss: 0.7236 - val_recall: 0.7984 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 359ms/step - loss: 0.1025 - recall: 0.9621 - val_loss: 0.7801 - val_recall: 0.7993 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m80s[0m 359ms/step - loss: 0.1025 - recall: 0.9621 - val_loss: 0.7801 - val_recall: 0.7993 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 356ms/step - loss: 0.0918 - recall: 0.9644 - val_loss: 0.9317 - val_recall: 0.8063 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 360ms/step - loss: 0.0918 - recall: 0.9644 - val_loss: 0.9317 - val_recall: 0.8063 - learning_rate: 0.0010
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 358ms/step - loss: 0.0861 - recall: 0.9650 - val_loss: 0.8448 - val_recall: 0.8238 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 357ms/step - loss: 0.0861 - recall: 0.9650 - val_loss: 0.8448 - val_recall: 0.8238 - learning_rate: 0.0010
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 351ms/step - loss: 0.0560 - recall: 0.9774 - val_loss: 0.8052 - val_recall: 0.8300 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 357ms/step - loss: 0.0560 - recall: 0.9774 - val_loss: 0.8052 - val_recall: 0.8300 - learning_rate: 1.0000e-04
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 355ms/step - loss: 0.0285 - recall: 0.9933 - val_loss: 0.8621 - val_recall: 0.8186 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 362ms/step - loss: 0.0285 - recall: 0.9933 - val_loss: 0.8621 - val_recall: 0.8186 - learning_rate: 1.0000e-04
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 360ms/step - loss: 0.0294 - recall: 0.9919 - val_loss: 0.8798 - val_recall: 0.8256 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 368ms/step - loss: 0.0294 - recall: 0.9919 - val_loss: 0.8798 - val_recall: 0.8256 - learning_rate: 1.0000e-04
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 356ms/step - loss: 0.0235 - recall: 0.9925 - val_loss: 0.8846 - val_recall: 0.8230 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 353ms/step - loss: 0.0235 - recall: 0.9925 - val_loss: 0.8846 - val_recall: 0.8230 - learning_rate: 1.0000e-05
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 355ms/step - loss: 0.0297 - recall: 0.9903 - val_loss: 0.8888 - val_recall: 0.8247 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 352ms/step - loss: 0.0297 - recall: 0.9903 - val_loss: 0.8888 - val_recall: 0.8247 - learning_rate: 1.0000e-05
     Epoch 15/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 356ms/step - loss: 0.0237 - recall: 0.9951 - val_loss: 0.9018 - val_recall: 0.8230 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 353ms/step - loss: 0.0237 - recall: 0.9951 - val_loss: 0.9018 - val_recall: 0.8230 - learning_rate: 1.0000e-05
     Epoch 16/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 352ms/step - loss: 0.0283 - recall: 0.9913 - val_loss: 0.9021 - val_recall: 0.8238 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 356ms/step - loss: 0.0283 - recall: 0.9913 - val_loss: 0.9021 - val_recall: 0.8238 - learning_rate: 1.0000e-06
     
 
 
@@ -4425,7 +4760,7 @@ model_nr_complex_y_pred_val = model_nr_complex.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 129ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 120ms/step
     
 
 
@@ -4633,6 +4968,74 @@ model_nr_complex_all_summary_val = pd.DataFrame(zip(model_nr_complex_model_list_
 
 ### 1.6.4 CNN With Dropout Regularization Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.4"></a>
 
+1. The simple model contained 1,607,044 trainable parameters broken down per layer as follows:
+    * <span style="color: #FF0000">Conv2D: dr_simple_conv2d_0</span>
+        * output size = 227x227x8
+        * number of parameters = 80
+    * <span style="color: #FF0000">MaxPooling2D: dr_simple_max_pooling2d_0</span>
+        * output size = 113x113x8
+        * number of parameters = 0
+    * <span style="color: #FF0000">Conv2D: dr_simple_conv2d_1</span>
+        * output size = 113x113x16
+        * number of parameters = 1,168 
+    * <span style="color: #FF0000">MaxPooling2D: dr_simple_max_pooling2d_1</span>
+        * output size = 56x56x16
+        * number of parameters = 0
+    * <span style="color: #FF0000">Flatten: dr_simple_flatten</span>
+        * output size = 50,176
+        * number of parameters = 0
+    * <span style="color: #FF0000">Dense: dr_simple_dense_0</span>
+        * output size = 32
+        * number of parameters = 1,605,664
+    * <span style="color: #FF0000">Dropout: dr_simple_dropout</span>
+        * output size = 32
+        * number of parameters = 0
+    * <span style="color: #FF0000">Dense: dr_simple_dense_1</span>
+        * output size = 4
+        * number of parameters = 132
+2. The complex model contained 6,446,468 trainable parameters broken down per layer as follows:
+    * <span style="color: #FF0000">Conv2D: dr_complex_conv2d_0</span>
+        * output size = 227x227x16
+        * number of parameters = 160
+    * <span style="color: #FF0000">MaxPooling2D: dr_complex_max_pooling2d_0</span>
+        * output size = 113x113x16
+        * number of parameters = 0
+    * <span style="color: #FF0000">Conv2D: dr_complex_conv2d_1</span>
+        * output size = 113x113x32
+        * number of parameters = 4,640
+    * <span style="color: #FF0000">MaxPooling2D: dr_complex_max_pooling2d_1</span>
+        * output size = 56x56x32
+        * number of parameters = 0
+    * <span style="color: #FF0000">Conv2D: dr_complex_conv2d_2</span>
+        * output size = 56x56x64
+        * number of parameters = 18,496 
+    * <span style="color: #FF0000">MaxPooling2D: dr_complex_max_pooling2d_2</span>
+        * output size = 28x28x64
+        * number of parameters = 0
+    * <span style="color: #FF0000">Flatten: dr_complex_flatten</span>
+        * output size = 50,176
+        * number of parameters = 0
+    * <span style="color: #FF0000">Dense: dr_complex_dense_0</span>
+        * output size = 128
+        * number of parameters = 6,422,656
+    * <span style="color: #FF0000">Dropout: dr_complex_dropout</span>
+        * output size = 128
+        * number of parameters = 0
+    * <span style="color: #FF0000">Dense: dr_complex_dense_1</span>
+        * output size = 4
+        * number of parameters = 516
+3. The model performance on the validation set for all image categories is summarized as follows:
+    * Simple
+        * **Precision** = 0.7709
+        * **Recall** = 0.7576
+        * **F1 Score** = 0.7611
+    * Complex
+        * **Precision** = 0.7878
+        * **Recall** = 0.7897
+        * **F1 Score** = 0.7881
+
+
+
 
 ```python
 ##################################
@@ -4678,41 +5081,41 @@ model_dr_simple_history = model_dr_simple.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 233ms/step - loss: 1.3558 - recall: 0.1436 - val_loss: 1.0029 - val_recall: 0.4259 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 253ms/step - loss: 1.3558 - recall: 0.1436 - val_loss: 1.0029 - val_recall: 0.4259 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 223ms/step - loss: 0.7573 - recall: 0.5541 - val_loss: 0.8809 - val_recall: 0.5995 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m40s[0m 248ms/step - loss: 0.7573 - recall: 0.5541 - val_loss: 0.8809 - val_recall: 0.5995 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 220ms/step - loss: 0.6801 - recall: 0.5991 - val_loss: 0.8098 - val_recall: 0.6784 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 243ms/step - loss: 0.6801 - recall: 0.5991 - val_loss: 0.8098 - val_recall: 0.6784 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 227ms/step - loss: 0.5949 - recall: 0.6555 - val_loss: 0.9510 - val_recall: 0.6319 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m40s[0m 233ms/step - loss: 0.5949 - recall: 0.6555 - val_loss: 0.9510 - val_recall: 0.6319 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 224ms/step - loss: 0.5358 - recall: 0.6888 - val_loss: 0.8406 - val_recall: 0.6687 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 239ms/step - loss: 0.5358 - recall: 0.6888 - val_loss: 0.8406 - val_recall: 0.6687 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 226ms/step - loss: 0.5175 - recall: 0.7039 - val_loss: 0.7385 - val_recall: 0.6950 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 243ms/step - loss: 0.5175 - recall: 0.7039 - val_loss: 0.7385 - val_recall: 0.6950 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 226ms/step - loss: 0.5096 - recall: 0.7264 - val_loss: 0.8432 - val_recall: 0.7108 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 235ms/step - loss: 0.5096 - recall: 0.7264 - val_loss: 0.8432 - val_recall: 0.7108 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m50s[0m 346ms/step - loss: 0.5263 - recall: 0.7275 - val_loss: 0.7060 - val_recall: 0.7432 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m48s[0m 336ms/step - loss: 0.5263 - recall: 0.7275 - val_loss: 0.7060 - val_recall: 0.7432 - learning_rate: 0.0010
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m63s[0m 215ms/step - loss: 0.4338 - recall: 0.7747 - val_loss: 0.8316 - val_recall: 0.7546 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 232ms/step - loss: 0.4338 - recall: 0.7747 - val_loss: 0.8316 - val_recall: 0.7546 - learning_rate: 0.0010
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 220ms/step - loss: 0.4617 - recall: 0.7647 - val_loss: 0.8108 - val_recall: 0.7432 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 239ms/step - loss: 0.4617 - recall: 0.7647 - val_loss: 0.8108 - val_recall: 0.7432 - learning_rate: 0.0010
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 220ms/step - loss: 0.4197 - recall: 0.7834 - val_loss: 0.8501 - val_recall: 0.7406 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 233ms/step - loss: 0.4197 - recall: 0.7834 - val_loss: 0.8501 - val_recall: 0.7406 - learning_rate: 0.0010
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 223ms/step - loss: 0.4121 - recall: 0.7925 - val_loss: 0.7721 - val_recall: 0.7634 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 237ms/step - loss: 0.4121 - recall: 0.7925 - val_loss: 0.7721 - val_recall: 0.7634 - learning_rate: 1.0000e-04
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 223ms/step - loss: 0.3817 - recall: 0.8064 - val_loss: 0.7482 - val_recall: 0.7713 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 232ms/step - loss: 0.3817 - recall: 0.8064 - val_loss: 0.7482 - val_recall: 0.7713 - learning_rate: 1.0000e-04
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 225ms/step - loss: 0.3763 - recall: 0.8102 - val_loss: 0.7683 - val_recall: 0.7634 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m78s[0m 545ms/step - loss: 0.3763 - recall: 0.8102 - val_loss: 0.7683 - val_recall: 0.7634 - learning_rate: 1.0000e-04
     Epoch 15/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 230ms/step - loss: 0.3781 - recall: 0.7994 - val_loss: 0.7877 - val_recall: 0.7642 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 236ms/step - loss: 0.3781 - recall: 0.7994 - val_loss: 0.7877 - val_recall: 0.7642 - learning_rate: 1.0000e-05
     Epoch 16/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m32s[0m 219ms/step - loss: 0.3701 - recall: 0.8088 - val_loss: 0.7936 - val_recall: 0.7642 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 237ms/step - loss: 0.3701 - recall: 0.8088 - val_loss: 0.7936 - val_recall: 0.7642 - learning_rate: 1.0000e-05
     Epoch 17/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m33s[0m 227ms/step - loss: 0.3933 - recall: 0.8056 - val_loss: 0.7841 - val_recall: 0.7660 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 248ms/step - loss: 0.3933 - recall: 0.8056 - val_loss: 0.7841 - val_recall: 0.7660 - learning_rate: 1.0000e-05
     Epoch 18/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m31s[0m 217ms/step - loss: 0.3852 - recall: 0.7920 - val_loss: 0.7832 - val_recall: 0.7660 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 244ms/step - loss: 0.3852 - recall: 0.7920 - val_loss: 0.7832 - val_recall: 0.7660 - learning_rate: 1.0000e-06
     
 
 
@@ -4726,7 +5129,7 @@ model_dr_simple_y_pred_val = model_dr_simple.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 98ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 112ms/step
     
 
 
@@ -4982,33 +5385,33 @@ model_dr_complex_history = model_dr_complex.fit(train_gen,
     Epoch 1/20
     [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 371ms/step - loss: 1.0131 - recall: 0.3707 - val_loss: 0.8088 - val_recall: 0.6994 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 355ms/step - loss: 0.4345 - recall: 0.8110 - val_loss: 0.7967 - val_recall: 0.6968 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m80s[0m 360ms/step - loss: 0.4345 - recall: 0.8110 - val_loss: 0.7967 - val_recall: 0.6968 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 359ms/step - loss: 0.2910 - recall: 0.8898 - val_loss: 0.7494 - val_recall: 0.7458 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m83s[0m 364ms/step - loss: 0.2910 - recall: 0.8898 - val_loss: 0.7494 - val_recall: 0.7458 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 357ms/step - loss: 0.2426 - recall: 0.9008 - val_loss: 0.7891 - val_recall: 0.7511 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m81s[0m 358ms/step - loss: 0.2426 - recall: 0.9008 - val_loss: 0.7891 - val_recall: 0.7511 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 357ms/step - loss: 0.1822 - recall: 0.9304 - val_loss: 0.6271 - val_recall: 0.7844 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 369ms/step - loss: 0.1822 - recall: 0.9304 - val_loss: 0.6271 - val_recall: 0.7844 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 388ms/step - loss: 0.1632 - recall: 0.9328 - val_loss: 0.7265 - val_recall: 0.7774 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m81s[0m 365ms/step - loss: 0.1632 - recall: 0.9328 - val_loss: 0.7265 - val_recall: 0.7774 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 365ms/step - loss: 0.1317 - recall: 0.9478 - val_loss: 0.8423 - val_recall: 0.7862 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 362ms/step - loss: 0.1317 - recall: 0.9478 - val_loss: 0.8423 - val_recall: 0.7862 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 362ms/step - loss: 0.1286 - recall: 0.9583 - val_loss: 0.8516 - val_recall: 0.8107 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m51s[0m 356ms/step - loss: 0.1286 - recall: 0.9583 - val_loss: 0.8516 - val_recall: 0.8107 - learning_rate: 0.0010
     Epoch 9/20
     [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 360ms/step - loss: 0.0860 - recall: 0.9707 - val_loss: 0.7973 - val_recall: 0.8124 - learning_rate: 1.0000e-04
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 382ms/step - loss: 0.0758 - recall: 0.9745 - val_loss: 0.8234 - val_recall: 0.8081 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m103s[0m 720ms/step - loss: 0.0758 - recall: 0.9745 - val_loss: 0.8234 - val_recall: 0.8081 - learning_rate: 1.0000e-04
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 371ms/step - loss: 0.0523 - recall: 0.9825 - val_loss: 0.8551 - val_recall: 0.8098 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 358ms/step - loss: 0.0523 - recall: 0.9825 - val_loss: 0.8551 - val_recall: 0.8098 - learning_rate: 1.0000e-04
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 372ms/step - loss: 0.0571 - recall: 0.9813 - val_loss: 0.8562 - val_recall: 0.8054 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 360ms/step - loss: 0.0571 - recall: 0.9813 - val_loss: 0.8562 - val_recall: 0.8054 - learning_rate: 1.0000e-05
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 375ms/step - loss: 0.0540 - recall: 0.9823 - val_loss: 0.8620 - val_recall: 0.8089 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 359ms/step - loss: 0.0540 - recall: 0.9823 - val_loss: 0.8620 - val_recall: 0.8089 - learning_rate: 1.0000e-05
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 375ms/step - loss: 0.0564 - recall: 0.9793 - val_loss: 0.8652 - val_recall: 0.8098 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 363ms/step - loss: 0.0564 - recall: 0.9793 - val_loss: 0.8652 - val_recall: 0.8098 - learning_rate: 1.0000e-05
     Epoch 15/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 381ms/step - loss: 0.0538 - recall: 0.9812 - val_loss: 0.8655 - val_recall: 0.8098 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 359ms/step - loss: 0.0538 - recall: 0.9812 - val_loss: 0.8655 - val_recall: 0.8098 - learning_rate: 1.0000e-06
     
 
 
@@ -5022,7 +5425,7 @@ model_dr_complex_y_pred_val = model_dr_complex.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 125ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 117ms/step
     
 
 
@@ -5231,6 +5634,79 @@ model_dr_complex_all_summary_val = pd.DataFrame(zip(model_dr_complex_model_list_
 
 ### 1.6.5 CNN With Batch Normalization Regularization Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.5"></a>
 
+1. The simple model contained 1,607,076 trainable parameters broken down per layer as follows:
+    * <span style="color: #FF0000">Conv2D: bnr_simple_conv2d_0</span>
+        * output size = 227x227x8
+        * number of parameters = 80
+    * <span style="color: #FF0000">MaxPooling2D: bnr_simple_max_pooling2d_0</span>
+        * output size = 113x113x8
+        * number of parameters = 0
+    * <span style="color: #FF0000">Conv2D: bnr_simple_conv2d_1</span>
+        * output size = 113x113x16
+        * number of parameters = 1,168
+    * <span style="color: #FF0000">BatchNormalization: bnr_simple_batch_normalization</span>
+        * output size = 113x113x16
+        * number of parameters = 64
+    * <span style="color: #FF0000">Activation: bnr_simple_activation</span>
+        * output size = 113x113x16
+        * number of parameters = 0 
+    * <span style="color: #FF0000">MaxPooling2D: bnr_simple_max_pooling2d_1</span>
+        * output size = 56x56x16
+        * number of parameters = 0
+    * <span style="color: #FF0000">Flatten: bnr_simple_flatten</span>
+        * output size = 50,176
+        * number of parameters = 0
+    * <span style="color: #FF0000">Dense: bnr_simple_dense_0</span>
+        * output size = 32
+        * number of parameters = 1,605,664
+    * <span style="color: #FF0000">Dense: bnr_simple_dense_1</span>
+        * output size = 4
+        * number of parameters = 132
+2. The complex model contained 6,446,596 trainable parameters broken down per layer as follows:
+    * <span style="color: #FF0000">Conv2D: bnr_complex_conv2d_0</span>
+        * output size = 227x227x16
+        * number of parameters = 160
+    * <span style="color: #FF0000">MaxPooling2D: bnr_complex_max_pooling2d_0</span>
+        * output size = 113x113x16
+        * number of parameters = 0
+    * <span style="color: #FF0000">Conv2D: bnr_complex_conv2d_1</span>
+        * output size = 113x113x32
+        * number of parameters = 4,640
+    * <span style="color: #FF0000">MaxPooling2D: bnr_complex_max_pooling2d_1</span>
+        * output size = 56x56x32
+        * number of parameters = 0
+    * <span style="color: #FF0000">Conv2D: bnr_complex_conv2d_2</span>
+        * output size = 56x56x64
+        * number of parameters = 18,496
+    * <span style="color: #FF0000">BatchNormalization: bnr_complex_batch_normalization</span>
+        * output size = 56x56x64
+        * number of parameters = 256
+    * <span style="color: #FF0000">Activation: bnr_complex_activation</span>
+        * output size = 56x56x64
+        * number of parameters = 0 
+    * <span style="color: #FF0000">MaxPooling2D: bnr_complex_max_pooling2d_2</span>
+        * output size = 28x28x64
+        * number of parameters = 0
+    * <span style="color: #FF0000">Flatten: bnr_complex_flatten</span>
+        * output size = 50,176
+        * number of parameters = 0
+    * <span style="color: #FF0000">Dense: bnr_complex_dense_0</span>
+        * output size = 128
+        * number of parameters = 6,422,656
+    * <span style="color: #FF0000">Dense: bnr_complex_dense_1</span>
+        * output size = 4
+        * number of parameters = 516
+3. The model performance on the validation set for all image categories is summarized as follows:
+    * Simple
+        * **Precision** = 0.8326
+        * **Recall** = 0.8261
+        * **F1 Score** = 0.8285
+    * Complex
+        * **Precision** = 0.6667
+        * **Recall** = 0.6539
+        * **F1 Score** = 0.6482
+
+
 
 ```python
 ##################################
@@ -5277,33 +5753,33 @@ model_bnr_simple_history = model_bnr_simple.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m45s[0m 293ms/step - loss: 1.7668 - recall: 0.5558 - val_loss: 1.0888 - val_recall: 0.0473 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m42s[0m 284ms/step - loss: 1.7668 - recall: 0.5558 - val_loss: 1.0888 - val_recall: 0.0473 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 272ms/step - loss: 0.3585 - recall: 0.8676 - val_loss: 0.8608 - val_recall: 0.3716 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 270ms/step - loss: 0.3585 - recall: 0.8676 - val_loss: 0.8608 - val_recall: 0.3716 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 274ms/step - loss: 0.2334 - recall: 0.9148 - val_loss: 0.7054 - val_recall: 0.6591 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m44s[0m 288ms/step - loss: 0.2334 - recall: 0.9148 - val_loss: 0.7054 - val_recall: 0.6591 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 274ms/step - loss: 0.2119 - recall: 0.9237 - val_loss: 0.5743 - val_recall: 0.8089 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m79s[0m 267ms/step - loss: 0.2119 - recall: 0.9237 - val_loss: 0.5743 - val_recall: 0.8089 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m42s[0m 292ms/step - loss: 0.2065 - recall: 0.9280 - val_loss: 0.6802 - val_recall: 0.8072 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 267ms/step - loss: 0.2065 - recall: 0.9280 - val_loss: 0.6802 - val_recall: 0.8072 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m43s[0m 302ms/step - loss: 0.1448 - recall: 0.9461 - val_loss: 0.8415 - val_recall: 0.8387 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 272ms/step - loss: 0.1448 - recall: 0.9461 - val_loss: 0.8415 - val_recall: 0.8387 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m42s[0m 290ms/step - loss: 0.1309 - recall: 0.9561 - val_loss: 1.1974 - val_recall: 0.8107 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m40s[0m 268ms/step - loss: 0.1309 - recall: 0.9561 - val_loss: 1.1974 - val_recall: 0.8107 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 267ms/step - loss: 0.0820 - recall: 0.9706 - val_loss: 0.9800 - val_recall: 0.8282 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 269ms/step - loss: 0.0820 - recall: 0.9706 - val_loss: 0.9800 - val_recall: 0.8282 - learning_rate: 1.0000e-04
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m42s[0m 292ms/step - loss: 0.0649 - recall: 0.9801 - val_loss: 1.0222 - val_recall: 0.8309 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 266ms/step - loss: 0.0649 - recall: 0.9801 - val_loss: 1.0222 - val_recall: 0.8309 - learning_rate: 1.0000e-04
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m47s[0m 326ms/step - loss: 0.0683 - recall: 0.9782 - val_loss: 1.0025 - val_recall: 0.8247 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 270ms/step - loss: 0.0683 - recall: 0.9782 - val_loss: 1.0025 - val_recall: 0.8247 - learning_rate: 1.0000e-04
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m44s[0m 305ms/step - loss: 0.0509 - recall: 0.9825 - val_loss: 0.9991 - val_recall: 0.8309 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 268ms/step - loss: 0.0509 - recall: 0.9825 - val_loss: 0.9991 - val_recall: 0.8309 - learning_rate: 1.0000e-05
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m40s[0m 280ms/step - loss: 0.0648 - recall: 0.9745 - val_loss: 0.9882 - val_recall: 0.8309 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m68s[0m 477ms/step - loss: 0.0648 - recall: 0.9745 - val_loss: 0.9882 - val_recall: 0.8309 - learning_rate: 1.0000e-05
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 283ms/step - loss: 0.0472 - recall: 0.9859 - val_loss: 0.9759 - val_recall: 0.8300 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 275ms/step - loss: 0.0472 - recall: 0.9859 - val_loss: 0.9759 - val_recall: 0.8300 - learning_rate: 1.0000e-05
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 261ms/step - loss: 0.0499 - recall: 0.9851 - val_loss: 0.9774 - val_recall: 0.8309 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 270ms/step - loss: 0.0499 - recall: 0.9851 - val_loss: 0.9774 - val_recall: 0.8309 - learning_rate: 1.0000e-06
     
 
 
@@ -5317,7 +5793,7 @@ model_bnr_simple_y_pred_val = model_bnr_simple.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 106ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 110ms/step
     
 
 
@@ -5571,25 +6047,25 @@ model_bnr_complex_history = model_bnr_complex.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m63s[0m 419ms/step - loss: 2.4198 - recall: 0.4782 - val_loss: 1.1481 - val_recall: 0.0096 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m61s[0m 411ms/step - loss: 2.4198 - recall: 0.4782 - val_loss: 1.1481 - val_recall: 0.0096 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m66s[0m 461ms/step - loss: 0.3966 - recall: 0.8304 - val_loss: 0.9454 - val_recall: 0.1613 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m79s[0m 387ms/step - loss: 0.3966 - recall: 0.8304 - val_loss: 0.9454 - val_recall: 0.1613 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m59s[0m 412ms/step - loss: 0.2384 - recall: 0.9055 - val_loss: 0.7357 - val_recall: 0.5819 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m81s[0m 384ms/step - loss: 0.2384 - recall: 0.9055 - val_loss: 0.7357 - val_recall: 0.5819 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m59s[0m 412ms/step - loss: 0.2179 - recall: 0.9136 - val_loss: 0.6788 - val_recall: 0.7809 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m83s[0m 389ms/step - loss: 0.2179 - recall: 0.9136 - val_loss: 0.6788 - val_recall: 0.7809 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m61s[0m 425ms/step - loss: 0.1693 - recall: 0.9332 - val_loss: 0.8541 - val_recall: 0.7064 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m81s[0m 383ms/step - loss: 0.1693 - recall: 0.9332 - val_loss: 0.8541 - val_recall: 0.7064 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m59s[0m 412ms/step - loss: 0.1205 - recall: 0.9529 - val_loss: 0.8922 - val_recall: 0.7774 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 385ms/step - loss: 0.1205 - recall: 0.9529 - val_loss: 0.8922 - val_recall: 0.7774 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m60s[0m 414ms/step - loss: 0.1140 - recall: 0.9631 - val_loss: 1.1084 - val_recall: 0.7695 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 387ms/step - loss: 0.1140 - recall: 0.9631 - val_loss: 1.1084 - val_recall: 0.7695 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m63s[0m 434ms/step - loss: 0.0670 - recall: 0.9783 - val_loss: 0.8778 - val_recall: 0.8151 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 382ms/step - loss: 0.0670 - recall: 0.9783 - val_loss: 0.8778 - val_recall: 0.8151 - learning_rate: 1.0000e-04
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m64s[0m 447ms/step - loss: 0.0429 - recall: 0.9854 - val_loss: 0.8952 - val_recall: 0.8186 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 377ms/step - loss: 0.0429 - recall: 0.9854 - val_loss: 0.8952 - val_recall: 0.8186 - learning_rate: 1.0000e-04
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m59s[0m 412ms/step - loss: 0.0439 - recall: 0.9852 - val_loss: 0.8729 - val_recall: 0.8335 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 381ms/step - loss: 0.0439 - recall: 0.9852 - val_loss: 0.8729 - val_recall: 0.8335 - learning_rate: 1.0000e-04
     
 
 
@@ -5603,7 +6079,7 @@ model_bnr_complex_y_pred_val = model_bnr_complex.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 134ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 121ms/step
     
 
 
@@ -5812,6 +6288,85 @@ model_bnr_complex_all_summary_val = pd.DataFrame(zip(model_bnr_complex_model_lis
 
 ### 1.6.6 CNN With Dropout and Batch Normalization Regularization Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.6"></a>
 
+1. The simple model contained 1,607,076 trainable parameters broken down per layer as follows:
+    * <span style="color: #FF0000">Conv2D: cdrbnr_simple_conv2d_0</span>
+        * output size = 227x227x8
+        * number of parameters = 80
+    * <span style="color: #FF0000">MaxPooling2D: cdrbnr_simple_max_pooling2d_0</span>
+        * output size = 113x113x8
+        * number of parameters = 0
+    * <span style="color: #FF0000">Conv2D: cdrbnr_simple_conv2d_1</span>
+        * output size = 113x113x16
+        * number of parameters = 1,168
+    * <span style="color: #FF0000">BatchNormalization: cdrbnr_simple_batch_normalization</span>
+        * output size = 113x113x16
+        * number of parameters = 64
+    * <span style="color: #FF0000">Activation: cdrbnr_simple_activation</span>
+        * output size = 113x113x16
+        * number of parameters = 0 
+    * <span style="color: #FF0000">MaxPooling2D: cdrbnr_simple_max_pooling2d_1</span>
+        * output size = 56x56x16
+        * number of parameters = 0
+    * <span style="color: #FF0000">Flatten: cdrbnr_simple_flatten</span>
+        * output size = 50,176
+        * number of parameters = 0
+    * <span style="color: #FF0000">Dense: cdrbnr_simple_dense_0</span>
+        * output size = 32
+        * number of parameters = 1,605,664
+    * <span style="color: #FF0000">Dropout: cdrbnr_simple_dropout</span>
+        * output size = 32
+        * number of parameters = 0
+    * <span style="color: #FF0000">Dense: cdrbnr_simple_dense_1</span>
+        * output size = 4
+        * number of parameters = 132
+2. The complex model contained 6,446,596 trainable parameters broken down per layer as follows:
+    * <span style="color: #FF0000">Conv2D: cdrbnr_complex_conv2d_0</span>
+        * output size = 227x227x16
+        * number of parameters = 160
+    * <span style="color: #FF0000">MaxPooling2D: cdrbnr_complex_max_pooling2d_0</span>
+        * output size = 113x113x16
+        * number of parameters = 0
+    * <span style="color: #FF0000">Conv2D: cdrbnr_complex_conv2d_1</span>
+        * output size = 113x113x32
+        * number of parameters = 4,640
+    * <span style="color: #FF0000">MaxPooling2D: cdrbnr_complex_max_pooling2d_1</span>
+        * output size = 56x56x32
+        * number of parameters = 0
+    * <span style="color: #FF0000">Conv2D: cdrbnr_complex_conv2d_2</span>
+        * output size = 56x56x64
+        * number of parameters = 18,496
+    * <span style="color: #FF0000">BatchNormalization: cdrbnr_complex_batch_normalization</span>
+        * output size = 56x56x64
+        * number of parameters = 256
+    * <span style="color: #FF0000">Activation: cdrbnr_complex_activation</span>
+        * output size = 56x56x64
+        * number of parameters = 0 
+    * <span style="color: #FF0000">MaxPooling2D: cdrbnr_complex_max_pooling2d_2</span>
+        * output size = 28x28x64
+        * number of parameters = 0
+    * <span style="color: #FF0000">Flatten: cdrbnr_complex_flatten</span>
+        * output size = 50,176
+        * number of parameters = 0
+    * <span style="color: #FF0000">Dense: cdrbnr_complex_dense_0</span>
+        * output size = 128
+        * number of parameters = 6,422,656
+    * <span style="color: #FF0000">Dropout: cdrbnr_complex_dropout</span>
+        * output size = 128
+        * number of parameters = 0
+    * <span style="color: #FF0000">Dense: cdrbnr_complex_dense_1</span>
+        * output size = 4
+        * number of parameters = 516
+3. The model performance on the validation set for all image categories is summarized as follows:
+    * Simple
+        * **Precision** = 0.6003
+        * **Recall** = 0.4639
+        * **F1 Score** = 0.4181
+    * Complex
+        * **Precision** = 0.8429
+        * **Recall** = 0.8385
+        * **F1 Score** = 0.8388
+
+
 
 ```python
 ##################################
@@ -5859,25 +6414,25 @@ model_cdrbnr_simple_history = model_cdrbnr_simple.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m43s[0m 285ms/step - loss: 1.6579 - recall: 0.1515 - val_loss: 1.3345 - val_recall: 0.0018 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 274ms/step - loss: 1.6579 - recall: 0.1515 - val_loss: 1.3345 - val_recall: 0.0018 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 272ms/step - loss: 1.0206 - recall: 0.3417 - val_loss: 1.1807 - val_recall: 0.0649 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 271ms/step - loss: 1.0206 - recall: 0.3417 - val_loss: 1.1807 - val_recall: 0.0649 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 265ms/step - loss: 0.9324 - recall: 0.3955 - val_loss: 1.0523 - val_recall: 0.2366 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m40s[0m 264ms/step - loss: 0.9324 - recall: 0.3955 - val_loss: 1.0523 - val_recall: 0.2366 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m44s[0m 307ms/step - loss: 0.7758 - recall: 0.4966 - val_loss: 0.9607 - val_recall: 0.4137 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m43s[0m 277ms/step - loss: 0.7758 - recall: 0.4966 - val_loss: 0.9607 - val_recall: 0.4137 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m42s[0m 289ms/step - loss: 0.7319 - recall: 0.5117 - val_loss: 1.0513 - val_recall: 0.4496 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 265ms/step - loss: 0.7319 - recall: 0.5117 - val_loss: 1.0513 - val_recall: 0.4496 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m44s[0m 306ms/step - loss: 0.6944 - recall: 0.5397 - val_loss: 1.0002 - val_recall: 0.5127 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m65s[0m 455ms/step - loss: 0.6944 - recall: 0.5397 - val_loss: 1.0002 - val_recall: 0.5127 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m42s[0m 295ms/step - loss: 0.6810 - recall: 0.5275 - val_loss: 1.1606 - val_recall: 0.6056 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 268ms/step - loss: 0.6810 - recall: 0.5275 - val_loss: 1.1606 - val_recall: 0.6056 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 267ms/step - loss: 0.6298 - recall: 0.5520 - val_loss: 0.9720 - val_recall: 0.5951 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m40s[0m 275ms/step - loss: 0.6298 - recall: 0.5520 - val_loss: 0.9720 - val_recall: 0.5951 - learning_rate: 1.0000e-04
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m40s[0m 275ms/step - loss: 0.5942 - recall: 0.5613 - val_loss: 0.9829 - val_recall: 0.5960 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 265ms/step - loss: 0.5942 - recall: 0.5613 - val_loss: 0.9829 - val_recall: 0.5960 - learning_rate: 1.0000e-04
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m40s[0m 281ms/step - loss: 0.6268 - recall: 0.5480 - val_loss: 1.0679 - val_recall: 0.5942 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 262ms/step - loss: 0.6268 - recall: 0.5480 - val_loss: 1.0679 - val_recall: 0.5942 - learning_rate: 1.0000e-04
     
 
 
@@ -5891,7 +6446,7 @@ model_cdrbnr_simple_y_pred_val = model_cdrbnr_simple.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m3s[0m 94ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 100ms/step
     
 
 
@@ -6147,37 +6702,37 @@ model_cdrbnr_complex_history = model_cdrbnr_complex.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m59s[0m 390ms/step - loss: 1.7995 - recall: 0.5219 - val_loss: 1.1321 - val_recall: 0.0342 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 382ms/step - loss: 1.7995 - recall: 0.5219 - val_loss: 1.1321 - val_recall: 0.0342 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m58s[0m 400ms/step - loss: 0.3938 - recall: 0.8333 - val_loss: 0.9887 - val_recall: 0.0649 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m83s[0m 389ms/step - loss: 0.3938 - recall: 0.8333 - val_loss: 0.9887 - val_recall: 0.0649 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 391ms/step - loss: 0.2484 - recall: 0.8988 - val_loss: 0.6290 - val_recall: 0.6713 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m82s[0m 388ms/step - loss: 0.2484 - recall: 0.8988 - val_loss: 0.6290 - val_recall: 0.6713 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m60s[0m 418ms/step - loss: 0.2268 - recall: 0.9093 - val_loss: 0.6252 - val_recall: 0.7555 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m82s[0m 388ms/step - loss: 0.2268 - recall: 0.9093 - val_loss: 0.6252 - val_recall: 0.7555 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m80s[0m 401ms/step - loss: 0.1590 - recall: 0.9359 - val_loss: 0.8430 - val_recall: 0.7046 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m81s[0m 382ms/step - loss: 0.1590 - recall: 0.9359 - val_loss: 0.8430 - val_recall: 0.7046 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 396ms/step - loss: 0.1436 - recall: 0.9409 - val_loss: 0.5680 - val_recall: 0.8352 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 387ms/step - loss: 0.1436 - recall: 0.9409 - val_loss: 0.5680 - val_recall: 0.8352 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m81s[0m 385ms/step - loss: 0.1110 - recall: 0.9563 - val_loss: 0.7335 - val_recall: 0.8344 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 390ms/step - loss: 0.1110 - recall: 0.9563 - val_loss: 0.7335 - val_recall: 0.8344 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 392ms/step - loss: 0.1024 - recall: 0.9607 - val_loss: 0.9613 - val_recall: 0.8291 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 380ms/step - loss: 0.1024 - recall: 0.9607 - val_loss: 0.9613 - val_recall: 0.8291 - learning_rate: 0.0010
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.1047 - recall: 0.9615 - val_loss: 0.6784 - val_recall: 0.8475 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 382ms/step - loss: 0.1047 - recall: 0.9615 - val_loss: 0.6784 - val_recall: 0.8475 - learning_rate: 0.0010
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 380ms/step - loss: 0.0612 - recall: 0.9779 - val_loss: 0.7055 - val_recall: 0.8580 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 381ms/step - loss: 0.0612 - recall: 0.9779 - val_loss: 0.7055 - val_recall: 0.8580 - learning_rate: 1.0000e-04
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 384ms/step - loss: 0.0465 - recall: 0.9825 - val_loss: 0.7504 - val_recall: 0.8615 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 387ms/step - loss: 0.0465 - recall: 0.9825 - val_loss: 0.7504 - val_recall: 0.8615 - learning_rate: 1.0000e-04
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 390ms/step - loss: 0.0426 - recall: 0.9825 - val_loss: 0.8035 - val_recall: 0.8624 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 393ms/step - loss: 0.0426 - recall: 0.9825 - val_loss: 0.8035 - val_recall: 0.8624 - learning_rate: 1.0000e-04
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m58s[0m 402ms/step - loss: 0.0373 - recall: 0.9885 - val_loss: 0.7971 - val_recall: 0.8624 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 387ms/step - loss: 0.0373 - recall: 0.9885 - val_loss: 0.7971 - val_recall: 0.8624 - learning_rate: 1.0000e-05
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 389ms/step - loss: 0.0427 - recall: 0.9842 - val_loss: 0.7896 - val_recall: 0.8606 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 385ms/step - loss: 0.0427 - recall: 0.9842 - val_loss: 0.7896 - val_recall: 0.8606 - learning_rate: 1.0000e-05
     Epoch 15/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 399ms/step - loss: 0.0323 - recall: 0.9903 - val_loss: 0.7911 - val_recall: 0.8606 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 381ms/step - loss: 0.0323 - recall: 0.9903 - val_loss: 0.7911 - val_recall: 0.8606 - learning_rate: 1.0000e-05
     Epoch 16/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m58s[0m 402ms/step - loss: 0.0418 - recall: 0.9818 - val_loss: 0.7901 - val_recall: 0.8606 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 391ms/step - loss: 0.0418 - recall: 0.9818 - val_loss: 0.7901 - val_recall: 0.8606 - learning_rate: 1.0000e-06
     
 
 
@@ -6191,7 +6746,7 @@ model_cdrbnr_complex_y_pred_val = model_cdrbnr_complex.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 147ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 123ms/step
     
 
 
@@ -6398,6 +6953,46 @@ model_cdrbnr_complex_all_summary_val = pd.DataFrame(zip(model_cdrbnr_complex_mod
 ```
 
 ### 1.6.7 Model Selection <a class="anchor" id="1.6.7"></a>
+
+1. The **Simple CNN Model With No Regularization** demonstrated the following validation set performance for all image categories:
+    * **Precision** = 0.7709
+    * **Recall** = 0.7576
+    * **F1 Score** = 0.7611
+2. The **Complex CNN Model With No Regularization** demonstrated the following validation set performance for all image categories:
+    * **Precision** = 0.7878
+    * **Recall** = 0.7897
+    * **F1 Score** = 0.7881  
+3. The **Simple CNN Model With Dropout Regularization** demonstrated the following validation set performance for all image categories:
+    * **Precision** = 0.7709
+    * **Recall** = 0.7576
+    * **F1 Score** = 0.7611
+4. The **Complex CNN Model With Dropout Regularization** demonstrated the following validation set performance for all image categories:
+    * **Precision** = 0.7878
+    * **Recall** = 0.7897
+    * **F1 Score** = 0.7881
+5. The **Simple CNN Model With Batch Normalization Regularization** demonstrated the following validation set performance for all image categories:
+    * **Precision** = 0.8326
+    * **Recall** = 0.8261
+    * **F1 Score** = 0.8285
+6. The **Complex CNN Model With Batch Normalization Regularization** demonstrated the following validation set performance for all image categories:
+    * **Precision** = 0.6667
+    * **Recall** = 0.6539
+    * **F1 Score** = 0.6482
+7. The **Simple CNN Model With Dropout and Batch Normalization Regularization** demonstrated the following validation set performance for all image categories:
+    * **Precision** = 0.6003
+    * **Recall** = 0.4639
+    * **F1 Score** = 0.4181
+8. The **Complex CNN Model With Dropout and Batch Normalization Regularization** demonstrated the following validation set performance for all image categories:
+    * **Precision** = 0.8429
+    * **Recall** = 0.8385
+    * **F1 Score** = 0.8388
+9. While the classification results have been sufficiently high, the current study can be further extended to achieve optimal model performance through the following:
+    * Leverage pre-trained models that have been trained on large datasets to improve performance
+    * Conduct model hyperparameter tuning given sufficient analysis time and higher computing power
+    * Formulate deeper neural network architectures to better capture spatial hierarchies and features in the input images
+    * Apply various techniques to interpret the CNN models by understanding and visualizing the features and decisions made at each layer 
+    * Consider an imbalanced dataset and apply remedial measures to address unbalanced classification to accurately reflect real-world scenario
+
 
 
 ```python
@@ -6897,7 +7492,7 @@ for container in cnn_model_performance_comparison_val_fscore_plot.containers:
 model_cdrbnr_complex_y_pred_test = model_cdrbnr_complex.predict(test_gen)
 ```
 
-    [1m41/41[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m6s[0m 143ms/step
+    [1m41/41[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 102ms/step
     
 
 
