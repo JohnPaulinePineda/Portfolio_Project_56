@@ -103,7 +103,7 @@ grad_model_first_conv2d.compile(loss='categorical_crossentropy', optimizer='adam
 # of the second convolutional layer
 ##################################
 grad_model_second_conv2d = Model(inputs=fcnnmodel_input_layer, 
-                                outputs=[fcnnmodel_conv2d_layer, fcnnmodel_output_layer], 
+                                outputs=[fcnnmodel_conv2d_1_layer, fcnnmodel_output_layer], 
                                 name="final_cnn_model_fapi_second_conv2d")
 set_seed()
 grad_model_second_conv2d.compile(loss='categorical_crossentropy', optimizer='adam', metrics=[Recall(name='recall')])
@@ -114,7 +114,7 @@ grad_model_second_conv2d.compile(loss='categorical_crossentropy', optimizer='ada
 # of the third convolutional layer
 ##################################
 grad_model_third_conv2d = Model(inputs=fcnnmodel_input_layer, 
-                                outputs=[fcnnmodel_conv2d_layer, fcnnmodel_output_layer], 
+                                outputs=[fcnnmodel_conv2d_2_layer, fcnnmodel_output_layer], 
                                 name="final_cnn_model_fapi_third_conv2d")
 set_seed()
 grad_model_third_conv2d.compile(loss='categorical_crossentropy', optimizer='adam', metrics=[Recall(name='recall')])
@@ -168,10 +168,10 @@ def predict_image(preprocessed_sample_image):
     predicted_class = classes[predicted_class_index] 
 
     # Obtaining the individual class probabilities
-    notumor_probability = predicted_probabilities[0]
-    glioma_probability = predicted_probabilities[1]
-    meningioma_probability = predicted_probabilities[2]
-    pituitary_probability = predicted_probabilities[3]
+    notumor_probability = 100*predicted_probabilities[0]
+    glioma_probability = 100*predicted_probabilities[1]
+    meningioma_probability = 100*predicted_probabilities[2]
+    pituitary_probability = 100*predicted_probabilities[3]
 
     return predicted_class, notumor_probability, glioma_probability, meningioma_probability, pituitary_probability
 
@@ -278,26 +278,20 @@ def gradcam_image_prediction(path):
     jet = plt.colormaps["turbo"]
     jet_colors = jet(np.arange(256))[:, :3]
     
-    jet_heatmap_first_conv2d = jet_colors[heatmap_first_conv2d]
-    jet_heatmap_first_conv2d = tf.keras.preprocessing.image.array_to_img(jet_heatmap_first_conv2d)
-    jet_heatmap_first_conv2d = jet_heatmap_first_conv2d.resize((img.shape[1], img.shape[0]))
-    jet_heatmap_first_conv2d = tf.keras.preprocessing.image.img_to_array(jet_heatmap_first_conv2d)
-    superimposed_img_first_conv2d = jet_heatmap_first_conv2d * 0.80 + img
-    superimposed_img_first_conv2d = tf.keras.preprocessing.image.array_to_img(superimposed_img_first_conv2d)
+    def process_heatmap(heatmap, img):
+        jet_heatmap = jet_colors[heatmap]
+        jet_heatmap = tf.keras.preprocessing.image.array_to_img(jet_heatmap)
+        jet_heatmap = jet_heatmap.resize((img.shape[1], img.shape[0]))
+        jet_heatmap = tf.keras.preprocessing.image.img_to_array(jet_heatmap)
+        superimposed_img = jet_heatmap * 0.80 + img
+        superimposed_img = tf.keras.preprocessing.image.array_to_img(superimposed_img)
+        # Resizing the superimposed image to 277x277
+        superimposed_img = superimposed_img.resize((277, 277))
+        return superimposed_img
 
-    jet_heatmap_second_conv2d = jet_colors[heatmap_second_conv2d]
-    jet_heatmap_second_conv2d = tf.keras.preprocessing.image.array_to_img(jet_heatmap_second_conv2d)
-    jet_heatmap_second_conv2d = jet_heatmap_second_conv2d.resize((img.shape[1], img.shape[0]))
-    jet_heatmap_second_conv2d = tf.keras.preprocessing.image.img_to_array(jet_heatmap_second_conv2d)
-    superimposed_img_second_conv2d = jet_heatmap_second_conv2d * 0.80 + img
-    superimposed_img_second_conv2d = tf.keras.preprocessing.image.array_to_img(superimposed_img_second_conv2d)
+    superimposed_img_first_conv2d = process_heatmap(heatmap_first_conv2d, img)
+    superimposed_img_second_conv2d = process_heatmap(heatmap_second_conv2d, img)
+    superimposed_img_third_conv2d = process_heatmap(heatmap_third_conv2d, img)
 
-    jet_heatmap_third_conv2d = jet_colors[heatmap_third_conv2d]
-    jet_heatmap_third_conv2d = tf.keras.preprocessing.image.array_to_img(jet_heatmap_third_conv2d)
-    jet_heatmap_third_conv2d = jet_heatmap_third_conv2d.resize((img.shape[1], img.shape[0]))
-    jet_heatmap_third_conv2d = tf.keras.preprocessing.image.img_to_array(jet_heatmap_third_conv2d)
-    superimposed_img_third_conv2d = jet_heatmap_third_conv2d * 0.80 + img
-    superimposed_img_third_conv2d = tf.keras.preprocessing.image.array_to_img(superimposed_img_third_conv2d)
-    
     return superimposed_img_first_conv2d, superimposed_img_second_conv2d, superimposed_img_third_conv2d
 
