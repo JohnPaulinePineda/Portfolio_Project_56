@@ -23,20 +23,20 @@ DATASETS_FINAL_TEST_PATH = r"datasets\Brain_Tumor_MRI_Dataset\Testing"
 
 ##################################
 # Defining the image category levels
-# for the training data
+# for the testing data
 ##################################
 diagnosis_code_dictionary_test = {'Te-no': 0,
                                   'Te-noTr': 0,
                                   'Te-gl': 1,
                                   'Te-glTr': 1,
-                                  'Tr-me': 2,
+                                  'Te-me': 2,
                                   'Te-meTr': 2,
                                   'Te-pi': 3,
                                   'Te-piTr': 3}
 
 ##################################
 # Defining the image category descriptions
-# for the training data
+# for the testing data
 ##################################
 diagnosis_description_dictionary_test = {'Te-no': 'No Tumor',
                                          'Te-noTr': 'No Tumor',
