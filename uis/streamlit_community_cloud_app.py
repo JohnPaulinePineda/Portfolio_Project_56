@@ -13,9 +13,9 @@ from glob import glob
 import time
 from pathlib import Path
 
-from model_prediction import preprocess_image, predict_image
-from model_prediction import make_gradcam_heatmap_first_conv2d, make_gradcam_heatmap_second_conv2d, make_gradcam_heatmap_third_conv2d
-from model_prediction import gradcam_image_prediction
+from model_prediction_community_cloud_app import preprocess_image, predict_image
+from model_prediction_community_cloud_app import make_gradcam_heatmap_first_conv2d, make_gradcam_heatmap_second_conv2d, make_gradcam_heatmap_third_conv2d
+from model_prediction_community_cloud_app import gradcam_image_prediction
 
 ##################################
 # Defining file paths
