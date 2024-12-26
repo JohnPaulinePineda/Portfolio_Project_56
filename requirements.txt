@@ -9,6 +9,6 @@ setuptools==74.0.0
 streamlit==1.38.0
 opencv-python==4.10.0.84
 glob2==0.7
-pillow==11.0.0
+pillow==10.4.0
 tensorflow==2.18.0
 keras==3.6.0
