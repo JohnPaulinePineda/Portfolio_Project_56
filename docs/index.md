@@ -2,7 +2,7 @@
 # Model Deployment : Classifying Brain Tumors from Magnetic Resonance Images by Leveraging Convolutional Neural Network-Based Multilevel Feature Extraction and Hierarchical Representation 
 
 ***
-### [**John Pauline Pineda**](https://github.com/JohnPaulinePineda) <br> <br> *December 28, 2024*
+### [**John Pauline Pineda**](https://github.com/JohnPaulinePineda) <br> <br> *December 31, 2024*
 ***
 
 * [**1. Table of Contents**](#TOC)
@@ -84,6 +84,22 @@ The hierarchical representation of image features enables the network to transfo
 
 ## 1.2 Data Description <a class="anchor" id="1.2"></a>
 
+1. The (initial) training dataset is comprised of:
+    * **5712 images** (observations)
+    * **1 target** (variable)
+        * <span style="color: #FF0000">CLASS: No Tumor</span> = **1595 images**
+        * <span style="color: #FF0000">CLASS: Pituitary</span> = **1457 images**
+        * <span style="color: #FF0000">CLASS: Meningioma</span> = **1339 images**
+        * <span style="color: #FF0000">CLASS: Glioma</span> = **1321 images**
+2. The test dataset is comprised of:
+    * **1311 images** (observations)
+    * **1 target** (variable)
+        * <span style="color: #FF0000">CLASS: No Tumor</span> = **405 images**
+        * <span style="color: #FF0000">CLASS: Pituitary</span> = **306 images**
+        * <span style="color: #FF0000">CLASS: Meningioma</span> = **300 images**
+        * <span style="color: #FF0000">CLASS: Glioma</span> = **300 images**
+
+
 
 ```python
 ##################################
@@ -112,6 +128,11 @@ import cv2
 import os
 import random
 import math
+from collections import Counter
+import scipy.stats as stats
+import itertools
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
+from statsmodels.stats.multitest import multipletests
 
 ##################################
 # Model Development
@@ -935,6 +956,10 @@ mri_images_test.Class.value_counts(normalize=True)
 
 ## 1.3 Data Quality Assessment <a class="anchor" id="1.3"></a>
 
+Data quality findings based on assessment are as follows:
+1. No duplicated images observed.
+2. No null images observed.
+
 
 ```python
 ##################################
@@ -1012,6 +1037,26 @@ mri_images_test.isnull().sum()
 
 
 ## 1.4 Data Preprocessing <a class="anchor" id="1.4"></a>
+
+1. Each grayscale image contains 3 channels with equivalent pixel values for each individual channel:
+    * Red channel pixel value range = 0 to 255
+    * Blue channel pixel value range = 0 to 255
+    * Green channel pixel value range = 0 to 255
+2. All images were resized to a consistent shape, allowing them to be processed in batches by the model and to work seamlessly with augmentation techniques ensuring consistency in image preprocessing.
+    * Image height = 227 pixels
+    * Image width = 227 pixels
+    * Image size = 51,529 pixels
+3. Different image augmentation techniques were applied using various transformations to the training images to artificially increase the diversity of the dataset and improve the generalization and robustness of the model, including:
+    * **Rescaling** - normalization of the pixel values within the 0 to 1 range
+    * **Rotation** - random image rotation by 2 degrees
+    * **Width Shift** - random horizontal shifting of the image by 2% of the total width
+    * **Height Shift** - random vertical shifting of the image by 2% of the total height
+    * **Shear Transformation** - image slanting by 2 degrees along the horizontal axis.
+    * **Zooming** - random image zoom-in or zoom-out by a factor of 2%
+4. Other image augmentation techniques were not applied to minimize noise in the dataset, including:
+    * **Horizontal Flip** - random horizontal flipping of the image
+    * **Vertical Flip** - random vertical flipping of the image
+
 
 
 ```python
@@ -1433,6 +1478,29 @@ train_gen = train_datagen.flow_from_directory(directory=path_train,
 
 ```python
 ##################################
+# Obtaining the count and class distribution
+# for the training set
+##################################
+total_images = train_gen.samples
+class_counts = Counter(train_gen.classes)
+print("Training Set Class Breakdown:")
+print(f"Overall: {total_images}")
+for class_id, count in class_counts.items():
+    class_name = list(train_gen.class_indices.keys())[list(train_gen.class_indices.values()).index(class_id)]
+    print(f"{class_name}: {count}")
+```
+
+    Training Set Class Breakdown:
+    Overall: 4571
+    notumor: 1276
+    glioma: 1057
+    meningioma: 1072
+    pituitary: 1166
+    
+
+
+```python
+##################################
 # Loading samples of augmented images
 # for the training set
 ##################################
@@ -1450,7 +1518,7 @@ plt.show()
 
 
     
-![png](output_54_0.png)
+![png](output_55_0.png)
     
 
 
@@ -1459,9 +1527,6 @@ plt.show()
 ##################################
 # Creating subsets of images
 # for model validation and
-# setting the parameters for
-# real-time data augmentation
-# at each epoch
 ##################################
 set_seed()
 val_datagen = ImageDataGenerator(rescale=1./255, 
@@ -1487,6 +1552,29 @@ val_gen = val_datagen.flow_from_directory(directory=path_train,
 
 ```python
 ##################################
+# Obtaining the count and class distribution
+# for the validation set
+##################################
+total_images = val_gen.samples
+class_counts = Counter(val_gen.classes)
+print("Validation Set Class Breakdown:")
+print(f"Overall: {total_images}")
+for class_id, count in class_counts.items():
+    class_name = list(val_gen.class_indices.keys())[list(val_gen.class_indices.values()).index(class_id)]
+    print(f"{class_name}: {count}")
+```
+
+    Validation Set Class Breakdown:
+    Overall: 1141
+    notumor: 319
+    glioma: 264
+    meningioma: 267
+    pituitary: 291
+    
+
+
+```python
+##################################
 # Loading samples of original images
 # for the validation set
 ##################################
@@ -1502,7 +1590,7 @@ plt.show()
 
 
     
-![png](output_56_0.png)
+![png](output_58_0.png)
     
 
 
@@ -1652,7 +1740,7 @@ for n_axs, (type_name, type_rows) in zip(m_axs, mri_images_test.sort_values(['Cl
 
 
     
-![png](output_60_0.png)
+![png](output_62_0.png)
     
 
 
@@ -1733,7 +1821,7 @@ plt.show()
 
 
     
-![png](output_62_0.png)
+![png](output_64_0.png)
     
 
 
@@ -1934,13 +2022,32 @@ plt.show()
 
 
     
-![png](output_73_0.png)
+![png](output_75_0.png)
     
 
 
 ## 1.5 Data Exploration <a class="anchor" id="1.5"></a>
 
 ### 1.5.1 Exploratory Data Analysis <a class="anchor" id="1.5.1"></a>
+
+1. Distinct patterns were observed between the image categories.
+    * Images identified with <span style="color: #FF0000">CLASS: No Tumor</span> had the following characteristics:
+        * Higher mean pixel values indicating generally lighter images
+        * Multimodal and wider distribution of mean pixel values indicating a higher variation
+        * Wider range of image pixel standard deviation indicating a higher variation in contrast
+    * Images identified with <span style="color: #FF0000">CLASS: Pituitary</span> had the following characteristics:
+        * Lower mean pixel values indicating generally darker images
+        * Unimodal and steeper distribution of mean pixel values indicating more stable variation
+        * Minimal outliers of image pixel standard deviation indicating subset of images with high contrast
+    * Images identified with <span style="color: #FF0000">CLASS: Meningioma</span> had the following characteristics:
+        * Lower mean pixel values indicating generally darker images
+        * Unimodal and steeper distribution of mean pixel values indicating more stable variation
+        * Moderate outliers of image pixel standard deviation indicating subset of images with high contrast
+    * Images identified with <span style="color: #FF0000">CLASS: Glioma</span> had the following characteristics:
+        * Lower mean pixel values indicating generally darker images
+        * Unimodal and steeper distribution of mean pixel values indicating more stable variation
+        * Compact range of image pixel standard deviation indicating images with stable and sufficient contrast
+          
 
 
 ```python
@@ -2073,7 +2180,7 @@ plt.title('Image Pixel Intensity Mean Distribution by Category', fontsize=14, we
 
 
     
-![png](output_81_0.png)
+![png](output_83_0.png)
     
 
 
@@ -2090,7 +2197,7 @@ plt.title('Image Pixel Intensity Maximum Distribution by Category', fontsize=14,
 
 
     
-![png](output_82_0.png)
+![png](output_84_0.png)
     
 
 
@@ -2107,7 +2214,7 @@ plt.title('Image Pixel Intensity Minimum Distribution by Category', fontsize=14,
 
 
     
-![png](output_83_0.png)
+![png](output_85_0.png)
     
 
 
@@ -2124,7 +2231,7 @@ plt.title('Image Pixel Intensity Standard Deviation Distribution by Category', f
 
 
     
-![png](output_84_0.png)
+![png](output_86_0.png)
     
 
 
@@ -2148,7 +2255,7 @@ plt.title('Image Pixel Intensity Mean and Standard Deviation Distribution', font
 
 
     
-![png](output_85_0.png)
+![png](output_87_0.png)
     
 
 
@@ -2174,7 +2281,7 @@ scatterplot.fig.tight_layout()
 
 
     
-![png](output_86_0.png)
+![png](output_88_0.png)
     
 
 
@@ -2211,7 +2318,7 @@ for x0, y0, path in zip(DF_sample['Mean'], DF_sample['StDev'], paths):
 
 
     
-![png](output_87_0.png)
+![png](output_89_0.png)
     
 
 
@@ -2247,7 +2354,7 @@ for x0, y0, path_glioma in zip(DF_sample['Mean'], DF_sample['StDev'], paths):
 
 
     
-![png](output_88_0.png)
+![png](output_90_0.png)
     
 
 
@@ -2283,7 +2390,7 @@ for x0, y0, path_meningioma in zip(DF_sample['Mean'], DF_sample['StDev'], paths)
 
 
     
-![png](output_89_0.png)
+![png](output_91_0.png)
     
 
 
@@ -2319,7 +2426,7 @@ for x0, y0, path_pituitary in zip(DF_sample['Mean'], DF_sample['StDev'], paths):
 
 
     
-![png](output_90_0.png)
+![png](output_92_0.png)
     
 
 
@@ -2355,7 +2462,7 @@ for x0, y0, path_no_tumor in zip(DF_sample['Mean'], DF_sample['StDev'], paths):
 
 
     
-![png](output_91_0.png)
+![png](output_93_0.png)
     
 
 
@@ -2387,7 +2494,7 @@ for x0, y0, path in zip(DF_sample['Min'], DF_sample['StDev'], paths):
 
 
     
-![png](output_92_0.png)
+![png](output_94_0.png)
     
 
 
@@ -2420,7 +2527,7 @@ for x0, y0, path_glioma in zip(DF_sample['Min'], DF_sample['StDev'], paths):
 
 
     
-![png](output_93_0.png)
+![png](output_95_0.png)
     
 
 
@@ -2453,7 +2560,7 @@ for x0, y0, path_meningioma in zip(DF_sample['Min'], DF_sample['StDev'], paths):
 
 
     
-![png](output_94_0.png)
+![png](output_96_0.png)
     
 
 
@@ -2486,7 +2593,7 @@ for x0, y0, path_pituitary in zip(DF_sample['Min'], DF_sample['StDev'], paths):
 
 
     
-![png](output_95_0.png)
+![png](output_97_0.png)
     
 
 
@@ -2519,7 +2626,7 @@ for x0, y0, path_no_tumor in zip(DF_sample['Min'], DF_sample['StDev'], paths):
 
 
     
-![png](output_96_0.png)
+![png](output_98_0.png)
     
 
 
@@ -2551,7 +2658,7 @@ for x0, y0, path in zip(DF_sample['Max'], DF_sample['StDev'], paths):
 
 
     
-![png](output_97_0.png)
+![png](output_99_0.png)
     
 
 
@@ -2584,7 +2691,7 @@ for x0, y0, path_glioma in zip(DF_sample['Max'], DF_sample['StDev'], paths):
 
 
     
-![png](output_98_0.png)
+![png](output_100_0.png)
     
 
 
@@ -2617,7 +2724,7 @@ for x0, y0, path_meningioma in zip(DF_sample['Max'], DF_sample['StDev'], paths):
 
 
     
-![png](output_99_0.png)
+![png](output_101_0.png)
     
 
 
@@ -2650,7 +2757,7 @@ for x0, y0, path_pituitary in zip(DF_sample['Max'], DF_sample['StDev'], paths):
 
 
     
-![png](output_100_0.png)
+![png](output_102_0.png)
     
 
 
@@ -2683,15 +2790,704 @@ for x0, y0, path_no_tumor in zip(DF_sample['Max'], DF_sample['StDev'], paths):
 
 
     
-![png](output_101_0.png)
+![png](output_103_0.png)
     
 
 
 ### 1.5.2 Hypothesis Testing <a class="anchor" id="1.5.2"></a>
 
+1. The relationship between the numeric predictors (based on the summary statistics for the image pixel values) to the <span style="color: #FF0000">Class</span> event variable assessed collectively was statistically evaluated using the following hypotheses:
+    * **Null**: Collective difference in the means or mean ranks between the No Tumor, Pituitary, Meningioma and Glioma groups is equal to zero  
+    * **Alternative**: Collective difference in the means or mean ranks between the No Tumor, Pituitary, Meningioma and Glioma groups is not equal to zero    
+2. There is sufficient evidence to conclude of a statistically significant difference between the mean ranks of the numeric measurements (based on the summary statistics for the image pixel values) obtained from the <span style="color: #FF0000">Class</span> groups given their high kruskall-wallis statistic values with reported low p-values less than the significance level of 0.05.
+    * <span style="color: #FF0000">Mean</span>: Group.Comparison.Test.Statistic=2251.886, Group.Comparison.Test.PValue=0.000
+    * <span style="color: #FF0000">St_Dev</span>: Group.Comparison.Test.Statistic=2329.458, Group.Comparison.Test.PValue=0.000 
+    * <span style="color: #FF0000">Max</span>: Group.Comparison.Test.Statistic=1982.847, Group.Comparison.Test.PValue=0.000  
+    * <span style="color: #FF0000">Min</span>: Group.Comparison.Test.Statistic=394.328, Group.Comparison.Test.PValue=0.000 
+3. The relationship between the numeric predictors (based on the summary statistics for the image pixel values) to the <span style="color: #FF0000">Class</span> event variable assessed pairwise was statistically evaluated using the following hypotheses:
+    * **Null**: Pairwise difference in the means or mean ranks between the No Tumor, Pituitary, Meningioma and Glioma groups is equal to zero  
+    * **Alternative**: Pairwise difference  in the means or mean ranks between the No Tumor, Pituitary, Meningioma and Glioma groups is not equal to zero   
+4. There is sufficient evidence to conclude of a statistically significant difference between the mean ranks for <span style="color: #FF0000">Mean</span> as evaluated using all the pairwise combinations of the <span style="color: #FF0000">Class</span> groups given their high mann-whitney U test values with reported low p-values less than the significance level of 0.05.
+5. There is sufficient evidence to conclude of a statistically significant difference between the mean ranks for <span style="color: #FF0000">StDev</span> as evaluated using all the pairwise combinations of the <span style="color: #FF0000">Class</span> groups given their high mann-whitney U test values with reported low p-values less than the significance level of 0.05.
+6. There is sufficient evidence to conclude of a statistically significant difference between the mean ranks for <span style="color: #FF0000">Max</span> as evaluated using all the pairwise combinations of the <span style="color: #FF0000">Class</span> groups given their high mann-whitney U test values with reported low p-values less than the significance level of 0.05.
+7. There is sufficient evidence to conclude of a statistically significant difference between the mean ranks for <span style="color: #FF0000">Min</span> as evaluated using all the pairwise combinations of the <span style="color: #FF0000">Class</span> groups given their high mann-whitney U test values with reported low p-values less than the significance level of 0.05.
+
+
+
+```python
+##################################
+# Displaying the summary statistics
+# for the image pixel values
+# for hypothesis testing
+##################################
+imageEDA.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Image</th>
+      <th>Class</th>
+      <th>Path</th>
+      <th>Mean</th>
+      <th>StDev</th>
+      <th>Max</th>
+      <th>Min</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>[[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], ...</td>
+      <td>Glioma</td>
+      <td>..\datasets\Brain_Tumor_MRI_Dataset\Training\g...</td>
+      <td>31.392000</td>
+      <td>43.092624</td>
+      <td>246</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>[[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], ...</td>
+      <td>Glioma</td>
+      <td>..\datasets\Brain_Tumor_MRI_Dataset\Training\g...</td>
+      <td>37.849950</td>
+      <td>43.262592</td>
+      <td>240</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>[[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], ...</td>
+      <td>Glioma</td>
+      <td>..\datasets\Brain_Tumor_MRI_Dataset\Training\g...</td>
+      <td>36.042375</td>
+      <td>40.557254</td>
+      <td>223</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>[[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], ...</td>
+      <td>Glioma</td>
+      <td>..\datasets\Brain_Tumor_MRI_Dataset\Training\g...</td>
+      <td>24.911150</td>
+      <td>27.533453</td>
+      <td>229</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>[[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], ...</td>
+      <td>Glioma</td>
+      <td>..\datasets\Brain_Tumor_MRI_Dataset\Training\g...</td>
+      <td>32.090825</td>
+      <td>33.166552</td>
+      <td>236</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+##################################
+# Defining the predictor columns
+# for statistical evaluation
+##################################
+predictor_cols = ['Mean', 'StDev', 'Max', 'Min']
+statistical_test_results = []
+```
+
+
+```python
+##################################
+# Checking data assumptions
+# and implementing the most appropriate
+# group comparison statistical tests
+##################################
+for col in predictor_cols:
+    # Grouping imageEDA by Class
+    groups = [group[col].values for name, group in imageEDA.groupby('Class')]
+    
+    # Performing normality tests using Shapiro-Wilk
+    normality = all(stats.shapiro(g)[1] > 0.05 for g in groups if len(g) > 3)  
+    
+    # Performing homogeneity of variance test using Levene's test
+    homogeneity = stats.levene(*groups)[1] > 0.05 if len(groups) > 1 else True
+    
+    # Choosing the most appropriate test based on assumptions
+    if normality and homogeneity:
+        # One-way ANOVA for data meeting the normality and homogeneity assumptions
+        test_stat, p_value = stats.f_oneway(*groups)  
+        test_name = "ANOVA"
+    else:
+        # Kruskal-Wallis H-test for data not meeting the normality and homogeneity assumptions
+        test_stat, p_value = stats.kruskal(*groups)  
+        test_name = "Kruskal-Wallis"
+    
+    # Appending the statistical_test_results
+    statistical_test_results.append({
+        'Group.Comparison': f"Class_{col}",
+        'Group.Comparison.Test.Statistic': test_stat,
+        'Group.Comparison.Test.PValue': p_value,
+        'Group.Comparison.Statistical.Test': test_name
+    })
+
+```
+
+
+```python
+##################################
+# Formulating the group comparison test summary
+# between the target variable
+# and numeric predictor columns
+# comprised of the summary statistics
+# for the image pixel values
+##################################
+statistical_test_summary = pd.DataFrame(statistical_test_results)
+statistical_test_summary.set_index('Group.Comparison', inplace=True)
+display(statistical_test_summary)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Group.Comparison.Test.Statistic</th>
+      <th>Group.Comparison.Test.PValue</th>
+      <th>Group.Comparison.Statistical.Test</th>
+    </tr>
+    <tr>
+      <th>Group.Comparison</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Class_Mean</th>
+      <td>2251.886072</td>
+      <td>0.000000e+00</td>
+      <td>Kruskal-Wallis</td>
+    </tr>
+    <tr>
+      <th>Class_StDev</th>
+      <td>2329.458509</td>
+      <td>0.000000e+00</td>
+      <td>Kruskal-Wallis</td>
+    </tr>
+    <tr>
+      <th>Class_Max</th>
+      <td>1982.847155</td>
+      <td>0.000000e+00</td>
+      <td>Kruskal-Wallis</td>
+    </tr>
+    <tr>
+      <th>Class_Min</th>
+      <td>394.328915</td>
+      <td>3.745680e-85</td>
+      <td>Kruskal-Wallis</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Creating a function to conduct
+# a pairwise post-hoc evaluation
+# of the numeric predictors from the
+# group comparison statistical test results
+##################################
+post_hoc_statistical_test_results = {}
+
+def pairwise_comparisons(imageEDA, col, groups, test_type="ANOVA"):
+    pairs = list(itertools.combinations(groups, 2))
+    pairwise_statistical_test_results = []
+    
+    for g1, g2 in pairs:
+        group1 = imageEDA[imageEDA['Class'] == g1][col].values
+        group2 = imageEDA[imageEDA['Class'] == g2][col].values
+        
+        if test_type == "ANOVA":
+            # Using pairwise comparisons with the Tukey's HSD test for ANOVA results
+            test_stat, p_value = stats.ttest_ind(group1, group2, equal_var=True)
+        else:
+            # Using pairwise comparisons with the Mann-Whitney U test for Kruskal-Wallis H-test results
+            test_stat, p_value = stats.mannwhitneyu(group1, group2)
+        
+        pairwise_statistical_test_results.append({'Group.1': g1,
+                                                  'Group.2': g2,
+                                                  'PostHoc.Group.Comparison.Test.Statistic': test_stat,
+                                                  'PostHoc.Group.Comparison.Test.PValue': p_value})
+    
+    # Applying Bonferroni correction for the p-values obtained during the pairwise comparisons
+    p_values = [r['PostHoc.Group.Comparison.Test.PValue'] for r in pairwise_statistical_test_results]
+    corrected = multipletests(p_values, method='bonferroni')
+    for r, corr_p in zip(pairwise_statistical_test_results, corrected[1]):
+        r['PostHoc.Group.Comparison.Test.Bonferroni.Corrected.PValue'] = corr_p
+    
+    return pd.DataFrame(pairwise_statistical_test_results)
+    
+```
+
+
+```python
+##################################
+# Implementing the pairwise post-hoc evaluation
+# of the numeric predictors from the
+# group comparison statistical test results
+##################################
+for result in statistical_test_results:
+    col = result['Group.Comparison'].split('_')[1]
+    if result['Group.Comparison.Test.PValue'] < 0.05:
+        groups = imageEDA['Class'].unique()
+        test_type = "ANOVA" if result['Group.Comparison.Statistical.Test'] == "ANOVA" else "Kruskal-Wallis"
+        post_hoc_statistical_test_results[col] = pairwise_comparisons(imageEDA, col, groups, test_type)
+```
+
+
+```python
+##################################
+# Formulating the summary for 
+# the pairwise post-hoc evaluation
+# of the numeric predictors from the
+# group comparison statistical test results
+##################################
+for col, df in post_hoc_statistical_test_results.items():
+    print(f"Post-Hoc Statistical Test Results for {col}:")
+    display(df)
+    print("\n")
+
+```
+
+    Post-Hoc Statistical Test Results for Mean:
+    
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Group.1</th>
+      <th>Group.2</th>
+      <th>PostHoc.Group.Comparison.Test.Statistic</th>
+      <th>PostHoc.Group.Comparison.Test.PValue</th>
+      <th>PostHoc.Group.Comparison.Test.Bonferroni.Corrected.PValue</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Glioma</td>
+      <td>Meningioma</td>
+      <td>413058.5</td>
+      <td>3.368236e-125</td>
+      <td>2.020941e-124</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Glioma</td>
+      <td>No Tumor</td>
+      <td>206883.0</td>
+      <td>2.789625e-306</td>
+      <td>1.673775e-305</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Glioma</td>
+      <td>Pituitary</td>
+      <td>169398.0</td>
+      <td>1.014580e-308</td>
+      <td>6.087478e-308</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Meningioma</td>
+      <td>No Tumor</td>
+      <td>503954.0</td>
+      <td>2.101071e-134</td>
+      <td>1.260643e-133</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Meningioma</td>
+      <td>Pituitary</td>
+      <td>525848.5</td>
+      <td>1.104420e-98</td>
+      <td>6.626523e-98</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>No Tumor</td>
+      <td>Pituitary</td>
+      <td>1551655.0</td>
+      <td>8.318077e-58</td>
+      <td>4.990846e-57</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+    
+    
+    Post-Hoc Statistical Test Results for StDev:
+    
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Group.1</th>
+      <th>Group.2</th>
+      <th>PostHoc.Group.Comparison.Test.Statistic</th>
+      <th>PostHoc.Group.Comparison.Test.PValue</th>
+      <th>PostHoc.Group.Comparison.Test.Bonferroni.Corrected.PValue</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Glioma</td>
+      <td>Meningioma</td>
+      <td>298990.0</td>
+      <td>4.995792e-192</td>
+      <td>2.997475e-191</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Glioma</td>
+      <td>No Tumor</td>
+      <td>202390.0</td>
+      <td>1.619059e-309</td>
+      <td>9.714352e-309</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Glioma</td>
+      <td>Pituitary</td>
+      <td>666271.0</td>
+      <td>1.112726e-44</td>
+      <td>6.676358e-44</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Meningioma</td>
+      <td>No Tumor</td>
+      <td>516617.0</td>
+      <td>1.593771e-128</td>
+      <td>9.562626e-128</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Meningioma</td>
+      <td>Pituitary</td>
+      <td>1439681.0</td>
+      <td>4.521296e-105</td>
+      <td>2.712778e-104</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>No Tumor</td>
+      <td>Pituitary</td>
+      <td>2008320.0</td>
+      <td>1.870740e-265</td>
+      <td>1.122444e-264</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+    
+    
+    Post-Hoc Statistical Test Results for Max:
+    
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Group.1</th>
+      <th>Group.2</th>
+      <th>PostHoc.Group.Comparison.Test.Statistic</th>
+      <th>PostHoc.Group.Comparison.Test.PValue</th>
+      <th>PostHoc.Group.Comparison.Test.Bonferroni.Corrected.PValue</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Glioma</td>
+      <td>Meningioma</td>
+      <td>478405.0</td>
+      <td>1.745474e-93</td>
+      <td>1.047284e-92</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Glioma</td>
+      <td>No Tumor</td>
+      <td>246714.5</td>
+      <td>1.816804e-298</td>
+      <td>1.090083e-297</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Glioma</td>
+      <td>Pituitary</td>
+      <td>688685.5</td>
+      <td>1.857985e-38</td>
+      <td>1.114791e-37</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Meningioma</td>
+      <td>No Tumor</td>
+      <td>402750.5</td>
+      <td>1.362945e-203</td>
+      <td>8.177673e-203</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Meningioma</td>
+      <td>Pituitary</td>
+      <td>1154535.0</td>
+      <td>4.358408e-17</td>
+      <td>2.615045e-16</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>No Tumor</td>
+      <td>Pituitary</td>
+      <td>1979668.5</td>
+      <td>1.892725e-264</td>
+      <td>1.135635e-263</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+    
+    
+    Post-Hoc Statistical Test Results for Min:
+    
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Group.1</th>
+      <th>Group.2</th>
+      <th>PostHoc.Group.Comparison.Test.Statistic</th>
+      <th>PostHoc.Group.Comparison.Test.PValue</th>
+      <th>PostHoc.Group.Comparison.Test.Bonferroni.Corrected.PValue</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Glioma</td>
+      <td>Meningioma</td>
+      <td>869218.0</td>
+      <td>1.726123e-06</td>
+      <td>1.035674e-05</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Glioma</td>
+      <td>No Tumor</td>
+      <td>933286.5</td>
+      <td>8.827701e-37</td>
+      <td>5.296621e-36</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Glioma</td>
+      <td>Pituitary</td>
+      <td>961688.0</td>
+      <td>3.413685e-01</td>
+      <td>1.000000e+00</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Meningioma</td>
+      <td>No Tumor</td>
+      <td>964530.0</td>
+      <td>1.462778e-24</td>
+      <td>8.776671e-24</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Meningioma</td>
+      <td>Pituitary</td>
+      <td>991543.0</td>
+      <td>2.362945e-06</td>
+      <td>1.417767e-05</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>No Tumor</td>
+      <td>Pituitary</td>
+      <td>1293690.5</td>
+      <td>1.368021e-39</td>
+      <td>8.208125e-39</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+    
+    
+    
+
 ## 1.6 Predictive Model Development <a class="anchor" id="1.6"></a>
 
 ### 1.6.1 Pre-Modelling Data Preparation <a class="anchor" id="1.6.1"></a>
+
+1. Training data (obtained as a subset of the initial training set representing 80%) included **4571 augmented images**.
+   * <span style="color: #FF0000">CLASS: No Tumor</span> = **1276 images**
+   * <span style="color: #FF0000">CLASS: Pituitary</span> = **1116 images**
+   * <span style="color: #FF0000">CLASS: Meningioma</span> = **1072 images**
+   * <span style="color: #FF0000">CLASS: Glioma</span> = **1057 images**
+2. Validation data (obtained as a subset of the initial training data representing 20%) included **1141 original images**.
+   * <span style="color: #FF0000">CLASS: No Tumor</span> = **319 images**
+   * <span style="color: #FF0000">CLASS: Pituitary</span> = **291 images**
+   * <span style="color: #FF0000">CLASS: Meningioma</span> = **267 images**
+   * <span style="color: #FF0000">CLASS: Glioma</span> = **264 images**
+3. Candidate models were formulated using common layers as follows:
+    * **Convolutional Layer** (<span style="color: #FF0000">Conv_2D</span>) - extracts features from input images using convolutional filters
+    * **Maximum Pooling Layer** (<span style="color: #FF0000">MaxPooling2D</span>) - Reduces spatial dimensions and downsamples feature maps
+    * **Activation Layer** (<span style="color: #FF0000">Activation</span>)- Applies an activation function element-wise to the output
+    * **Flatten Layer** (<span style="color: #FF0000">Flatten</span>) - Flattens the input to a 1D array, preparing for fully connected layers
+    * **Dense Layer** (<span style="color: #FF0000">Dense</span>) - Fully connected layer for classification
+4. Different iterations of the model were formulated using variations in the inclusion or exclusion of the following regularization layers:
+    * **Dropout Layer** (<span style="color: #FF0000">Droptout</span>) - randomly drops (sets to zero) a fraction of the neurons during training reducing co-dependencies between them
+    * **Batch Normalization Layer** (<span style="color: #FF0000">BatchNormalization</span>) - adjusts and scales the inputs to a layer reducing the sensitivity to weight initialization choices
+5. A subset of hyperparameters for the different layers were fixed during model training including:
+    * <span style="color: #FF0000">kernel_size</span> - setting used to define the local region the convolutional layer considers when processing the input
+    * <span style="color: #FF0000">activation</span> - setting used to introduce non-linearity into the model, enabling it to learn complex relationships in the data
+    * <span style="color: #FF0000">pool_size</span> - setting used to reduce the spatial dimensions of the feature maps to focus on the most important features
+    * <span style="color: #FF0000">padding</span> - setting used to control the spatial size and shape for every convolutional operation at each stage
+    * <span style="color: #FF0000">optimizer</span> - setting used to determine how the model's weights are updated during training
+    * <span style="color: #FF0000">batch_size</span> - setting used to determine how many samples are used in each iteration of training
+    * <span style="color: #FF0000">loss</span> - setting used to define the objective that the model seeks to minimize during training
+6. A subset of hyperparameters for the different layers were optimized during model training including:
+    * <span style="color: #FF0000">filters</span> - setting used to capture spatial hierarchies and features in the input images
+    * <span style="color: #FF0000">units</span> - setting used to process the flattened feature maps and determine the dimensionality of the output space
+    * <span style="color: #FF0000">learning_rate</span> - setting used to determine the step size at each iteration during optimization
+7. Two CNN model structures were additionally evaluated as follows:
+    * **Simple**
+        * Lesser number of <span style="color: #FF0000">Conv_2D</span>
+        * Lower values set for <span style="color: #FF0000">filters</span>
+        * Lower values set for <span style="color: #FF0000">units</span>
+    * **Complex**
+        * Higher number of <span style="color: #FF0000">Conv_2D</span>
+        * Higher values set for <span style="color: #FF0000">filters</span>
+        * Higher values set for <span style="color: #FF0000">units</span>
+
 
 ### 1.6.2 Convolutional Neural Network Sequential Layer Development <a class="anchor" id="1.6.2"></a>
 
@@ -4481,37 +5277,37 @@ model_nr_simple_history = model_nr_simple.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 237ms/step - loss: 0.8697 - recall: 0.4612 - val_loss: 0.9379 - val_recall: 0.6556 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 249ms/step - loss: 0.8697 - recall: 0.4612 - val_loss: 0.9379 - val_recall: 0.6556 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 236ms/step - loss: 0.4279 - recall: 0.8129 - val_loss: 0.8684 - val_recall: 0.6792 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m42s[0m 254ms/step - loss: 0.4279 - recall: 0.8129 - val_loss: 0.8684 - val_recall: 0.6792 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 247ms/step - loss: 0.3339 - recall: 0.8637 - val_loss: 0.8071 - val_recall: 0.7239 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 257ms/step - loss: 0.3339 - recall: 0.8637 - val_loss: 0.8071 - val_recall: 0.7239 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m40s[0m 240ms/step - loss: 0.3062 - recall: 0.8771 - val_loss: 0.9367 - val_recall: 0.7528 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 244ms/step - loss: 0.3062 - recall: 0.8771 - val_loss: 0.9367 - val_recall: 0.7528 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 251ms/step - loss: 0.2505 - recall: 0.9024 - val_loss: 0.8099 - val_recall: 0.7450 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 248ms/step - loss: 0.2505 - recall: 0.9024 - val_loss: 0.8099 - val_recall: 0.7450 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m46s[0m 320ms/step - loss: 0.2282 - recall: 0.9033 - val_loss: 0.7319 - val_recall: 0.7862 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 249ms/step - loss: 0.2282 - recall: 0.9033 - val_loss: 0.7319 - val_recall: 0.7862 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m72s[0m 250ms/step - loss: 0.1857 - recall: 0.9301 - val_loss: 0.8285 - val_recall: 0.7783 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 246ms/step - loss: 0.1857 - recall: 0.9301 - val_loss: 0.8285 - val_recall: 0.7783 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 237ms/step - loss: 0.1783 - recall: 0.9361 - val_loss: 0.8437 - val_recall: 0.7642 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 244ms/step - loss: 0.1783 - recall: 0.9361 - val_loss: 0.8437 - val_recall: 0.7642 - learning_rate: 0.0010
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 239ms/step - loss: 0.1366 - recall: 0.9491 - val_loss: 0.8675 - val_recall: 0.8089 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 245ms/step - loss: 0.1366 - recall: 0.9491 - val_loss: 0.8675 - val_recall: 0.8089 - learning_rate: 0.0010
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 236ms/step - loss: 0.1127 - recall: 0.9611 - val_loss: 0.7600 - val_recall: 0.8186 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 250ms/step - loss: 0.1127 - recall: 0.9611 - val_loss: 0.7600 - val_recall: 0.8186 - learning_rate: 1.0000e-04
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 242ms/step - loss: 0.0880 - recall: 0.9663 - val_loss: 0.7769 - val_recall: 0.8177 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 238ms/step - loss: 0.0880 - recall: 0.9663 - val_loss: 0.7769 - val_recall: 0.8177 - learning_rate: 1.0000e-04
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 244ms/step - loss: 0.1055 - recall: 0.9612 - val_loss: 0.7722 - val_recall: 0.8221 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m82s[0m 575ms/step - loss: 0.1055 - recall: 0.9612 - val_loss: 0.7722 - val_recall: 0.8221 - learning_rate: 1.0000e-04
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 246ms/step - loss: 0.0787 - recall: 0.9733 - val_loss: 0.7732 - val_recall: 0.8221 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 256ms/step - loss: 0.0787 - recall: 0.9733 - val_loss: 0.7732 - val_recall: 0.8221 - learning_rate: 1.0000e-05
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m47s[0m 325ms/step - loss: 0.0926 - recall: 0.9680 - val_loss: 0.7768 - val_recall: 0.8221 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 248ms/step - loss: 0.0926 - recall: 0.9680 - val_loss: 0.7768 - val_recall: 0.8221 - learning_rate: 1.0000e-05
     Epoch 15/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m70s[0m 241ms/step - loss: 0.0824 - recall: 0.9691 - val_loss: 0.7803 - val_recall: 0.8212 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 252ms/step - loss: 0.0824 - recall: 0.9691 - val_loss: 0.7803 - val_recall: 0.8212 - learning_rate: 1.0000e-05
     Epoch 16/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 243ms/step - loss: 0.0939 - recall: 0.9701 - val_loss: 0.7808 - val_recall: 0.8203 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 245ms/step - loss: 0.0939 - recall: 0.9701 - val_loss: 0.7808 - val_recall: 0.8203 - learning_rate: 1.0000e-06
     
 
 
@@ -4525,7 +5321,7 @@ model_nr_simple_y_pred_val = model_nr_simple.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 113ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 118ms/step
     
 
 
@@ -4541,7 +5337,7 @@ plot_training_history(model_nr_simple_history, 'Simple CNN With No Regularizatio
 
 
     
-![png](output_157_0.png)
+![png](output_166_0.png)
     
 
 
@@ -4588,7 +5384,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_158_1.png)
+![png](output_167_1.png)
     
 
 
@@ -4780,35 +5576,35 @@ model_nr_complex_history = model_nr_complex.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 376ms/step - loss: 1.0913 - recall: 0.3645 - val_loss: 0.8411 - val_recall: 0.6915 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 384ms/step - loss: 1.0913 - recall: 0.3645 - val_loss: 0.8411 - val_recall: 0.6915 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m82s[0m 376ms/step - loss: 0.4091 - recall: 0.8322 - val_loss: 0.8689 - val_recall: 0.6862 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m82s[0m 384ms/step - loss: 0.4091 - recall: 0.8322 - val_loss: 0.8689 - val_recall: 0.6862 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m78s[0m 542ms/step - loss: 0.2674 - recall: 0.8948 - val_loss: 0.8096 - val_recall: 0.7327 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 380ms/step - loss: 0.2674 - recall: 0.8948 - val_loss: 0.8096 - val_recall: 0.7327 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m58s[0m 376ms/step - loss: 0.2156 - recall: 0.9202 - val_loss: 0.8086 - val_recall: 0.7862 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m82s[0m 378ms/step - loss: 0.2156 - recall: 0.9202 - val_loss: 0.8086 - val_recall: 0.7862 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m81s[0m 370ms/step - loss: 0.1748 - recall: 0.9339 - val_loss: 0.8040 - val_recall: 0.7625 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m83s[0m 388ms/step - loss: 0.1748 - recall: 0.9339 - val_loss: 0.8040 - val_recall: 0.7625 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m85s[0m 390ms/step - loss: 0.1469 - recall: 0.9431 - val_loss: 0.7236 - val_recall: 0.7984 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m81s[0m 380ms/step - loss: 0.1469 - recall: 0.9431 - val_loss: 0.7236 - val_recall: 0.7984 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 369ms/step - loss: 0.1025 - recall: 0.9621 - val_loss: 0.7801 - val_recall: 0.7993 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m81s[0m 375ms/step - loss: 0.1025 - recall: 0.9621 - val_loss: 0.7801 - val_recall: 0.7993 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 373ms/step - loss: 0.0918 - recall: 0.9644 - val_loss: 0.9317 - val_recall: 0.8063 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 382ms/step - loss: 0.0918 - recall: 0.9644 - val_loss: 0.9317 - val_recall: 0.8063 - learning_rate: 0.0010
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 368ms/step - loss: 0.0861 - recall: 0.9650 - val_loss: 0.8448 - val_recall: 0.8238 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 372ms/step - loss: 0.0861 - recall: 0.9650 - val_loss: 0.8448 - val_recall: 0.8238 - learning_rate: 0.0010
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 391ms/step - loss: 0.0560 - recall: 0.9774 - val_loss: 0.8052 - val_recall: 0.8300 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 370ms/step - loss: 0.0560 - recall: 0.9774 - val_loss: 0.8052 - val_recall: 0.8300 - learning_rate: 1.0000e-04
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 371ms/step - loss: 0.0285 - recall: 0.9933 - val_loss: 0.8621 - val_recall: 0.8186 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 379ms/step - loss: 0.0285 - recall: 0.9933 - val_loss: 0.8621 - val_recall: 0.8186 - learning_rate: 1.0000e-04
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m149s[0m 1s/step - loss: 0.0294 - recall: 0.9919 - val_loss: 0.8798 - val_recall: 0.8256 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m152s[0m 1s/step - loss: 0.0294 - recall: 0.9919 - val_loss: 0.8798 - val_recall: 0.8256 - learning_rate: 1.0000e-04
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 384ms/step - loss: 0.0235 - recall: 0.9925 - val_loss: 0.8846 - val_recall: 0.8230 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 379ms/step - loss: 0.0235 - recall: 0.9925 - val_loss: 0.8846 - val_recall: 0.8230 - learning_rate: 1.0000e-05
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 365ms/step - loss: 0.0297 - recall: 0.9903 - val_loss: 0.8888 - val_recall: 0.8247 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 379ms/step - loss: 0.0297 - recall: 0.9903 - val_loss: 0.8888 - val_recall: 0.8247 - learning_rate: 1.0000e-05
     Epoch 15/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 372ms/step - loss: 0.0237 - recall: 0.9951 - val_loss: 0.9018 - val_recall: 0.8230 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 379ms/step - loss: 0.0237 - recall: 0.9951 - val_loss: 0.9018 - val_recall: 0.8230 - learning_rate: 1.0000e-05
     Epoch 16/20
     [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 368ms/step - loss: 0.0283 - recall: 0.9913 - val_loss: 0.9021 - val_recall: 0.8238 - learning_rate: 1.0000e-06
     
@@ -4824,7 +5620,7 @@ model_nr_complex_y_pred_val = model_nr_complex.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 131ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 127ms/step
     
 
 
@@ -4840,7 +5636,7 @@ plot_training_history(model_nr_complex_history, 'Complex CNN With No Regularizat
 
 
     
-![png](output_164_0.png)
+![png](output_173_0.png)
     
 
 
@@ -4883,7 +5679,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_165_0.png)
+![png](output_174_0.png)
     
 
 
@@ -5145,41 +5941,41 @@ model_dr_simple_history = model_dr_simple.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 247ms/step - loss: 1.3558 - recall: 0.1436 - val_loss: 1.0029 - val_recall: 0.4259 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m38s[0m 257ms/step - loss: 1.3558 - recall: 0.1436 - val_loss: 1.0029 - val_recall: 0.4259 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 248ms/step - loss: 0.7573 - recall: 0.5541 - val_loss: 0.8809 - val_recall: 0.5995 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m40s[0m 249ms/step - loss: 0.7573 - recall: 0.5541 - val_loss: 0.8809 - val_recall: 0.5995 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m42s[0m 253ms/step - loss: 0.6801 - recall: 0.5991 - val_loss: 0.8098 - val_recall: 0.6784 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m44s[0m 268ms/step - loss: 0.6801 - recall: 0.5991 - val_loss: 0.8098 - val_recall: 0.6784 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 240ms/step - loss: 0.5949 - recall: 0.6555 - val_loss: 0.9510 - val_recall: 0.6319 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m39s[0m 253ms/step - loss: 0.5949 - recall: 0.6555 - val_loss: 0.9510 - val_recall: 0.6319 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 246ms/step - loss: 0.5358 - recall: 0.6888 - val_loss: 0.8406 - val_recall: 0.6687 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 252ms/step - loss: 0.5358 - recall: 0.6888 - val_loss: 0.8406 - val_recall: 0.6687 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 249ms/step - loss: 0.5175 - recall: 0.7039 - val_loss: 0.7385 - val_recall: 0.6950 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 251ms/step - loss: 0.5175 - recall: 0.7039 - val_loss: 0.7385 - val_recall: 0.6950 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 245ms/step - loss: 0.5096 - recall: 0.7264 - val_loss: 0.8432 - val_recall: 0.7108 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 238ms/step - loss: 0.5096 - recall: 0.7264 - val_loss: 0.8432 - val_recall: 0.7108 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m47s[0m 326ms/step - loss: 0.5263 - recall: 0.7275 - val_loss: 0.7060 - val_recall: 0.7432 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 249ms/step - loss: 0.5263 - recall: 0.7275 - val_loss: 0.7060 - val_recall: 0.7432 - learning_rate: 0.0010
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m70s[0m 244ms/step - loss: 0.4338 - recall: 0.7747 - val_loss: 0.8316 - val_recall: 0.7546 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 251ms/step - loss: 0.4338 - recall: 0.7747 - val_loss: 0.8316 - val_recall: 0.7546 - learning_rate: 0.0010
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 240ms/step - loss: 0.4617 - recall: 0.7647 - val_loss: 0.8108 - val_recall: 0.7432 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 245ms/step - loss: 0.4617 - recall: 0.7647 - val_loss: 0.8108 - val_recall: 0.7432 - learning_rate: 0.0010
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 242ms/step - loss: 0.4197 - recall: 0.7834 - val_loss: 0.8501 - val_recall: 0.7406 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 250ms/step - loss: 0.4197 - recall: 0.7834 - val_loss: 0.8501 - val_recall: 0.7406 - learning_rate: 0.0010
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 237ms/step - loss: 0.4121 - recall: 0.7925 - val_loss: 0.7721 - val_recall: 0.7634 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 251ms/step - loss: 0.4121 - recall: 0.7925 - val_loss: 0.7721 - val_recall: 0.7634 - learning_rate: 1.0000e-04
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 242ms/step - loss: 0.3817 - recall: 0.8064 - val_loss: 0.7482 - val_recall: 0.7713 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 248ms/step - loss: 0.3817 - recall: 0.8064 - val_loss: 0.7482 - val_recall: 0.7713 - learning_rate: 1.0000e-04
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m111s[0m 777ms/step - loss: 0.3763 - recall: 0.8102 - val_loss: 0.7683 - val_recall: 0.7634 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m75s[0m 520ms/step - loss: 0.3763 - recall: 0.8102 - val_loss: 0.7683 - val_recall: 0.7634 - learning_rate: 1.0000e-04
     Epoch 15/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m66s[0m 245ms/step - loss: 0.3781 - recall: 0.7994 - val_loss: 0.7877 - val_recall: 0.7642 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 247ms/step - loss: 0.3781 - recall: 0.7994 - val_loss: 0.7877 - val_recall: 0.7642 - learning_rate: 1.0000e-05
     Epoch 16/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 244ms/step - loss: 0.3701 - recall: 0.8088 - val_loss: 0.7936 - val_recall: 0.7642 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m36s[0m 253ms/step - loss: 0.3701 - recall: 0.8088 - val_loss: 0.7936 - val_recall: 0.7642 - learning_rate: 1.0000e-05
     Epoch 17/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m35s[0m 245ms/step - loss: 0.3933 - recall: 0.8056 - val_loss: 0.7841 - val_recall: 0.7660 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 254ms/step - loss: 0.3933 - recall: 0.8056 - val_loss: 0.7841 - val_recall: 0.7660 - learning_rate: 1.0000e-05
     Epoch 18/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m34s[0m 239ms/step - loss: 0.3852 - recall: 0.7920 - val_loss: 0.7832 - val_recall: 0.7660 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m37s[0m 258ms/step - loss: 0.3852 - recall: 0.7920 - val_loss: 0.7832 - val_recall: 0.7660 - learning_rate: 1.0000e-06
     
 
 
@@ -5193,7 +5989,7 @@ model_dr_simple_y_pred_val = model_dr_simple.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 113ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 125ms/step
     
 
 
@@ -5209,7 +6005,7 @@ plot_training_history(model_dr_simple_history, 'Simple CNN With Dropout Regulari
 
 
     
-![png](output_172_0.png)
+![png](output_181_0.png)
     
 
 
@@ -5253,7 +6049,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_173_0.png)
+![png](output_182_0.png)
     
 
 
@@ -5447,35 +6243,35 @@ model_dr_complex_history = model_dr_complex.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 385ms/step - loss: 1.0131 - recall: 0.3707 - val_loss: 0.8088 - val_recall: 0.6994 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m58s[0m 390ms/step - loss: 1.0131 - recall: 0.3707 - val_loss: 0.8088 - val_recall: 0.6994 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m80s[0m 367ms/step - loss: 0.4345 - recall: 0.8110 - val_loss: 0.7967 - val_recall: 0.6968 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m80s[0m 373ms/step - loss: 0.4345 - recall: 0.8110 - val_loss: 0.7967 - val_recall: 0.6968 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m82s[0m 368ms/step - loss: 0.2910 - recall: 0.8898 - val_loss: 0.7494 - val_recall: 0.7458 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m82s[0m 371ms/step - loss: 0.2910 - recall: 0.8898 - val_loss: 0.7494 - val_recall: 0.7458 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m84s[0m 384ms/step - loss: 0.2426 - recall: 0.9008 - val_loss: 0.7891 - val_recall: 0.7511 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m82s[0m 371ms/step - loss: 0.2426 - recall: 0.9008 - val_loss: 0.7891 - val_recall: 0.7511 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 369ms/step - loss: 0.1822 - recall: 0.9304 - val_loss: 0.6271 - val_recall: 0.7844 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 388ms/step - loss: 0.1822 - recall: 0.9304 - val_loss: 0.6271 - val_recall: 0.7844 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m82s[0m 369ms/step - loss: 0.1632 - recall: 0.9328 - val_loss: 0.7265 - val_recall: 0.7774 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m82s[0m 386ms/step - loss: 0.1632 - recall: 0.9328 - val_loss: 0.7265 - val_recall: 0.7774 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 370ms/step - loss: 0.1317 - recall: 0.9478 - val_loss: 0.8423 - val_recall: 0.7862 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 374ms/step - loss: 0.1317 - recall: 0.9478 - val_loss: 0.8423 - val_recall: 0.7862 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 381ms/step - loss: 0.1286 - recall: 0.9583 - val_loss: 0.8516 - val_recall: 0.8107 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 380ms/step - loss: 0.1286 - recall: 0.9583 - val_loss: 0.8516 - val_recall: 0.8107 - learning_rate: 0.0010
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 374ms/step - loss: 0.0860 - recall: 0.9707 - val_loss: 0.7973 - val_recall: 0.8124 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 379ms/step - loss: 0.0860 - recall: 0.9707 - val_loss: 0.7973 - val_recall: 0.8124 - learning_rate: 1.0000e-04
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 367ms/step - loss: 0.0758 - recall: 0.9745 - val_loss: 0.8234 - val_recall: 0.8081 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 370ms/step - loss: 0.0758 - recall: 0.9745 - val_loss: 0.8234 - val_recall: 0.8081 - learning_rate: 1.0000e-04
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m52s[0m 362ms/step - loss: 0.0523 - recall: 0.9825 - val_loss: 0.8551 - val_recall: 0.8098 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 368ms/step - loss: 0.0523 - recall: 0.9825 - val_loss: 0.8551 - val_recall: 0.8098 - learning_rate: 1.0000e-04
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 399ms/step - loss: 0.0571 - recall: 0.9813 - val_loss: 0.8562 - val_recall: 0.8054 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 372ms/step - loss: 0.0571 - recall: 0.9813 - val_loss: 0.8562 - val_recall: 0.8054 - learning_rate: 1.0000e-05
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m59s[0m 409ms/step - loss: 0.0540 - recall: 0.9823 - val_loss: 0.8620 - val_recall: 0.8089 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 383ms/step - loss: 0.0540 - recall: 0.9823 - val_loss: 0.8620 - val_recall: 0.8089 - learning_rate: 1.0000e-05
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m54s[0m 374ms/step - loss: 0.0564 - recall: 0.9793 - val_loss: 0.8652 - val_recall: 0.8098 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 392ms/step - loss: 0.0564 - recall: 0.9793 - val_loss: 0.8652 - val_recall: 0.8098 - learning_rate: 1.0000e-05
     Epoch 15/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m53s[0m 371ms/step - loss: 0.0538 - recall: 0.9812 - val_loss: 0.8655 - val_recall: 0.8098 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 387ms/step - loss: 0.0538 - recall: 0.9812 - val_loss: 0.8655 - val_recall: 0.8098 - learning_rate: 1.0000e-06
     
 
 
@@ -5489,7 +6285,7 @@ model_dr_complex_y_pred_val = model_dr_complex.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 129ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 125ms/step
     
 
 
@@ -5505,7 +6301,7 @@ plot_training_history(model_dr_complex_history, 'Complex CNN With Dropout Regula
 
 
     
-![png](output_179_0.png)
+![png](output_188_0.png)
     
 
 
@@ -5549,7 +6345,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_180_0.png)
+![png](output_189_0.png)
     
 
 
@@ -5819,31 +6615,31 @@ model_bnr_simple_history = model_bnr_simple.fit(train_gen,
     Epoch 1/20
     [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m43s[0m 290ms/step - loss: 1.7668 - recall: 0.5558 - val_loss: 1.0888 - val_recall: 0.0473 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m80s[0m 280ms/step - loss: 0.3585 - recall: 0.8676 - val_loss: 0.8608 - val_recall: 0.3716 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m80s[0m 278ms/step - loss: 0.3585 - recall: 0.8676 - val_loss: 0.8608 - val_recall: 0.3716 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 279ms/step - loss: 0.2334 - recall: 0.9148 - val_loss: 0.7054 - val_recall: 0.6591 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 277ms/step - loss: 0.2334 - recall: 0.9148 - val_loss: 0.7054 - val_recall: 0.6591 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m40s[0m 280ms/step - loss: 0.2119 - recall: 0.9237 - val_loss: 0.5743 - val_recall: 0.8089 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m42s[0m 282ms/step - loss: 0.2119 - recall: 0.9237 - val_loss: 0.5743 - val_recall: 0.8089 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 281ms/step - loss: 0.2065 - recall: 0.9280 - val_loss: 0.6802 - val_recall: 0.8072 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m43s[0m 297ms/step - loss: 0.2065 - recall: 0.9280 - val_loss: 0.6802 - val_recall: 0.8072 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m40s[0m 275ms/step - loss: 0.1448 - recall: 0.9461 - val_loss: 0.8415 - val_recall: 0.8387 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m43s[0m 298ms/step - loss: 0.1448 - recall: 0.9461 - val_loss: 0.8415 - val_recall: 0.8387 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 277ms/step - loss: 0.1309 - recall: 0.9561 - val_loss: 1.1974 - val_recall: 0.8107 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m81s[0m 289ms/step - loss: 0.1309 - recall: 0.9561 - val_loss: 1.1974 - val_recall: 0.8107 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m40s[0m 276ms/step - loss: 0.0820 - recall: 0.9706 - val_loss: 0.9800 - val_recall: 0.8282 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m43s[0m 298ms/step - loss: 0.0820 - recall: 0.9706 - val_loss: 0.9800 - val_recall: 0.8282 - learning_rate: 1.0000e-04
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m40s[0m 276ms/step - loss: 0.0649 - recall: 0.9801 - val_loss: 1.0222 - val_recall: 0.8309 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m42s[0m 289ms/step - loss: 0.0649 - recall: 0.9801 - val_loss: 1.0222 - val_recall: 0.8309 - learning_rate: 1.0000e-04
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m40s[0m 277ms/step - loss: 0.0683 - recall: 0.9782 - val_loss: 1.0025 - val_recall: 0.8247 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 283ms/step - loss: 0.0683 - recall: 0.9782 - val_loss: 1.0025 - val_recall: 0.8247 - learning_rate: 1.0000e-04
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m40s[0m 277ms/step - loss: 0.0509 - recall: 0.9825 - val_loss: 0.9991 - val_recall: 0.8309 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m40s[0m 280ms/step - loss: 0.0509 - recall: 0.9825 - val_loss: 0.9991 - val_recall: 0.8309 - learning_rate: 1.0000e-05
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 285ms/step - loss: 0.0648 - recall: 0.9745 - val_loss: 0.9882 - val_recall: 0.8309 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 282ms/step - loss: 0.0648 - recall: 0.9745 - val_loss: 0.9882 - val_recall: 0.8309 - learning_rate: 1.0000e-05
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 286ms/step - loss: 0.0472 - recall: 0.9859 - val_loss: 0.9759 - val_recall: 0.8300 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m40s[0m 278ms/step - loss: 0.0472 - recall: 0.9859 - val_loss: 0.9759 - val_recall: 0.8300 - learning_rate: 1.0000e-05
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 281ms/step - loss: 0.0499 - recall: 0.9851 - val_loss: 0.9774 - val_recall: 0.8309 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m42s[0m 291ms/step - loss: 0.0499 - recall: 0.9851 - val_loss: 0.9774 - val_recall: 0.8309 - learning_rate: 1.0000e-06
     
 
 
@@ -5857,7 +6653,7 @@ model_bnr_simple_y_pred_val = model_bnr_simple.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 108ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 111ms/step
     
 
 
@@ -5873,7 +6669,7 @@ plot_training_history(model_bnr_simple_history, 'Simple CNN With Batch Normaliza
 
 
     
-![png](output_187_0.png)
+![png](output_196_0.png)
     
 
 
@@ -5917,7 +6713,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_188_0.png)
+![png](output_197_0.png)
     
 
 
@@ -6111,25 +6907,25 @@ model_bnr_complex_history = model_bnr_complex.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m58s[0m 389ms/step - loss: 2.4198 - recall: 0.4782 - val_loss: 1.1481 - val_recall: 0.0096 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m59s[0m 398ms/step - loss: 2.4198 - recall: 0.4782 - val_loss: 1.1481 - val_recall: 0.0096 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m83s[0m 394ms/step - loss: 0.3966 - recall: 0.8304 - val_loss: 0.9454 - val_recall: 0.1613 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m82s[0m 398ms/step - loss: 0.3966 - recall: 0.8304 - val_loss: 0.9454 - val_recall: 0.1613 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m81s[0m 389ms/step - loss: 0.2384 - recall: 0.9055 - val_loss: 0.7357 - val_recall: 0.5819 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m59s[0m 410ms/step - loss: 0.2384 - recall: 0.9055 - val_loss: 0.7357 - val_recall: 0.5819 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m83s[0m 396ms/step - loss: 0.2179 - recall: 0.9136 - val_loss: 0.6788 - val_recall: 0.7809 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m80s[0m 400ms/step - loss: 0.2179 - recall: 0.9136 - val_loss: 0.6788 - val_recall: 0.7809 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m83s[0m 400ms/step - loss: 0.1693 - recall: 0.9332 - val_loss: 0.8541 - val_recall: 0.7064 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m82s[0m 396ms/step - loss: 0.1693 - recall: 0.9332 - val_loss: 0.8541 - val_recall: 0.7064 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m85s[0m 420ms/step - loss: 0.1205 - recall: 0.9529 - val_loss: 0.8922 - val_recall: 0.7774 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m58s[0m 403ms/step - loss: 0.1205 - recall: 0.9529 - val_loss: 0.8922 - val_recall: 0.7774 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 397ms/step - loss: 0.1140 - recall: 0.9631 - val_loss: 1.1084 - val_recall: 0.7695 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m58s[0m 405ms/step - loss: 0.1140 - recall: 0.9631 - val_loss: 1.1084 - val_recall: 0.7695 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 395ms/step - loss: 0.0670 - recall: 0.9783 - val_loss: 0.8778 - val_recall: 0.8151 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 397ms/step - loss: 0.0670 - recall: 0.9783 - val_loss: 0.8778 - val_recall: 0.8151 - learning_rate: 1.0000e-04
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m58s[0m 406ms/step - loss: 0.0429 - recall: 0.9854 - val_loss: 0.8952 - val_recall: 0.8186 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m90s[0m 625ms/step - loss: 0.0429 - recall: 0.9854 - val_loss: 0.8952 - val_recall: 0.8186 - learning_rate: 1.0000e-04
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 395ms/step - loss: 0.0439 - recall: 0.9852 - val_loss: 0.8729 - val_recall: 0.8335 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m109s[0m 395ms/step - loss: 0.0439 - recall: 0.9852 - val_loss: 0.8729 - val_recall: 0.8335 - learning_rate: 1.0000e-04
     
 
 
@@ -6143,7 +6939,7 @@ model_bnr_complex_y_pred_val = model_bnr_complex.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 131ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 147ms/step
     
 
 
@@ -6159,7 +6955,7 @@ plot_training_history(model_bnr_complex_history, 'Complex CNN With Batch Normali
 
 
     
-![png](output_194_0.png)
+![png](output_203_0.png)
     
 
 
@@ -6203,7 +6999,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_195_0.png)
+![png](output_204_0.png)
     
 
 
@@ -6478,25 +7274,25 @@ model_cdrbnr_simple_history = model_cdrbnr_simple.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 276ms/step - loss: 1.6579 - recall: 0.1515 - val_loss: 1.3345 - val_recall: 0.0018 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m44s[0m 294ms/step - loss: 1.6579 - recall: 0.1515 - val_loss: 1.3345 - val_recall: 0.0018 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m40s[0m 270ms/step - loss: 1.0206 - recall: 0.3417 - val_loss: 1.1807 - val_recall: 0.0649 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m82s[0m 295ms/step - loss: 1.0206 - recall: 0.3417 - val_loss: 1.1807 - val_recall: 0.0649 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m43s[0m 284ms/step - loss: 0.9324 - recall: 0.3955 - val_loss: 1.0523 - val_recall: 0.2366 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 288ms/step - loss: 0.9324 - recall: 0.3955 - val_loss: 1.0523 - val_recall: 0.2366 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 283ms/step - loss: 0.7758 - recall: 0.4966 - val_loss: 0.9607 - val_recall: 0.4137 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m81s[0m 282ms/step - loss: 0.7758 - recall: 0.4966 - val_loss: 0.9607 - val_recall: 0.4137 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m42s[0m 288ms/step - loss: 0.7319 - recall: 0.5117 - val_loss: 1.0513 - val_recall: 0.4496 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 280ms/step - loss: 0.7319 - recall: 0.5117 - val_loss: 1.0513 - val_recall: 0.4496 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m42s[0m 289ms/step - loss: 0.6944 - recall: 0.5397 - val_loss: 1.0002 - val_recall: 0.5127 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 287ms/step - loss: 0.6944 - recall: 0.5397 - val_loss: 1.0002 - val_recall: 0.5127 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m42s[0m 289ms/step - loss: 0.6810 - recall: 0.5275 - val_loss: 1.1606 - val_recall: 0.6056 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m42s[0m 293ms/step - loss: 0.6810 - recall: 0.5275 - val_loss: 1.1606 - val_recall: 0.6056 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m44s[0m 306ms/step - loss: 0.6298 - recall: 0.5520 - val_loss: 0.9720 - val_recall: 0.5951 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 286ms/step - loss: 0.6298 - recall: 0.5520 - val_loss: 0.9720 - val_recall: 0.5951 - learning_rate: 1.0000e-04
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 287ms/step - loss: 0.5942 - recall: 0.5613 - val_loss: 0.9829 - val_recall: 0.5960 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m41s[0m 284ms/step - loss: 0.5942 - recall: 0.5613 - val_loss: 0.9829 - val_recall: 0.5960 - learning_rate: 1.0000e-04
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m40s[0m 278ms/step - loss: 0.6268 - recall: 0.5480 - val_loss: 1.0679 - val_recall: 0.5942 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m69s[0m 483ms/step - loss: 0.6268 - recall: 0.5480 - val_loss: 1.0679 - val_recall: 0.5942 - learning_rate: 1.0000e-04
     
 
 
@@ -6510,7 +7306,7 @@ model_cdrbnr_simple_y_pred_val = model_cdrbnr_simple.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 111ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 104ms/step
     
 
 
@@ -6526,7 +7322,7 @@ plot_training_history(model_cdrbnr_simple_history, 'Simple CNN With Dropout and 
 
 
     
-![png](output_202_0.png)
+![png](output_211_0.png)
     
 
 
@@ -6570,7 +7366,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_203_0.png)
+![png](output_212_0.png)
     
 
 
@@ -6766,37 +7562,37 @@ model_cdrbnr_complex_history = model_cdrbnr_complex.fit(train_gen,
 ```
 
     Epoch 1/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m60s[0m 402ms/step - loss: 1.7995 - recall: 0.5219 - val_loss: 1.1321 - val_recall: 0.0342 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m94s[0m 636ms/step - loss: 1.7995 - recall: 0.5219 - val_loss: 1.1321 - val_recall: 0.0342 - learning_rate: 0.0010
     Epoch 2/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m82s[0m 404ms/step - loss: 0.3938 - recall: 0.8333 - val_loss: 0.9887 - val_recall: 0.0649 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m108s[0m 397ms/step - loss: 0.3938 - recall: 0.8333 - val_loss: 0.9887 - val_recall: 0.0649 - learning_rate: 0.0010
     Epoch 3/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m81s[0m 398ms/step - loss: 0.2484 - recall: 0.8988 - val_loss: 0.6290 - val_recall: 0.6713 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m82s[0m 395ms/step - loss: 0.2484 - recall: 0.8988 - val_loss: 0.6290 - val_recall: 0.6713 - learning_rate: 0.0010
     Epoch 4/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m82s[0m 400ms/step - loss: 0.2268 - recall: 0.9093 - val_loss: 0.6252 - val_recall: 0.7555 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m85s[0m 413ms/step - loss: 0.2268 - recall: 0.9093 - val_loss: 0.6252 - val_recall: 0.7555 - learning_rate: 0.0010
     Epoch 5/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m81s[0m 390ms/step - loss: 0.1590 - recall: 0.9359 - val_loss: 0.8430 - val_recall: 0.7046 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m80s[0m 396ms/step - loss: 0.1590 - recall: 0.9359 - val_loss: 0.8430 - val_recall: 0.7046 - learning_rate: 0.0010
     Epoch 6/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m113s[0m 789ms/step - loss: 0.1436 - recall: 0.9409 - val_loss: 0.5680 - val_recall: 0.8352 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m58s[0m 404ms/step - loss: 0.1436 - recall: 0.9409 - val_loss: 0.5680 - val_recall: 0.8352 - learning_rate: 0.0010
     Epoch 7/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m85s[0m 391ms/step - loss: 0.1110 - recall: 0.9563 - val_loss: 0.7335 - val_recall: 0.8344 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 390ms/step - loss: 0.1110 - recall: 0.9563 - val_loss: 0.7335 - val_recall: 0.8344 - learning_rate: 0.0010
     Epoch 8/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m58s[0m 404ms/step - loss: 0.1024 - recall: 0.9607 - val_loss: 0.9613 - val_recall: 0.8291 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 390ms/step - loss: 0.1024 - recall: 0.9607 - val_loss: 0.9613 - val_recall: 0.8291 - learning_rate: 0.0010
     Epoch 9/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 395ms/step - loss: 0.1047 - recall: 0.9615 - val_loss: 0.6784 - val_recall: 0.8475 - learning_rate: 0.0010
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 391ms/step - loss: 0.1047 - recall: 0.9615 - val_loss: 0.6784 - val_recall: 0.8475 - learning_rate: 0.0010
     Epoch 10/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m58s[0m 401ms/step - loss: 0.0612 - recall: 0.9779 - val_loss: 0.7055 - val_recall: 0.8580 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 390ms/step - loss: 0.0612 - recall: 0.9779 - val_loss: 0.7055 - val_recall: 0.8580 - learning_rate: 1.0000e-04
     Epoch 11/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 394ms/step - loss: 0.0465 - recall: 0.9825 - val_loss: 0.7504 - val_recall: 0.8615 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 397ms/step - loss: 0.0465 - recall: 0.9825 - val_loss: 0.7504 - val_recall: 0.8615 - learning_rate: 1.0000e-04
     Epoch 12/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m97s[0m 678ms/step - loss: 0.0426 - recall: 0.9825 - val_loss: 0.8035 - val_recall: 0.8624 - learning_rate: 1.0000e-04
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 396ms/step - loss: 0.0426 - recall: 0.9825 - val_loss: 0.8035 - val_recall: 0.8624 - learning_rate: 1.0000e-04
     Epoch 13/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m58s[0m 402ms/step - loss: 0.0373 - recall: 0.9885 - val_loss: 0.7971 - val_recall: 0.8624 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 397ms/step - loss: 0.0373 - recall: 0.9885 - val_loss: 0.7971 - val_recall: 0.8624 - learning_rate: 1.0000e-05
     Epoch 14/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m59s[0m 410ms/step - loss: 0.0427 - recall: 0.9842 - val_loss: 0.7896 - val_recall: 0.8606 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m58s[0m 402ms/step - loss: 0.0427 - recall: 0.9842 - val_loss: 0.7896 - val_recall: 0.8606 - learning_rate: 1.0000e-05
     Epoch 15/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 394ms/step - loss: 0.0323 - recall: 0.9903 - val_loss: 0.7911 - val_recall: 0.8606 - learning_rate: 1.0000e-05
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m56s[0m 390ms/step - loss: 0.0323 - recall: 0.9903 - val_loss: 0.7911 - val_recall: 0.8606 - learning_rate: 1.0000e-05
     Epoch 16/20
-    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m57s[0m 394ms/step - loss: 0.0418 - recall: 0.9818 - val_loss: 0.7901 - val_recall: 0.8606 - learning_rate: 1.0000e-06
+    [1m144/144[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m55s[0m 385ms/step - loss: 0.0418 - recall: 0.9818 - val_loss: 0.7901 - val_recall: 0.8606 - learning_rate: 1.0000e-06
     
 
 
@@ -6810,7 +7606,7 @@ model_cdrbnr_complex_y_pred_val = model_cdrbnr_complex.predict(val_gen)
 
 ```
 
-    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 135ms/step
+    [1m36/36[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 119ms/step
     
 
 
@@ -6826,7 +7622,7 @@ plot_training_history(model_cdrbnr_complex_history, 'Complex CNN With Dropout an
 
 
     
-![png](output_209_0.png)
+![png](output_218_0.png)
     
 
 
@@ -6870,7 +7666,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_210_0.png)
+![png](output_219_0.png)
     
 
 
@@ -7231,7 +8027,7 @@ for container in cnn_model_performance_comparison_val_precision_plot.containers:
 
 
     
-![png](output_217_0.png)
+![png](output_226_0.png)
     
 
 
@@ -7387,7 +8183,7 @@ for container in cnn_model_performance_comparison_val_recall_plot.containers:
 
 
     
-![png](output_220_0.png)
+![png](output_229_0.png)
     
 
 
@@ -7543,7 +8339,7 @@ for container in cnn_model_performance_comparison_val_fscore_plot.containers:
 
 
     
-![png](output_223_0.png)
+![png](output_232_0.png)
     
 
 
@@ -7586,7 +8382,7 @@ model_bnr_simple_y_pred_test = model_bnr_simple.predict(test_gen)
 
 ```
 
-    [1m41/41[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m3s[0m 83ms/step
+    [1m41/41[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m16s[0m 386ms/step
     
 
 
@@ -7624,7 +8420,7 @@ ax.set_title('Simple CNN With Batch Normalization Regularization : Test Set Conf
 
 
     
-![png](output_226_0.png)
+![png](output_235_0.png)
     
 
 
@@ -7893,7 +8689,7 @@ for container in cnn_model_performance_comparison_val_test_precision_plot.contai
 
 
     
-![png](output_232_0.png)
+![png](output_241_0.png)
     
 
 
@@ -8004,7 +8800,7 @@ for container in cnn_model_performance_comparison_val_test_recall_plot.container
 
 
     
-![png](output_235_0.png)
+![png](output_244_0.png)
     
 
 
@@ -8115,7 +8911,7 @@ for container in cnn_model_performance_comparison_val_test_fscore_plot.container
 
 
     
-![png](output_238_0.png)
+![png](output_247_0.png)
     
 
 
@@ -8129,7 +8925,7 @@ for container in cnn_model_performance_comparison_val_test_fscore_plot.container
 model_cdrbnr_complex_y_pred_test = model_cdrbnr_complex.predict(test_gen)
 ```
 
-    [1m41/41[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 103ms/step
+    [1m41/41[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m4s[0m 105ms/step
     
 
 
@@ -8167,7 +8963,7 @@ ax.set_title('Complex CNN With Dropout and Batch Normalization Regularization : 
 
 
     
-![png](output_240_0.png)
+![png](output_249_0.png)
     
 
 
@@ -8436,7 +9232,7 @@ for container in cnn_model_performance_comparison_val_test_precision_plot.contai
 
 
     
-![png](output_246_0.png)
+![png](output_255_0.png)
     
 
 
@@ -8547,7 +9343,7 @@ for container in cnn_model_performance_comparison_val_test_recall_plot.container
 
 
     
-![png](output_249_0.png)
+![png](output_258_0.png)
     
 
 
@@ -8658,46 +9454,46 @@ for container in cnn_model_performance_comparison_val_test_fscore_plot.container
 
 
     
-![png](output_252_0.png)
+![png](output_261_0.png)
     
 
 
 ### 1.6.9 Model Inference <a class="anchor" id="1.6.9"></a>
 
 1. The gradient-weighted class activation map for  the first convolutional layer of the selected model - **Complex CNN Model With Dropout and Batch Normalization Regularization** highlighted generic image features that lead to the activation of the different image categories.
-    * 1.1 Images identified with <span style="color: #FF0000">CLASS: No Tumor</span> had the following characteristics:
-        * 1.1.1 Smooth and symmetric brain structures without abrupt changes in intensity
-        * 1.1.2 High symmetry in both hemispheres
-    * 1.2 Images identified with <span style="color: #FF0000">CLASS: Glioma</span> had the following characteristics:
-        * 1.2.1 Irregular and poorly defined edges with heterogeneous intensity in the parenchymal brain tissue, particularly white matter (frontal or temporal lobes)
-        * 1.2.2 Asymmetric disruptions, particularly in deep structures like the thalamus
-    * 1.3 Images identified with <span style="color: #FF0000">CLASS: Meningioma</span> had the following characteristics:
-        * 1.3.1 Clear and sharp boundaries with uniform or slightly heterogeneous intensity from the meninges, commonly at the convexity or skull base
-        * 1.3.2 Localized asymmetry near the meninges
-    * 1.4 Images identified with <span style="color: #FF0000">CLASS: Pituitary</span> had the following characteristics:
-        * 1.4.1 Smooth or mildly irregular boundaries within the pituitary region
-        * 1.4.2 Localized asymmetry near the pituitary region
+    * Images identified with <span style="color: #FF0000">CLASS: No Tumor</span> had the following characteristics:
+        * Smooth and symmetric brain structures without abrupt changes in intensity
+        * High symmetry in both hemispheres
+    * Images identified with <span style="color: #FF0000">CLASS: Glioma</span> had the following characteristics:
+        * Irregular and poorly defined edges with heterogeneous intensity in the parenchymal brain tissue, particularly white matter (frontal or temporal lobes)
+        * Asymmetric disruptions, particularly in deep structures like the thalamus
+    * Images identified with <span style="color: #FF0000">CLASS: Meningioma</span> had the following characteristics:
+        * Clear and sharp boundaries with uniform or slightly heterogeneous intensity from the meninges, commonly at the convexity or skull base
+        * Localized asymmetry near the meninges
+    * Images identified with <span style="color: #FF0000">CLASS: Pituitary</span> had the following characteristics:
+        * Smooth or mildly irregular boundaries within the pituitary region
+        * Localized asymmetry near the pituitary region
 2. The gradient-weighted class activation map for  the second convolutional layer of the selected model - **Complex CNN Model With Dropout and Batch Normalization Regularization** highlighted specific image features that lead to the activation of the different image categories.
-    * 2.1 Images identified with <span style="color: #FF0000">CLASS: No Tumor</span> had the following characteristics:
-        * 2.1.1 Normal brain morphology without extrinsic masses
-    * 2.2 Images identified with <span style="color: #FF0000">CLASS: Glioma</span> had the following characteristics:
-        * 2.2.1 Irregular shapes with infiltrative extensions into surrounding tissues
-    * 2.3 Images identified with <span style="color: #FF0000">CLASS: Meningioma</span> had the following characteristics:
-        * 2.3.1 Dome-shaped or spherical, often attached to the meninges, commonly at the convexity or skull base
-    * 2.4 Images identified with <span style="color: #FF0000">CLASS: Pituitary</span> had the following characteristics:
-        * 2.4.1 Ovoid or flattened tumor localized in the pituitary region
+    * Images identified with <span style="color: #FF0000">CLASS: No Tumor</span> had the following characteristics:
+        * Normal brain morphology without extrinsic masses
+    * Images identified with <span style="color: #FF0000">CLASS: Glioma</span> had the following characteristics:
+        * Irregular shapes with infiltrative extensions into surrounding tissues
+    * Images identified with <span style="color: #FF0000">CLASS: Meningioma</span> had the following characteristics:
+        * Dome-shaped or spherical, often attached to the meninges, commonly at the convexity or skull base
+    * Images identified with <span style="color: #FF0000">CLASS: Pituitary</span> had the following characteristics:
+        * Ovoid or flattened tumor localized in the pituitary region
 3. The gradient-weighted class activation map for  the third and final convolutional layer of the selected model - **Complex CNN Model With Dropout and Batch Normalization Regularization** highlighted detailed image features that lead to the activation of the different image categories.
-    * 3.1 Images identified with <span style="color: #FF0000">CLASS: No Tumor</span> had the following characteristics:
-        * 3.1.1 Normal anatomical landmarks without any mass effect
-    * 3.2 Images identified with <span style="color: #FF0000">CLASS: Glioma</span> had the following characteristics:
-        * 3.2.1 Hyper-intense masses in the parenchymal brain tissue, particularly white matter (frontal or temporal lobes) 
-        * 3.2.2 Significant mass effect including ventricular compression or midline shift
-    * 3.3 Images identified with <span style="color: #FF0000">CLASS: Meningioma</span> had the following characteristics:
-        * 3.3.1 Hyper-intense masses arising from the meninges, commonly at the convexity or skull base 
-        * 3.3.2 Significant mass effect including ventricular compression or midline shift
-    * 3.4 Images identified with <span style="color: #FF0000">CLASS: Pituitary</span> had the following characteristics:
-        * 3.4.1 Hyper-intense masses exclusively in the pituitary region 
-        * 3.4.2 Localized deformation at the pituitary region
+    * Images identified with <span style="color: #FF0000">CLASS: No Tumor</span> had the following characteristics:
+        * Normal anatomical landmarks without any mass effect
+    * Images identified with <span style="color: #FF0000">CLASS: Glioma</span> had the following characteristics:
+        * Hyper-intense masses in the parenchymal brain tissue, particularly white matter (frontal or temporal lobes) 
+        * Significant mass effect including ventricular compression or midline shift
+    * Images identified with <span style="color: #FF0000">CLASS: Meningioma</span> had the following characteristics:
+        * Hyper-intense masses arising from the meninges, commonly at the convexity or skull base 
+        * Significant mass effect including ventricular compression or midline shift
+    * Images identified with <span style="color: #FF0000">CLASS: Pituitary</span> had the following characteristics:
+        * Hyper-intense masses exclusively in the pituitary region 
+        * Localized deformation at the pituitary region
 
 
 
@@ -8891,7 +9687,7 @@ display_images(test_gen_df[test_gen_df['Matched_Category_Prediction']==True])
 
 
     
-![png](output_259_0.png)
+![png](output_268_0.png)
     
 
 
@@ -8906,7 +9702,7 @@ display_images(test_gen_df[test_gen_df['Matched_Category_Prediction']!=True])
 
 
     
-![png](output_260_0.png)
+![png](output_269_0.png)
     
 
 
@@ -9181,7 +9977,7 @@ display_heatmaps(matched_categories, matched_categories_titles)
 
 
     
-![png](output_269_0.png)
+![png](output_278_0.png)
     
 
 
@@ -9200,7 +9996,7 @@ display_heatmaps(mismatched_categories, mismatched_categories_titles)
 
 
     
-![png](output_270_0.png)
+![png](output_279_0.png)
     
 
 
@@ -9283,7 +10079,7 @@ display_heatmaps(matched_categories, matched_categories_titles)
 
 
     
-![png](output_275_0.png)
+![png](output_284_0.png)
     
 
 
@@ -9302,7 +10098,7 @@ display_heatmaps(mismatched_categories, mismatched_categories_titles)
 
 
     
-![png](output_276_0.png)
+![png](output_285_0.png)
     
 
 
@@ -9385,7 +10181,7 @@ display_heatmaps(matched_categories, matched_categories_titles)
 
 
     
-![png](output_281_0.png)
+![png](output_290_0.png)
     
 
 
@@ -9404,7 +10200,7 @@ display_heatmaps(mismatched_categories, mismatched_categories_titles)
 
 
     
-![png](output_282_0.png)
+![png](output_291_0.png)
     
 
 
