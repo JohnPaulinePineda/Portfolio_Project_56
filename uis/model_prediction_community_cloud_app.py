@@ -13,7 +13,6 @@ from keras.metrics import PrecisionAtRecall, Recall
 from tensorflow.keras.utils import img_to_array, array_to_img, load_img
 from pathlib import Path
 
-import os
 from PIL import Image
 from glob import glob
 import cv2
@@ -38,7 +37,7 @@ set_seed()
 ##################################
 # Defining file paths
 ##################################
-MODELS_PATH = Path("models")
+MODELS_PATH = Path("uis/models/final")
 
 ##################################
 # Loading the final classification model

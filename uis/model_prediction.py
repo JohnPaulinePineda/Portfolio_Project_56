@@ -12,7 +12,6 @@ from keras.optimizers import Adam
 from keras.metrics import PrecisionAtRecall, Recall 
 from tensorflow.keras.utils import img_to_array, array_to_img, load_img
 
-import os
 from PIL import Image
 from glob import glob
 import cv2
@@ -37,7 +36,7 @@ set_seed()
 ##################################
 # Defining file paths
 ##################################
-MODELS_PATH = r"models"
+MODELS_PATH = r"uis\models\final"
 
 ##################################
 # Loading the final classification model
