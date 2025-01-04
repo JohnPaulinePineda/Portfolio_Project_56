@@ -20,7 +20,7 @@ from model_prediction_community_cloud_app import gradcam_image_prediction
 ##################################
 # Defining file paths
 ##################################
-DATASETS_FINAL_TEST_PATH = Path("uis/Brain_Tumor_MRI_Dataset/Testing")
+DATASETS_FINAL_TEST_PATH = Path("uis_datasets/Brain_Tumor_MRI_Dataset/Testing")
 
 ##################################
 # Defining the image category levels
