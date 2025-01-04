@@ -36,7 +36,7 @@ set_seed()
 ##################################
 # Defining file paths
 ##################################
-MODELS_PATH = r"uis\models\final"
+MODELS_PATH = r"uis_models"
 
 ##################################
 # Loading the final classification model
