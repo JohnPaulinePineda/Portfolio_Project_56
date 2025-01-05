@@ -4,3 +4,9 @@ mdeploy_venv/
 datasets/
 # Ignore model files with huge file sizes
 models/
+# Ignore python notebook files with huge file sizes
+codes/
+# Ignore markdown and HTML files with huge file sizes
+docs/
+# Ignore image files with huge file sizes
+images/
