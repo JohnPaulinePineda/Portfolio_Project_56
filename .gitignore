@@ -10,3 +10,6 @@ codes/
 docs/
 # Ignore image files with huge file sizes
 images/
+# Ignore cached files with huge file sizes
+uis/.ipynb_checkpoints
+uis/__pycache__
